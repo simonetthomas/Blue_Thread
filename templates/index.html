@@ -17,12 +17,10 @@
     {% endif%}
     
     <form id="login_form" method="POST" action="http://localhost:5000/login">
-        <label for="login">login :</label>
-        <input id="login" name="login"></input><br />
-        <label for="password">app password :</label>
-        <input id="password" type="password" name="password"></input><br />
+        <input id="login" name="login" placeholder="Login"></input><br />
+        <input id="password" type="password" name="password" placeholder="App password"></input><br />
         
-        <input id="btn_valider" type="Submit" value="Connexion"></input>
+        <button id="btn_valider" type="Submit">Connexion</button>
     </form>
 
     <p class="note">Note : par sécurité, n'utilisez pas le mot de passe principal de votre compte Bluesky, mais générez un app password que vous utiliserez seulement pour cette application.</p>

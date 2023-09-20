@@ -1,6 +1,6 @@
 body{
-    width:1250px;
-    background-color:#eee;
+    width:1240px;
+    background-color:#b9c7df;
     font-family:"Segoe UI";
     margin-left:auto;
     margin-right:auto;
@@ -18,6 +18,7 @@ h1{
 }
 /* Champ dans lequel on saisit le texte */
 #text{
+    width: 645px;
     font-family:"Segoe UI"; 
     font-size: 16px;
     letter-spacing: 0.2px;
@@ -33,8 +34,8 @@ div.fond{
     display: block;
     overflow: auto;
     background-color:white;
-    padding:10px;
-    border:2px solid aliceblue;
+    padding:20px;
+    border:0px solid aliceblue;
     border-radius:10px;
 }
 
@@ -74,27 +75,33 @@ div.posts{
 }
 
 #login_form{
-    width:300px;
-    border:1px solid grey;
-    border-radius:5px;
     margin:auto;
     padding : 10px;
-    background-color:#def;
-    height:100px;
+    width:300px;
+    height:150px;
+    background-color: white;
+    border:0px;
+    border-radius:10px;
+    text-align: center;
 }
 
-#login_form label{
-    margin-top:10px;
-    float:left;
-}
  
 #login_form input{
-    margin-top:10px;
-    float:right;
+    margin-top:12px;
+    padding-left:10px;
+    height:35px;
+    width:250px;
+    background-color: #eee;
+    border: 0px;
+    font-size:100%;
 }
 
 #login_form #btn_valider{
-    clear:both;
+    margin-top:12px;
+    width:150px;
+    height:30px;
+    border:0px;
+    font-size:100%;
 }
 
 p.note{
