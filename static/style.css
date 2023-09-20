@@ -1,0 +1,63 @@
+body{
+    width:1200px;
+    background-color:#eee;
+    font-family:"Segoe UI";
+    margin-left:auto;
+    margin-right:auto;
+}
+
+
+#text{
+    font-family:"Segoe UI"; 
+    font-size: 16px;
+    letter-spacing: 0.2px;
+    font-weight: 400;
+    line-height: 20.8px;
+    resize: none;
+    padding:5px;
+}
+
+
+div.fond{
+   
+
+}
+
+.zone_texte{
+    float:left;
+}
+
+div.posts{
+    float:right;
+    padding-top:20px;
+    padding-left:10px;
+}
+
+/* Chaque post du thread */
+.post{
+    font-family:"Segoe UI"; 
+    font-size: 16px;
+    letter-spacing: 0.2px;
+    font-weight: 400;
+    line-height: 20.8px;
+    border:2px solid #bbb;
+    width:503px;
+    word-break: break-word;
+    padding:8px;
+    border-radius:5px;
+    margin-bottom:8px;
+    clear: left;
+    float: left;
+    resize:none;
+}
+
+.image_button{
+    clear: left;
+    float: left;
+}
+
+/* Bouton pour envoyer le thread */
+#envoyer{
+    float: right;
+    clear: right;
+}

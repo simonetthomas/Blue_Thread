@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Accueil</title> 
+    <meta charset=utf-8>
+</head>
+<body>
+    <h1>Bienvenue !</h1>
+    
+    <p>Ceci est un outil permettant de poster un thread automatiquement sur le réseau Bluesky</p>
+    
+     {% if error%}
+        <p><strong>{{error}}</strong></p>
+    {% endif%}
+    
+    <form method="POST" action="http://localhost:5000/login">
+        <label for="login">login :</label>
+        <input id="login" name="login"></input><br />
+        <label for="password">app password :</label>
+        <input id="password" name="password"></input><br />
+        
+        <input type="Submit" value="Connexion"></input>
+    </form>
+
+</body>
+</html>

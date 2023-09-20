@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang='fr'>
+<head>
+    <title>Thread</title> 
+    <meta charset=utf-8>
+    <link href="/static/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+    <div class="fond">
+    <h1>Thread</h1>
+    
+    {% with messages = get_flashed_messages()%}
+        {% if messages%}
+            {% for message in messages%}
+            <p><strong>{{message}}</strong></p>
+            {%endfor%}
+        {%endif%}
+    {%endwith%}
+    
+    <a href="/"><button><- Accueil</button></a><br />
+    
+    <form method="POST" class="zone_texte">
+        <label for="text">Racontez-nous tout :</label><br />
+        <textarea id="text" name="text" rows="30" cols="70" minlength="300" autocomplete="off" autocorrect="on"  autofocus="on" placeholder="Entrez votre texte...">{{text}}</textarea>
+        <br />
+        <input type="Submit" name="action" value="Découper le texte"/>
+        
+    </form>
+    
+    
+    <form method="post" enctype="multipart/form-data" >
+        <div class="posts">
+        {% for post in thread %}
+            <textarea name="post" class="post" rows=5 maxlength="300" >{{post}}</textarea>
+            <input type="file" name="image" accept="image/png, image/jpg, image/jpeg" class="image_button" />
+        {%endfor%}
+        </div>
+        <input type="Submit" name="action" value="Envoyer" {{disabled}} id="envoyer" />
+    </form>
+</body>
+<html>
