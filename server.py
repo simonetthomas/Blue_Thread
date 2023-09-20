@@ -22,6 +22,7 @@ app.config.from_pyfile('config.py')
 login = ""
 password=""
 client = Client()
+profile = None
 
 @app.route('/')
 def index():
@@ -36,9 +37,6 @@ def fctn_login():
     if request.method == 'POST':
         login = request.form.get('login')
         password = request.form.get('password')
-        
-        print (login)
-        print (password)
         
         if (connexion(client, login, password) == 0):
             flash("Connexion réussie")
@@ -59,9 +57,8 @@ def thread():
     global password
     global client
     
-    print("login : "+login)
-    
-    if login=="":
+    if profile is None:
+        print("Utilisateur non connecté, redirection vers la page d'accueil")
         return redirect("/login")
     
     if request.method == 'POST':
@@ -161,11 +158,14 @@ def trouver_fin_phrase(post):
 # Prend en entrée le client, un login et un password
 # Retourne 0 si connexion ok, 1 sinon
 def connexion(client, login, password):
+    global profile
     try:
         print("- Connexion...")
-        client.login(login, password)
+        profile = client.login(login, password)
+        print(profile.handle)
     except:
         print("Erreur de connexion. Veuillez vérifier l'identifiant et le mot de passe.")
+        profile = None;
         return 1;
     else:
         print("- Connexion ok")
