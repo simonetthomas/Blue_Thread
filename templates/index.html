@@ -1,26 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang='fr'>
 <head>
-    <title>Accueil</title> 
+    <title>Connexion</title> 
     <meta charset=utf-8>
+    <link href="/static/style.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-    <h1>Bienvenue !</h1>
+    <h1>Bienvenue sur Blue Threads !</h1>
     
-    <p>Ceci est un outil permettant de poster un thread automatiquement sur le réseau Bluesky</p>
+    <p>Postez un thread automatiquement sur le réseau Bluesky.</p>
+    
+    <p>Pour commencer, veuillez vous connecter.</p>
     
      {% if error%}
         <p><strong>{{error}}</strong></p>
     {% endif%}
     
-    <form method="POST" action="http://localhost:5000/login">
+    <form id="login_form" method="POST" action="http://localhost:5000/login">
         <label for="login">login :</label>
         <input id="login" name="login"></input><br />
         <label for="password">app password :</label>
-        <input id="password" name="password"></input><br />
+        <input id="password" type="password" name="password"></input><br />
         
-        <input type="Submit" value="Connexion"></input>
+        <input id="btn_valider" type="Submit" value="Connexion"></input>
     </form>
+
+    <p class="note">Note : par sécurité, n'utilisez pas le mot de passe principal de votre compte Bluesky, mais générez un app password que vous utiliserez seulement pour cette application.</p>
 
 </body>
 </html>

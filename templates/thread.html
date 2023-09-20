@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang='fr'>
 <head>
-    <title>Thread</title> 
+    <title>Blue Threads</title> 
     <meta charset=utf-8>
     <link href="/static/style.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 
     <div class="fond">
-    <h1>Thread</h1>
+    <h1>Blue Threads</h1>
     
     {% with messages = get_flashed_messages()%}
         {% if messages%}
@@ -38,5 +38,6 @@
         </div>
         <input type="Submit" name="action" value="Envoyer" {{disabled}} id="envoyer" />
     </form>
+    </div>
 </body>
 <html>
