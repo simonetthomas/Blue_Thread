@@ -1,13 +1,3 @@
-# TODO :
-# - Message de confirmation après l'envoi du thread
-# - améliorer la gestion de la session, avec des cookies etc.
-# - Gérer l'envoi d'une image par post : ok
-# - Afficher l'image choisie pour un post
-# - Gérer l'envoi de plusieurs images par post
-# - Limiter la sélection à 4 images par post
-# - Gérer le découpage en JS sans formulaire ?
-# - Gérer le choix de la langue d'envoi
-
 from flask import Flask, request, render_template, redirect, flash
 from atproto import Client, models
 import math
@@ -219,8 +209,8 @@ def envoi_thread (thread, images, client, langue):
 
             else:   # S'il y a une image
                 img_data=images[index].read()
-                upload = client.com.atproto.repo.upload_blob(img_data)  # TODO tester la taille du fichier ? Apparement erreur si trop gros
-                pics = [models.AppBskyEmbedImages.Image(alt='Une image', image=upload.blob)]    # TODO prendre en compte un ALT rempli par l'utilisateur
+                upload = client.com.atproto.repo.upload_blob(img_data)
+                pics = [models.AppBskyEmbedImages.Image(alt='Une image', image=upload.blob)]
                 embed = models.AppBskyEmbedImages.Main(images=pics)
                 
                 post_ref = client.send_post(
@@ -236,8 +226,8 @@ def envoi_thread (thread, images, client, langue):
                 )
             else:   # S'il y a une image
                 img_data=images[index].read()
-                upload = client.com.atproto.repo.upload_blob(img_data)  # TODO tester la taille du fichier ? Apparement erreur si trop gros
-                pics = [models.AppBskyEmbedImages.Image(alt='Une image', image=upload.blob)]    # TODO prendre en compte un ALT rempli par l'utilisateur
+                upload = client.com.atproto.repo.upload_blob(img_data)
+                pics = [models.AppBskyEmbedImages.Image(alt='Une image', image=upload.blob)]
                 embed = models.AppBskyEmbedImages.Main(images=pics)
                 
                 post_ref = client.send_post(
