@@ -26,13 +26,19 @@ profile = None
 
 @app.route('/')
 def index():
-  return render_template('index.html')
+    if profile == None:
+        print("Utilisateur non connecté, chargement de la page de connexion")
+        return render_template('index.html')
+    else:
+        print("Déjà connecté, on va sur /thread")
+        return redirect('/thread')
 
 @app.route("/login", methods=['GET', 'POST'])
 def fctn_login():
     global login
     global password
     global client
+    global profile
     
     if request.method == 'POST':
         login = request.form.get('login')
@@ -40,14 +46,32 @@ def fctn_login():
         
         if (connexion(client, login, password) == 0):
             flash("Connexion réussie")
-            return redirect('/thread/')
+            return redirect('/thread')
         else:
             error="Erreur de connexion, veuillez réessayer."
             return render_template("index.html", error=error)
-    else:
-        return redirect('/')
+            
+    elif request.method == 'GET':
+        if profile == None:
+            print("Utilisateur non connecté, redirection vers la page de connexion")
+            return redirect('/')
+        else:
+            print("Déjà connecté, on va sur /thread")
+            return redirect('/thread')
+    
+    # Au cas ou
+    return redirect('/')
 
-@app.route('/thread/',  methods=['GET', 'POST'])
+@app.route("/logout", methods=['GET'])
+def logout():
+    global profile
+    
+    print("- Déconnexion")
+    profile = None;
+    return redirect('/')
+
+
+@app.route('/thread',  methods=['GET', 'POST'])
 def thread():
     print ('Entrée dans la méthode "thread"')
     text=""
@@ -58,7 +82,7 @@ def thread():
     global client
     
     if profile is None:
-        print("Utilisateur non connecté, redirection vers la page d'accueil")
+        print("Utilisateur non connecté, redirection vers la page de connexion")
         return redirect("/login")
     
     if request.method == 'POST':
@@ -162,13 +186,12 @@ def connexion(client, login, password):
     try:
         print("- Connexion...")
         profile = client.login(login, password)
-        print(profile.handle)
     except:
         print("Erreur de connexion. Veuillez vérifier l'identifiant et le mot de passe.")
         profile = None;
         return 1;
     else:
-        print("- Connexion ok")
+        print("- Connecté en tant que "+profile.handle)
         return 0;
 
 
