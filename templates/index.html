@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang='fr'>
 <head>
-    <title>Connexion</title> 
+    <title>Blue Threads - Connexion</title> 
     <meta charset=utf-8>
     <link href="/static/style.css" rel="stylesheet" type="text/css" />
 </head>
@@ -17,7 +17,7 @@
     {% endif%}
     
     <form id="login_form" method="POST" action="http://localhost:5000/login">
-        <input id="login" name="login" placeholder="Login"></input><br />
+        <input id="login" name="login" placeholder="Login" autofocus ></input><br />
         <input id="password" type="password" name="password" placeholder="App password"></input><br />
         
         <button id="btn_valider" type="Submit">Connexion</button>
