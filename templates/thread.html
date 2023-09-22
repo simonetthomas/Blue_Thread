@@ -22,7 +22,7 @@
     <form method="POST" class="zone_texte">
         <textarea id="text" name="text" rows="30" cols="70" minlength="300" autocomplete="off" autocorrect="on"  autofocus="on" placeholder="Racontez-nous tout">{{text}}</textarea>
         <br />
-        <input type="Submit" name="action" value="Découper le texte"/>
+        <input id="btn_cut" type="Submit" name="action" value="Découper le texte" disabled/>
         
     </form>
     
@@ -36,5 +36,17 @@
         <input type="Submit" name="action" value="Envoyer" {{disabled}} id="envoyer" />
     </form>
     </div>
+    
+    <script>
+    const btn = document.getElementById("btn_cut");
+    const textarea = document.getElementById("text");
+    // Only allow to click on the cut button if the text is long enough
+    textarea.addEventListener('input', () => {
+        console.log("test");
+        btn.disabled = textarea.value.length < 300;
+    });
+    </script>
+
+    
 </body>
 <html>
