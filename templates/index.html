@@ -12,9 +12,6 @@
     
     <p>Pour commencer, veuillez vous connecter.</p>
     
-     {% if error%}
-        <p><strong>{{error}}</strong></p>
-    {% endif%}
     
     <form id="login_form" method="POST" action="http://localhost:5000/login">
         <input id="login" name="login" placeholder="Login" autofocus ></input><br />
@@ -22,6 +19,10 @@
         
         <button id="btn_valider" type="Submit">Connexion</button>
     </form>
+
+     {% if error%}
+        <p class="flash_error"><strong>{{error}}</strong></p>
+    {% endif%}
 
     <p class="note">Note : par sécurité, n'utilisez pas le mot de passe principal de votre compte Bluesky, mais générez un app password que vous utiliserez seulement pour cette application.</p>
 

@@ -38,10 +38,9 @@ def fctn_login():
         
         if (connexion(client, login, password) == 0):
             session["name"] = request.form.get('login')
-            flash("Connexion réussie")
             return redirect('/thread')
         else:
-            error="Erreur de connexion, veuillez réessayer."
+            error="Erreur de connexion, veuillez vérifier l'identifiant et le mot de passe."
             session["name"] = None
             return render_template("index.html", error=error)
             
@@ -86,9 +85,13 @@ def thread():
             
             # Récupération du texte du formulaire
             text = request.form.get('text')
-            thread=decoupage(text)
-            
-            disabled=""
+            try:
+                thread=decoupage(text)
+            except Exception as error:
+                print("Erreur lors du découpage du texte : ", error)
+                flash ("Erreur lors du découpage");
+            else:
+                disabled=""
                     
         elif request.form.get('action') == "Envoyer":
             # Récupération des posts
@@ -96,11 +99,14 @@ def thread():
             print(thread)
             images=request.files.getlist('image')
             
-            if (envoi_thread(thread, images, client, "fr") == 0):
-                print("Thread envoyé sur le compte bluesky de " + profile.handle + "!\n")
-                return render_template('thread_sent.html')
-            else :
-                print("Erreur lors de l'envoi...")
+            if (profile is not None):   # Si le client a bien une connexion valide à Bluesky
+                if (envoi_thread(thread, images, client, "fr") == 0):
+                    print("Thread envoyé sur le compte bluesky de " + profile.handle + "!\n")
+                    return render_template('thread_sent.html')
+                else :
+                    print("Erreur lors de l'envoi...")
+            else:
+                print("Utilisateur non connecté, envoi impossible")
 
     # Affichage de la page thread, éventuellement avec le texte s'il existe déjà
     return render_template("thread.html", text=text, thread=thread, disabled=disabled)
@@ -133,7 +139,7 @@ def decoupage(text):
         if (fin_phrase != -1):
             fin = fin_phrase+debut+150
         else:
-            #Si pas de ponctuation, si on coupe un mot en cours, on fixe la fin du post au début du mot
+            #Si pas de ponctuation, si on coupe un mot en cours, on fixe la fin du post au début du mot 
             while (text[fin-1] != " " and text[fin]) != " " and fin < len(text)-1:
                 fin-=1
                 

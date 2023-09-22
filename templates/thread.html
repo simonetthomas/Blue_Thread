@@ -10,13 +10,13 @@
     <div class="fond">
     <h1>Blue Threads</h1>
     
-<!--    {% with messages = get_flashed_messages()%}
+    {% with messages = get_flashed_messages()%}
         {% if messages%}
             {% for message in messages%}
-            <p><strong>{{message}}</strong></p>
+            <p class="flash_error"><strong>{{message}}</strong></p>
             {%endfor%}
         {%endif%}
-    {%endwith%}-->
+    {%endwith%}
     <p>Connecté en tant que {{session.name}} <a href="/logout"><button>Déconnexion</button></a></p>
     
     <form method="POST" class="zone_texte">

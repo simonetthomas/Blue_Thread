@@ -108,3 +108,8 @@ p.note{
     margin-top:50px;
     font-size:80%;
 }
+
+.flash_error{
+    text-align:center;
+    color:red;
+}
