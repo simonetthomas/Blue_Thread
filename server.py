@@ -1,4 +1,5 @@
-from flask import Flask, request, render_template, redirect, flash
+from flask import Flask, request, render_template, redirect, flash, session
+from flask_session import Session
 from atproto import Client, models
 import math
 import os
@@ -6,17 +7,19 @@ import argparse
 import re
 
 app = Flask(__name__)
-
 app.config.from_pyfile('config.py')
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+app.config["SESSION_USE_SIGNER"] = "True"
+Session(app)
 
-login = ""
-password=""
 client = Client()
-profile = None
+profile = None  # Permet de garder les infos du profil bluesky
 
 @app.route('/')
 def index():
-    if profile == None:
+    print('/')
+    if not session.get("name"):
         print("Utilisateur non connecté, chargement de la page de connexion")
         return render_template('index.html')
     else:
@@ -25,24 +28,25 @@ def index():
 
 @app.route("/login", methods=['GET', 'POST'])
 def fctn_login():
-    global login
-    global password
     global client
     global profile
     
+    print ("/login")
     if request.method == 'POST':
         login = request.form.get('login')
         password = request.form.get('password')
         
         if (connexion(client, login, password) == 0):
+            session["name"] = request.form.get('login')
             flash("Connexion réussie")
             return redirect('/thread')
         else:
             error="Erreur de connexion, veuillez réessayer."
+            session["name"] = None
             return render_template("index.html", error=error)
             
     elif request.method == 'GET':
-        if profile == None:
+        if not session.get("name"):
             print("Utilisateur non connecté, redirection vers la page de connexion")
             return redirect('/')
         else:
@@ -58,22 +62,22 @@ def logout():
     
     print("- Déconnexion")
     profile = None;
+    session["name"] = None
     return redirect('/')
 
 
 @app.route('/thread',  methods=['GET', 'POST'])
 def thread():
-    print ('Entrée dans la méthode "thread"')
+    print ('/thread')
     text=""
     thread=[]
     disabled="disabled='true'"
-    global login
-    global password
     global client
+    global profile
     
-    if profile is None:
+    if not session.get("name"):
         print("Utilisateur non connecté, redirection vers la page de connexion")
-        return redirect("/login")
+        return redirect("/")
     
     if request.method == 'POST':
         text = request.form.get('text')
@@ -92,11 +96,10 @@ def thread():
             print(thread)
             images=request.files.getlist('image')
             
-            if (connexion(client, login, password) == 0):
-                if (envoi_thread(thread, images, client, "fr") == 0):
-                    print("Thread envoyé sur le compte bluesky de " + login + "!\n")
-                else :
-                    print("Erreur lors de l'envoi...")
+            if (envoi_thread(thread, images, client, "fr") == 0):
+                print("Thread envoyé sur le compte bluesky de " + profile.handle + "!\n")
+            else :
+                print("Erreur lors de l'envoi...")
 
     # Affichage de la page thread, éventuellement avec le texte s'il existe déjà
     return render_template("thread.html", text=text, thread=thread, disabled=disabled)

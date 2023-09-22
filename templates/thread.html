@@ -10,15 +10,14 @@
     <div class="fond">
     <h1>Blue Threads</h1>
     
-    {% with messages = get_flashed_messages()%}
+<!--    {% with messages = get_flashed_messages()%}
         {% if messages%}
             {% for message in messages%}
             <p><strong>{{message}}</strong></p>
             {%endfor%}
         {%endif%}
-    {%endwith%}
-    
-    <a href="/logout"><button><- Déconnexion</button></a><br />
+    {%endwith%}-->
+    <p>Connecté en tant que {{session.name}} <a href="/logout"><button>Déconnexion</button></a></p>
     
     <form method="POST" class="zone_texte">
         <label for="text">Racontez-nous tout :</label><br />
@@ -27,7 +26,6 @@
         <input type="Submit" name="action" value="Découper le texte"/>
         
     </form>
-    
     
     <form method="post" enctype="multipart/form-data" >
         <div class="posts">
