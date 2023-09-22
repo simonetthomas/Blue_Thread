@@ -98,6 +98,7 @@ def thread():
             
             if (envoi_thread(thread, images, client, "fr") == 0):
                 print("Thread envoyé sur le compte bluesky de " + profile.handle + "!\n")
+                return render_template('thread_sent.html')
             else :
                 print("Erreur lors de l'envoi...")
 
