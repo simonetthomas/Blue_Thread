@@ -30,12 +30,12 @@ def index():
 def fctn_login():
     global client
     global profile
-    
+
     print ("/login")
     if request.method == 'POST':
         login = request.form.get('login')
         password = request.form.get('password')
-        
+
         if (connexion(client, login, password) == 0):
             session["name"] = request.form.get('login')
             return redirect('/thread')
@@ -43,7 +43,7 @@ def fctn_login():
             error="Erreur de connexion, veuillez vérifier l'identifiant et le mot de passe."
             session["name"] = None
             return render_template("index.html", error=error)
-            
+
     elif request.method == 'GET':
         if not session.get("name"):
             print("Utilisateur non connecté, redirection vers la page de connexion")
@@ -51,14 +51,14 @@ def fctn_login():
         else:
             print("Déjà connecté, on va sur /thread")
             return redirect('/thread')
-    
+
     # Au cas ou
     return redirect('/')
 
 @app.route("/logout", methods=['GET'])
 def logout():
     global profile
-    
+
     print("- Déconnexion")
     profile = None;
     session["name"] = None
@@ -73,16 +73,16 @@ def thread():
     disabled="disabled='true'"
     global client
     global profile
-    
+
     if not session.get("name"):
         print("Utilisateur non connecté, redirection vers la page de connexion")
         return redirect("/")
-    
+
     if request.method == 'POST':
         text = request.form.get('text')
         if request.form.get('action') == "Découper le texte":
             print ('Entrée avec la méthode POST')
-            
+
             # Récupération du texte du formulaire
             text = request.form.get('text')
             try:
@@ -92,13 +92,13 @@ def thread():
                 flash ("Erreur lors du découpage");
             else:
                 disabled=""
-                    
+
         elif request.form.get('action') == "Envoyer":
             # Récupération des posts
             thread=request.form.getlist("post")
             print(thread)
             images=request.files.getlist('image')
-            
+
             if (profile is not None):   # Si le client a bien une connexion valide à Bluesky
                 if (envoi_thread(thread, images, client, "fr") == 0):
                     print("Thread envoyé sur le compte bluesky de " + profile.handle + "!\n")
@@ -116,7 +116,7 @@ def thread():
 def page_not_found(error):
     return ('Page non trouvée :(')
 
-  
+
 # Parcourt le texte et le découpe en posts, puis les place dans un array
 # Prend en entree le texte à découper
 # Retourne un array de strings
@@ -125,53 +125,53 @@ def decoupage(text):
     debut=0         # Indice de début du post en cours
     fin=longueur    # Indice de fin du post en cours
     thread = []     # Array contenant les posts à envoyer
-    
+
     while (debut < len(text)-1 ):
         #print ("debut : "+str(debut)+", fin : "+str(fin))
-        
+
         # Pour éviter que l'indice dépasse la fin de la chaine, pour le dernier post
         if fin >= len(text):
             fin = len(text)-1
            # print ("nouvelle fin : "+str(fin)+ ", len(text)="+str(len(text)))
-            
+
         # On cherche une fin de phrase (points) entre les caractères 150 et 292
         fin_phrase = trouver_fin_phrase(text[debut+150:fin])
         if (fin_phrase != -1):
             fin = fin_phrase+debut+150
         else:
-            #Si pas de ponctuation, si on coupe un mot en cours, on fixe la fin du post au début du mot 
+            #Si pas de ponctuation, si on coupe un mot en cours, on fixe la fin du post au début du mot
             while (text[fin-1] != " " and text[fin]) != " " and fin < len(text)-1:
                 fin-=1
-                
+
         # Elimination des retours à la ligne en début de post
         while (text[debut] == '\n' or text[debut] == ' ' ):
             debut+=1
-        
+
         # Création du texte du post
         post=text[debut:fin+1]
         print("Post : ", post)
-        
+
         # Ajout à l'array
         thread.append(post)
-                
+
         # Calcul des variables pour le prochain post
         debut=fin+1
         fin+=longueur
-        
+
     # Ajout de la numérotation à la fin du post
     str_nb_posts = str(len(thread))
     for index, post in enumerate(thread):
         numerotation = str(index+1)+"/"+str_nb_posts
         thread[index]=post+" ("+numerotation+")"
 
-        
+
     return (thread)
 
 # Cherche la dernière fin de phrase dans la chaine en entrée
 # Prend en entrée une chaine
 # Retourne l'indice de la fin de phrase trouvée, -1 si pas de ponctuation trouvée
 def trouver_fin_phrase(post):
-    x = re.search("[\.?!][^\.\?!]*$", post) 
+    x = re.search("[\.?!][^\.\?!]*$", post)
     #print(x)
     if (x) :
         return x.start()
@@ -186,8 +186,8 @@ def connexion(client, login, password):
     try:
         print("- Connexion...")
         profile = client.login(login, password)
-    except:
-        print("Erreur de connexion. Veuillez vérifier l'identifiant et le mot de passe.")
+    except Exception as error:
+        print("Erreur de connexion. Veuillez vérifier l'identifiant et le mot de passe. ", error)
         profile = None;
         return 1;
     else:
@@ -201,12 +201,12 @@ def connexion(client, login, password):
 def envoi_thread (thread, images, client, langue):
     premier=True
     str_nb_posts = str(len(thread))
-    
+
     # for item in request.files.getlist('image'):
     # data = item.read()
     # print('len:', len(data))
 
-    
+
     for index, post in enumerate(thread):
         numerotation = str(index+1)+"/"+str_nb_posts
         embed=''
@@ -222,11 +222,11 @@ def envoi_thread (thread, images, client, langue):
                 upload = client.com.atproto.repo.upload_blob(img_data)
                 pics = [models.AppBskyEmbedImages.Image(alt='Une image', image=upload.blob)]
                 embed = models.AppBskyEmbedImages.Main(images=pics)
-                
+
                 post_ref = client.send_post(
                     text=post, langs=[langue], embed=embed
                 )
-                
+
             premier=False
         else:
             # Envoi d'un post suivant, en réponse au précedent
@@ -239,13 +239,13 @@ def envoi_thread (thread, images, client, langue):
                 upload = client.com.atproto.repo.upload_blob(img_data)
                 pics = [models.AppBskyEmbedImages.Image(alt='Une image', image=upload.blob)]
                 embed = models.AppBskyEmbedImages.Main(images=pics)
-                
+
                 post_ref = client.send_post(
                     text=post, reply_to=models.AppBskyFeedPost.ReplyRef(post_ref, post_ref), langs=[langue], embed=embed
                 )
-                
+
         print("- Post "+numerotation+" envoyé\n")
-        
+
     return 0
 
 

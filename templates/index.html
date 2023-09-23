@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html lang='fr'>
 <head>
-    <title>Blue Threads - Connexion</title> 
+    <title>Blue Threads - Connexion</title>
     <meta charset=utf-8>
     <link href="/static/style.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
     <h1>Bienvenue sur Blue Threads !</h1>
-    
+
     <p>Postez un thread automatiquement sur le réseau Bluesky.</p>
-    
+
     <p>Pour commencer, veuillez vous connecter.</p>
-    
-    
-    <form id="login_form" method="POST" action="http://localhost:5000/login">
+
+
+    <form id="login_form" method="POST" action="/login">
         <input id="login" name="login" placeholder="Login" autofocus ></input><br />
         <input id="password" type="password" name="password" placeholder="App password"></input><br />
-        
+
         <button id="btn_valider" type="Submit">Connexion</button>
     </form>
 
