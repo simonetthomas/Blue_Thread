@@ -30,7 +30,9 @@
         <div class="posts">
         {% for post in thread %}
             <textarea name="post" class="post" rows=5 maxlength="300" >{{post}}</textarea>
-            <input type="file" name="image" accept="image/png, image/jpg, image/jpeg" class="image_button" />
+            <label for="file_btn{{loop.index}}"><img src="static/image_icon.png" /></label>
+            <input id="file_btn{{loop.index}}" type="file" name="image" accept="image/png, image/jpg, image/jpeg" class="image_button" value="test"  onchange="loadFile(event, {{loop.index}})"/>
+            <output id="thumbnail{{loop.index}}"><img id="output{{loop.index}}" width="100" />	</output>
         {%endfor%}
         </div>
         <input type="Submit" name="action" value="Envoyer" {{disabled}} id="envoyer" />
@@ -42,9 +44,16 @@
     const textarea = document.getElementById("text");
     // Only allow to click on the cut button if the text is long enough
     textarea.addEventListener('input', () => {
-        console.log("test");
         btn.disabled = textarea.value.length < 300;
     });
+    
+    var loadFile = function(event, i) {
+        console.log(i);
+        var image = document.getElementById('output'+i);
+        image.src = URL.createObjectURL(event.target.files[0]);
+    };
+
+    
     </script>
 
     

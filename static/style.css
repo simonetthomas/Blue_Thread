@@ -41,7 +41,7 @@ div.fond{
 
 div.posts{
     float:right;
-    padding-top:20px;
+    padding-top:0px;
     padding-left:10px;
 }
 
@@ -63,11 +63,28 @@ div.posts{
     resize:none;
 }
 
+.posts label{
+    clear: left;
+    float: left;
+    margin-bottom:10px;
+}
+
+label img{
+    width:24px;
+    cursor:pointer;
+}
+
 .image_button{
     clear: left;
     float: left;
+    display :none;
+    
+    
 }
 
+output{
+    float: left;
+}
 /* Bouton pour envoyer le thread */
 #envoyer{
     float: right;
