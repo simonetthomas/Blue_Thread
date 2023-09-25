@@ -82,9 +82,35 @@ label img{
     
 }
 
-output{
+/* Zone dans laquelle on insere les vignettes des images */
+.posts output{
     float: left;
+    width: 490px;
 }
+
+output td{
+    width: 100px;
+}
+
+output img{
+    height:80px;
+    clear: both;
+    float: left;
+    object-fit: cover;
+    max-width:125px;
+    margin-right:5px;
+    border: 1px solid #bbb;
+    border-radius: 3px;
+}
+
+output input{
+    clear: both;
+    float: left;
+    width: 90%;
+}
+
+
+
 /* Bouton pour envoyer le thread */
 #envoyer{
     float: right;
