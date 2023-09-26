@@ -47,12 +47,14 @@
         btn.disabled = textarea.value.length < 300;
     });
     
-    /* Displays a dialog to input the alt text */
+    /* Displays a dialog to ask the alt text and updates the input value */
     var inputAlt = function (event){
-        console.log(event.target.id);
-        const inputText = document.getElementById(event.target.id).value; // get the element with id "input" which is the textField
-        new_alt = prompt("Décrivez l'image :", inputText); // show the value of the input in alert message
-        document.getElementById(event.target.id).value=new_alt;
+        // console.log(event);
+        const input = event.target;
+        const old_alt_text = document.getElementById(input.id).value;  // get the previous alt value which is in the input field
+        new_alt_text = prompt("Décrivez l'image :", old_alt_text);      // Prompts the user to input a new alt text
+        document.getElementById(input.id).value=new_alt_text;          // Sets the input value with the new alt text
+        document.getElementById(input.previousElementSibling.firstChild.id).title=new_alt_text;    // Sets the img title property which displays a tooltip over the picture
     };
     
     /* Called when a picture is added 
