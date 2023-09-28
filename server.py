@@ -187,7 +187,7 @@ def connexion(client, login, password):
         print("- Connexion...")
         profile = client.login(login, password)
     except Exception as error:
-        print("Erreur de connexion. Veuillez vérifier l'identifiant et le mot de passe. ", error)
+        print("Erreur de connexion. Veuillez vérifier l'identifiant et le mot de passe.", type(error).__name__, error)
         profile = None;
         return 1;
     else:
@@ -201,7 +201,9 @@ def connexion(client, login, password):
 def envoi_thread (thread, images, client, langue):
     premier=True
     str_nb_posts = str(len(thread))
-
+    
+    print("Envoi_thread")
+    
     # for item in request.files.getlist('image'):
     # data = item.read()
     # print('len:', len(data))
@@ -215,35 +217,39 @@ def envoi_thread (thread, images, client, langue):
             # print("image", images[index])
             if (images[index].filename==''):    # Si pas d'image
                 print("pas d'image")
-                post_ref = client.send_post(text=post, langs=[langue])
+                root_post_ref = models.create_strong_ref(client.send_post(text=post, langs=[langue]))
 
             else:   # S'il y a une image
+                print("Premier post avec une image")
                 img_data=images[index].read()
+                print("Juste avant ''upload_blob''")
                 upload = client.com.atproto.repo.upload_blob(img_data)
+                print("Juste après ''upload_blob''")
                 pics = [models.AppBskyEmbedImages.Image(alt='Une image', image=upload.blob)]
                 embed = models.AppBskyEmbedImages.Main(images=pics)
-
-                post_ref = client.send_post(
+                
+                root_post_ref = models.create_strong_ref(client.send_post(
                     text=post, langs=[langue], embed=embed
-                )
-
+                ))
+                                        
+            parent_post_ref = root_post_ref     # Le premier post devient la ref du post parent
             premier=False
         else:
             # Envoi d'un post suivant, en réponse au précedent
             if (images[index].filename==''):    # Si pas d'image
-                post_ref = client.send_post(
-                    text=post, reply_to=models.AppBskyFeedPost.ReplyRef(post_ref, post_ref), langs=[langue]
-                )
+                parent_post_ref = models.create_strong_ref(client.send_post(
+                    text=post, reply_to=models.AppBskyFeedPost.ReplyRef(parent=parent_post_ref, root=root_post_ref), langs=[langue]
+                ))
             else:   # S'il y a une image
                 img_data=images[index].read()
                 upload = client.com.atproto.repo.upload_blob(img_data)
                 pics = [models.AppBskyEmbedImages.Image(alt='Une image', image=upload.blob)]
                 embed = models.AppBskyEmbedImages.Main(images=pics)
-
-                post_ref = client.send_post(
-                    text=post, reply_to=models.AppBskyFeedPost.ReplyRef(post_ref, post_ref), langs=[langue], embed=embed
-                )
-
+                
+                parent_post_ref = models.create_strong_ref(client.send_post(
+                    text=post, reply_to=models.AppBskyFeedPost.ReplyRef(parent=parent_post_ref, root=root_post_ref), langs=[langue], embed=embed
+                ))
+                
         print("- Post "+numerotation+" envoyé\n")
 
     return 0

@@ -30,7 +30,9 @@
         <div class="posts">
         {% for post in thread %}
             <textarea name="post" class="post" rows=5 maxlength="300" >{{post}}</textarea>
-            <input type="file" name="image" accept="image/png, image/jpg, image/jpeg" class="image_button" />
+            <label for="file_btn{{loop.index}}"><img src="static/image_icon.png" /></label>
+            <input id="file_btn{{loop.index}}" type="file" name="image" accept="image/png, image/jpg, image/jpeg" class="image_button" value="test"  onchange="loadFile(event, {{loop.index}})"/>
+            <output id="thumbnail_zone{{loop.index}}"><table><tr id="output_table_row{{loop.index}}"></tr></table></output>
         {%endfor%}
         </div>
         <input type="Submit" name="action" value="Envoyer" {{disabled}} id="envoyer" />
@@ -42,9 +44,51 @@
     const textarea = document.getElementById("text");
     // Only allow to click on the cut button if the text is long enough
     textarea.addEventListener('input', () => {
-        console.log("test");
         btn.disabled = textarea.value.length < 300;
     });
+    
+    /* Displays a dialog to ask the alt text and updates the input value */
+    var inputAlt = function (event){
+        // console.log(event);
+        const input = event.target;
+        const old_alt_text = document.getElementById(input.id).value;  // get the previous alt value which is in the input field
+        new_alt_text = prompt("Décrivez l'image :", old_alt_text);      // Prompts the user to input a new alt text
+        document.getElementById(input.id).value=new_alt_text;          // Sets the input value with the new alt text
+        document.getElementById(input.previousElementSibling.firstChild.id).title=new_alt_text;    // Sets the img title property which displays a tooltip over the picture
+    };
+    
+    /* Called when a picture is added 
+       It adds the picture's thumbnail, and an input field for the alt text */
+    var loadFile = function(event, i) {
+        const tr = document.getElementById('output_table_row'+i);
+        const num_image = tr.cells.length+1;
+                
+        const image=document.createElement("img");
+        image.src = URL.createObjectURL(event.target.files[0]);
+        image.id="img"+i+"_"+num_image;
+        
+        // Link that opens the picture in a new tab
+        const lien=document.createElement("a");
+        lien.href=URL.createObjectURL(event.target.files[0]);
+        lien.target="_blank"
+        lien.appendChild(image);
+        
+        const alt=document.createElement("input");
+        alt.placeholder="alt";
+        alt.id="alt"+i+"_"+num_image;
+        alt.addEventListener("click", inputAlt);
+        
+        const td=document.createElement("td");
+        td.appendChild(lien);
+        td.appendChild(alt);
+        
+        tr.appendChild(td);        
+        
+    };
+    
+   
+
+    
     </script>
 
     

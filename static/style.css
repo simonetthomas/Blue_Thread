@@ -41,7 +41,7 @@ div.fond{
 
 div.posts{
     float:right;
-    padding-top:20px;
+    padding-top:0px;
     padding-left:10px;
 }
 
@@ -63,10 +63,53 @@ div.posts{
     resize:none;
 }
 
+.posts label{
+    clear: left;
+    float: left;
+    margin-bottom:10px;
+}
+
+label img{
+    width:24px;
+    cursor:pointer;
+}
+
 .image_button{
     clear: left;
     float: left;
+    display :none;
+    
+    
 }
+
+/* Zone dans laquelle on insere les vignettes des images */
+.posts output{
+    float: left;
+    width: 490px;
+}
+
+output td{
+    width: 100px;
+}
+
+output img{
+    height:80px;
+    clear: both;
+    float: left;
+    object-fit: cover;
+    max-width:125px;
+    margin-right:5px;
+    border: 1px solid #bbb;
+    border-radius: 3px;
+}
+
+output input{
+    clear: both;
+    float: left;
+    width: 90%;
+}
+
+
 
 /* Bouton pour envoyer le thread */
 #envoyer{
