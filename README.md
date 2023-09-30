@@ -1,16 +1,14 @@
-# Blue Threads
+# Blue Thread
 
 ## Disclaimer
 
-⚠ For now, it is experimental and not very nice looking. A lot of improvements will come in the future.
-
-**It is not hosted anywhere yet, but it will come.**
+⚠ For now, it is experimental and not very pretty. Some bugs are present, but a lot of improvements will come in the future.
 
 ## What is it ?
 
-Blue Threads is a tool to **post threads easily** on [Bluesky](https://bsky.app/).
+Blue Thread is a tool to **post threads easily** on [Bluesky](https://bsky.app/).
 
-Just type in a text, and Blue Threads will cut it into separate posts, number them, and post the thread in the blink of an eye!
+Just type in a text, and Blue Thread will cut it into separate posts, number them, and post the thread in the blink of an eye!
 
 ## Features
 
@@ -19,9 +17,8 @@ Just type in a text, and Blue Threads will cut it into separate posts, number th
 * Sends the entire thread all at once
 
 You can :
-* Edit each post after the cutting is done.
+* Edit each post before sending it on Bluesky.
 * Add a picture to a post, after the cutting is done.
-* Check the thread before sending it on Bluesky.
 
 ## Possible future features
 
@@ -29,7 +26,7 @@ Here is a list of possible features I'd like to add :
 * Add several pictures to a post (up to 4)
 * Add an alt text to each picture.
 * Chose the language of the thread.
-* Customize the way the thread is cut.
+* Customize the way the thread is cut ?
 * Cut the text and show you the result in real time ?
 
 ## What's the tech behind it
