@@ -98,9 +98,11 @@ def thread():
             thread=request.form.getlist("post")
             print(thread)
             images=request.files.getlist('image')
+            #alts=request.form.getlist("alt")
+            #print("alts : ", alts)
 
             if (profile is not None):   # Si le client a bien une connexion valide à Bluesky
-                if (envoi_thread(thread, images, client, "fr") == 0):
+                if (envoi_thread(thread, images, request.form, client, "fr") == 0):
                     print("Thread envoyé sur le compte bluesky de " + profile.handle + "!\n")
                     return render_template('thread_sent.html')
                 else :
@@ -198,20 +200,22 @@ def connexion(client, login, password):
 # Poste le thread sur Bluesky
 # Prend en entree un array de strings, un client et une langue
 # retourne 0 si ok
-def envoi_thread (thread, images, client, langue):
+def envoi_thread (thread, images, form, client, langue):
     premier=True
     str_nb_posts = str(len(thread))
     
     print("Envoi_thread")
-    
-    # for item in request.files.getlist('image'):
-    # data = item.read()
-    # print('len:', len(data))
-
 
     for index, post in enumerate(thread):
         numerotation = str(index+1)+"/"+str_nb_posts
         embed=''
+        
+        try:    # Essai de recupation d'un alt pour ce post
+            alt = form.get("alt"+str(index+1))
+        except Exception:
+            alt = ""  # no alt for this post
+            print("pas de alt récupéré")
+        
         if (premier):
             # Envoi du premier post, qui ne fait référence à aucun post
             # print("image", images[index])
@@ -225,7 +229,7 @@ def envoi_thread (thread, images, client, langue):
                 print("Juste avant ''upload_blob''")
                 upload = client.com.atproto.repo.upload_blob(img_data)
                 print("Juste après ''upload_blob''")
-                pics = [models.AppBskyEmbedImages.Image(alt='Une image', image=upload.blob)]
+                pics = [models.AppBskyEmbedImages.Image(alt=alt, image=upload.blob)]
                 embed = models.AppBskyEmbedImages.Main(images=pics)
                 
                 root_post_ref = models.create_strong_ref(client.send_post(
@@ -243,7 +247,7 @@ def envoi_thread (thread, images, client, langue):
             else:   # S'il y a une image
                 img_data=images[index].read()
                 upload = client.com.atproto.repo.upload_blob(img_data)
-                pics = [models.AppBskyEmbedImages.Image(alt='Une image', image=upload.blob)]
+                pics = [models.AppBskyEmbedImages.Image(alt=alt, image=upload.blob)]
                 embed = models.AppBskyEmbedImages.Main(images=pics)
                 
                 parent_post_ref = models.create_strong_ref(client.send_post(
