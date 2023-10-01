@@ -5,7 +5,7 @@
     <meta charset=utf-8>
     <link href="/static/style.css" rel="stylesheet" type="text/css" />
 </head>
-<body>
+<body onload="resizePosts()">
 
     <div class="fond">
     <h1>Blue Thread</h1>
@@ -26,10 +26,10 @@
         
     </form>
     
-    <form method="post" enctype="multipart/form-data" >
+    <form method="POST" id="form_posts" enctype="multipart/form-data" >
         <div class="posts">
         {% for post in thread %}
-            <textarea name="post" class="post" rows=5 maxlength="300" >{{post}}</textarea>
+            <textarea id="post{{loop.index}}" name="post" class="post" maxlength="300" oninput="resizeTextarea(this)">{{post}}</textarea>
             <label for="file_btn{{loop.index}}"><img src="static/image_icon.png" /></label>
             <input id="file_btn{{loop.index}}" type="file" name="image" accept="image/png, image/jpg, image/jpeg" class="image_button" value="test"  onchange="loadFile(event, {{loop.index}})"/>
             <output id="thumbnail_zone{{loop.index}}"><table><tr id="output_table_row{{loop.index}}"></tr></table></output>
@@ -87,8 +87,19 @@
         
     };
     
-   
-
+    /* Resizes a textarea to matchy the content height */
+    function resizeTextarea(element){
+        element.style.height = "auto";
+        element.style.height = element.scrollHeight-10 + "px";
+    }
+    
+    /* Resizes all the posts textareas */
+    function resizePosts(){
+        var ta = document.getElementById('form_posts').getElementsByTagName('textarea');
+        for (let element of ta) {
+          resizeTextarea(element);
+        }
+    }
     
     </script>
 
