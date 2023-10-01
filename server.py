@@ -173,7 +173,7 @@ def decoupage(text):
 # Prend en entrée une chaine
 # Retourne l'indice de la fin de phrase trouvée, -1 si pas de ponctuation trouvée
 def trouver_fin_phrase(post):
-    x = re.search("[\.?!][^\.\?!]*$", post)
+    x = re.search("[\.?!]\s[^\.\?!]*$", post)
     #print(x)
     if (x) :
         return x.start()
