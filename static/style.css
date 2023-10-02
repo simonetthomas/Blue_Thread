@@ -83,14 +83,23 @@ label img{
     clear: left;
     float: left;
     display :none;
-    
-    
 }
 
 /* Zone dans laquelle on insere les vignettes des images */
 .posts output{
     float: left;
     width: 490px;
+}
+
+/* Affichage du nombre de caractères par post */
+.nb_char{
+    text-align: right;
+    margin-right: 5px;
+    color:gray;
+}
+
+.nb_char .warning{
+    color : red;
 }
 
 output td{

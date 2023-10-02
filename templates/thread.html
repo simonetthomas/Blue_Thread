@@ -29,9 +29,10 @@
     <form method="POST" id="form_posts" enctype="multipart/form-data" >
         <div class="posts">
         {% for post in thread %}
-            <textarea id="post{{loop.index}}" name="post" class="post" maxlength="300" oninput="resizeTextarea(this)">{{post}}</textarea>
+            <textarea id="post{{loop.index}}" name="post" class="post" maxlength="300" oninput="resizeTextarea(this, {{loop.index}})">{{post}}</textarea>
             <label for="file_btn{{loop.index}}"><img src="static/image_icon.png" /></label>
             <input id="file_btn{{loop.index}}" type="file" name="image" accept="image/png, image/jpg, image/jpeg" class="image_button" value="test"  onchange="loadFile(event, {{loop.index}})"/>
+            <div id="nb_char{{loop.index}}" class="nb_char"><span>0</span>/300</div>
             <output id="thumbnail_zone{{loop.index}}"><table><tr id="output_table_row{{loop.index}}"></tr></table></output>
         {%endfor%}
         </div>
@@ -88,21 +89,35 @@
     };
     
     /* Resizes a textarea to matchy the content height */
-    function resizeTextarea(element){
+    function resizeTextarea(element, index){
         element.style.height = "auto";
         element.style.height = element.scrollHeight-10 + "px";
+        
+        
+        /* Updating the displayed number of characters */
+        var nb_char = element.value.length;
+        document.getElementById('nb_char'+index).children[0].innerText = nb_char;
+        
+        if (nb_char >= 290) {
+            document.getElementById('nb_char'+index).children[0].classList.add("warning");
+        }
+        else{
+            document.getElementById('nb_char'+index).children[0].classList.remove("warning");
+        }
+        
     }
     
     /* Resizes all the posts textareas */
     function resizePosts(){
         var ta = document.getElementById('form_posts').getElementsByTagName('textarea');
+        var i = 1;
         for (let element of ta) {
-          resizeTextarea(element);
+          resizeTextarea(element, i);
+          i=i+1;
         }
     }
     
     </script>
 
-    
 </body>
 <html>
