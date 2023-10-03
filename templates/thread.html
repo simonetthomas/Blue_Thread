@@ -27,16 +27,21 @@
     </form>
     
     <form method="POST" id="form_posts" enctype="multipart/form-data" >
-        <div class="posts">
+        <div id="posts">
         {% for post in thread %}
             <textarea id="post{{loop.index}}" name="post" class="post" maxlength="300" oninput="resizeTextarea(this, {{loop.index}})">{{post}}</textarea>
-            <label for="file_btn{{loop.index}}"><img src="static/image_icon.png" /></label>
+            <!-- <label for="file_btn{{loop.index}}"><img src="static/image_icon.png" /></label> -->
             <input id="file_btn{{loop.index}}" type="file" name="image" accept="image/png, image/jpg, image/jpeg" class="image_button" value="test"  onchange="loadFile(event, {{loop.index}})"/>
             <div id="nb_char{{loop.index}}" class="nb_char"><span>0</span>/300</div>
             <output id="thumbnail_zone{{loop.index}}"><table><tr id="output_table_row{{loop.index}}"></tr></table></output>
         {%endfor%}
+        {% if thread | length%}
+        <button type="button" id="btn_add_post" onclick="addPost(this)">+</button>
+        {% endif %}
         </div>
+        {% if thread | length%}
         <input type="Submit" name="action" value="Envoyer" {{disabled}} id="envoyer" />
+        {% endif %}
     </form>
     </div>
     
@@ -115,6 +120,33 @@
           resizeTextarea(element, i);
           i=i+1;
         }
+    }
+    
+    /* Adds a new post at the botom of the posts */
+    function addPost(element){
+        const new_ta = document.getElementById("post1").cloneNode(true);
+        const new_number = document.getElementsByClassName("post").length+1;
+        
+        new_ta.id = "post"+new_number;
+        new_ta.innerText="";
+        new_ta.oninput =  "resizeTextarea(this, 6)";
+        
+        new_input = document.getElementById("file_btn1").cloneNode(true);
+        new_input.id="file_btn"+new_number;
+        
+        new_nb_char = document.getElementById("nb_char1").cloneNode(true);
+        new_nb_char.id="nb_char"+new_number;
+        
+        new_thumbnail_zone = document.getElementById("thumbnail_zone1").cloneNode(true);
+        new_thumbnail_zone.id="thumbnail_zone"+new_number;
+        
+        element.parentNode.insertBefore(new_ta, document.getElementById("btn_add_post"));
+        element.parentNode.insertBefore(new_input, document.getElementById("btn_add_post"));
+        element.parentNode.insertBefore(new_nb_char, document.getElementById("btn_add_post"));
+        element.parentNode.insertBefore(new_thumbnail_zone, document.getElementById("btn_add_post"));
+      
+        
+    
     }
     
     </script>

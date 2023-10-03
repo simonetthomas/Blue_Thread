@@ -43,7 +43,7 @@ div.fond{
     border-radius:10px;
 }
 
-div.posts{
+#posts{
     float:right;
     padding-top:0px;
     padding-left:10px;
@@ -68,7 +68,7 @@ div.posts{
     overflow:hidden;
 }
 
-.posts label{
+#posts label{
     clear: left;
     float: left;
     margin-bottom:10px;
@@ -86,7 +86,7 @@ label img{
 }
 
 /* Zone dans laquelle on insere les vignettes des images */
-.posts output{
+#posts output{
     float: left;
     width: 490px;
 }
@@ -95,6 +95,7 @@ label img{
 .nb_char{
     text-align: right;
     margin-right: 5px;
+    margin-bottom: 10px;
     color:gray;
 }
 
@@ -159,6 +160,20 @@ output input{
     height:30px;
     border:0px;
     font-size:100%;
+}
+
+/* Button to add a post at the bottom */
+#btn_add_post{
+    margin-top: -20px;
+    padding-left: 5px;
+    width: 30px;
+    height: 30px;
+    float: left;
+    clear:left;
+    border: 1px solid deepskyblue;
+    border-radius: 50%;
+    font-size: 120%;
+    line-height: 0px;
 }
 
 p.note{
