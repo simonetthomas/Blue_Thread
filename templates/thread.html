@@ -36,7 +36,7 @@
             <output id="thumbnail_zone{{loop.index}}"><table><tr id="output_table_row{{loop.index}}"></tr></table></output>
         {%endfor%}
         {% if thread | length%}
-        <button type="button" id="btn_add_post" onclick="addPost(this)">+</button>
+        <button type="button" id="btn_add_post" title="Ajouter un post" onclick="addPost(this)">+</button>
         {% endif %}
         </div>
         {% if thread | length%}
@@ -136,6 +136,7 @@
         
         new_nb_char = document.getElementById("nb_char1").cloneNode(true);
         new_nb_char.id="nb_char"+new_number;
+        new_nb_char.innerText="0";
         
         new_thumbnail_zone = document.getElementById("thumbnail_zone1").cloneNode(true);
         new_thumbnail_zone.id="thumbnail_zone"+new_number;
