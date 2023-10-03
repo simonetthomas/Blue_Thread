@@ -163,8 +163,7 @@ output input{
 }
 
 /* Button to add a post at the bottom */
-#btn_add_post{
-    margin-top: -20px;
+#btn_add_post, #btn_remove_post{
     padding-left: 5px;
     width: 30px;
     height: 30px;
@@ -176,6 +175,14 @@ output input{
     line-height: 0px;
 }
 
+#btn_remove_post{
+    margin-top: -20px;
+}
+
+#btn_add_post{
+    margin-left:50px;
+    margin-top: -30px;
+}
 p.note{
     margin-top:50px;
     font-size:80%;
