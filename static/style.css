@@ -6,33 +6,6 @@ body{
     margin-right:auto;
 }
 
-/* Titres */
-h1{
-    
-}
-
-#version{
-    font-size:50%;
-    color : gray;
-    font-weight : normal;
-}
-
-.zone_texte{
-    float:left;
-}
-/* Champ dans lequel on saisit le texte */
-#text{
-    width: 645px;
-    font-family:"Segoe UI"; 
-    font-size: 16px;
-    letter-spacing: 0.2px;
-    font-weight: 400;
-    line-height: 20.8px;
-    resize: none;
-    padding:5px;
-    border:2px solid deepskyblue;
-    border-radius:10px;
-}
 
 div.fond{
     display: block;
@@ -43,71 +16,98 @@ div.fond{
     border-radius:10px;
 }
 
-#posts{
-    float:right;
-    padding-top:0px;
-    padding-left:10px;
+/* Titles */
+h1{
+    color:#eee;  
 }
 
-/* Chaque post du thread */
-.post{
+/* Version number */
+#version{
+    font-size:50%;
+    color : gray;
+    font-weight : normal;
+}
+
+/* * Left side * */
+
+#form_text{
+    width:658px;
+    float:left;
+}
+/* Textarea in which the text is entered */
+#ta_text{
+    width: 645px;
+    resize: none;
+    padding:5px;
+    border:2px solid deepskyblue;
+    border-radius:10px;    
+    font-family:"Segoe UI"; 
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+    line-height: 20.8px;
+}
+
+
+/* * Right side * */
+
+#form_posts{
+    float:right;    
+}
+
+
+/* Each post textarea in the thread */
+.ta_post{
+    margin-bottom:8px;
+    padding:8px;
+    clear: left;
+    float: left;
+    resize:none;
+    overflow:hidden;
+    width:503px;
+    border:2px solid deepskyblue;
+    border-radius:5px;
     font-family:"Segoe UI"; 
     font-size: 16px;
     letter-spacing: 0.2px;
     font-weight: 400;
     line-height: 20.8px;
-    border:2px solid deepskyblue;
-    width:503px;
     word-break: break-word;
-    padding:8px;
-    border-radius:5px;
-    margin-bottom:8px;
-    clear: left;
-    float: left;
-    resize:none;
-    overflow:hidden;
 }
 
-#posts label{
+/* File input button */
+#div_posts label{
     clear: left;
     float: left;
     margin-bottom:10px;
 }
 
-label img{
+/* File input button img */
+#div_posts label img{
     width:24px;
     cursor:pointer;
 }
 
-.image_button{
+/* input type = file */
+.input_images{
     clear: left;
     float: left;
     display :none;
 }
 
-/* Zone dans laquelle on insere les vignettes des images */
-#posts output{
+/* Zone in which we insert the images thumbnails */
+#div_posts output{
     float: left;
     width: 490px;
 }
 
-/* Affichage du nombre de caractères par post */
-.nb_char{
-    text-align: right;
-    margin-right: 5px;
-    margin-bottom: 10px;
-    color:gray;
-}
-
-.nb_char .warning{
-    color : red;
-}
-
-output td{
+/* Output zone cell */
+#div_posts output td{
     width: 100px;
 }
 
-output img{
+/* Thumbnail in the output zone */
+#div_posts output img{
     height:80px;
     clear: both;
     float: left;
@@ -118,21 +118,69 @@ output img{
     border-radius: 3px;
 }
 
-output input{
+/* Alt input in the output zone */
+#div_posts output input{
     clear: both;
     float: left;
     width: 90%;
 }
 
+/* Display of the post characters count*/
+.nb_char{
+    text-align: right;
+    margin-bottom: 10px;
+    color:gray;
+}
+
+/* In case the characters count closes the limit */
+.nb_char .warning{
+    color : red;
+    transition:0.5s;
+}
 
 
-/* Bouton pour envoyer le thread */
-#envoyer{
+/* * BUTTONS * */
+
+/* buttons (cut, send..) */
+.btn{
+    padding:5px 10px 5px 10px;
+    border:1px solid skyblue;
+    border-radius:3px;
+}
+ 
+#btn_cut{
+    margin-top:10px;
+}
+
+/* Button to add / remove a post at the bottom */
+#btn_add_post, #btn_remove_post{
+    width: 30px;
+    height: 30px;
+    border: 1px solid skyblue;
+    border-radius: 50%;
+    font-size: 120%;
+    line-height: 0px;
+}
+
+#btn_remove_post{
+
+}
+
+#btn_add_post{
+    margin-left:15px;
+}
+
+/* Button to send the thread */
+#btn_send{
     float: right;
     clear: right;
 }
 
-#login_form{
+
+/* * LOGIN PAGE * */
+
+/* Login form */
+#form_login{
     margin:auto;
     padding : 10px;
     width:300px;
@@ -144,7 +192,7 @@ output input{
 }
 
  
-#login_form input{
+#form_login input{
     margin-top:12px;
     padding-left:10px;
     height:35px;
@@ -154,7 +202,7 @@ output input{
     font-size:100%;
 }
 
-#login_form #btn_valider{
+#form_login #btn_valider{
     margin-top:12px;
     width:150px;
     height:30px;
@@ -162,27 +210,6 @@ output input{
     font-size:100%;
 }
 
-/* Button to add a post at the bottom */
-#btn_add_post, #btn_remove_post{
-    padding-left: 5px;
-    width: 30px;
-    height: 30px;
-    float: left;
-    clear:left;
-    border: 1px solid deepskyblue;
-    border-radius: 50%;
-    font-size: 120%;
-    line-height: 0px;
-}
-
-#btn_remove_post{
-    margin-top: -20px;
-}
-
-#btn_add_post{
-    margin-left:50px;
-    margin-top: -30px;
-}
 p.note{
     margin-top:50px;
     font-size:80%;

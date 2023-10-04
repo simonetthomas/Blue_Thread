@@ -17,41 +17,39 @@
             {%endfor%}
         {%endif%}
     {%endwith%}
-    <p>Connecté en tant que {{session.name}} <a href="/logout"><button>Déconnexion</button></a></p>
+    <p>Connecté en tant que {{session.name}} <a href="/logout"><button id="btn_logout" class="btn">Déconnexion</button></a></p>
     
-    <form method="POST" class="zone_texte">
-        <textarea id="text" name="text" rows="30" cols="70" minlength="300" autocomplete="off" autocorrect="on"  autofocus="on" placeholder="Racontez-nous tout">{{text}}</textarea>
-        <br />
-        <input id="btn_cut" type="Submit" name="action" value="Découper le texte" {% if text == "" %} disabled {% endif %} />
-        
+    <form method="POST" id="form_text">
+        <textarea id="ta_text" name="text" rows="30" cols="70" minlength="300" autocomplete="off" autocorrect="on"  autofocus="on" placeholder="Racontez-nous tout">{{text}}</textarea>
+        <input id="btn_cut" type="Submit" name="action" value="Découper le texte" class="btn" {% if text == "" %} disabled {% endif %} />
     </form>
     
     <form method="POST" id="form_posts" enctype="multipart/form-data" >
-        <div id="posts">
+        <div id="div_posts">
         {% for post in thread %}
-            <textarea id="post{{loop.index}}" name="post" class="post" maxlength="300" oninput="resizeTextarea(this)">{{post}}</textarea>
-            <!-- <label for="file_btn{{loop.index}}"><img src="static/image_icon.png" /></label> -->
-            <input id="file_btn{{loop.index}}" type="file" name="image" accept="image/png, image/jpg, image/jpeg" class="image_button" value="test"  onchange="loadFile(event, {{loop.index}})"/>
-            <div id="nb_char{{loop.index}}" class="nb_char"><span>0</span>/300</div>
-            <output id="thumbnail_zone{{loop.index}}"><table><tr id="output_table_row{{loop.index}}"></tr></table></output>
+            <div id="div_post{{loop.index}}" class="div_post">
+                <textarea id="ta_post{{loop.index}}" name="post" class="ta_post" maxlength="300" oninput="resizeTextarea(this)">{{post}}</textarea>
+                <!-- <label for="input_images{{loop.index}}"><img src="static/image_icon.png" /></label> -->
+                <input id="input_images{{loop.index}}" type="file" name="input_images" accept="image/png, image/jpg, image/jpeg" class="input_images"  onchange="loadFile(event, {{loop.index}})"/>
+                <div id="nb_char{{loop.index}}" class="nb_char"><span>0</span>/300</div>
+                <output id="thumbnail_zone{{loop.index}}"><table><tr id="output_table_row{{loop.index}}"></tr></table></output>
+            </div>
         {%endfor%}
         {% if thread | length%}
         <button type="button" id="btn_remove_post" title="Supprimer un post" onclick="removePost(this)">-</button>
         <button type="button" id="btn_add_post" title="Ajouter un post" onclick="addPost(this)">+</button>
+        <input id="btn_send" type="Submit" name="action" value="Envoyer" {{disabled}}class="btn" />
         {% endif %}
         </div>
-        {% if thread | length%}
-        <input type="Submit" name="action" value="Envoyer" {{disabled}} id="envoyer" />
-        {% endif %}
     </form>
     </div>
     
     <script>
-    const btn = document.getElementById("btn_cut");
-    const textarea = document.getElementById("text");
+    const btn_cut = document.getElementById("btn_cut");
+    const ta_text = document.getElementById("ta_text");
     // Only allow to click on the cut button if the text is long enough
-    textarea.addEventListener('input', () => {
-        btn.disabled = textarea.value.length < 300;
+    ta_text.addEventListener('input', () => {
+        btn_cut.disabled = ta_text.value.length < 300;
     });
     
     /* Displays a dialog to ask the alt text and updates the input value */
@@ -101,22 +99,25 @@
         
         /* Updating the displayed number of characters */
         var nb_char = element.value.length;
-        element.nextElementSibling.nextElementSibling.firstChild.innerText = nb_char;
+        const span_nb_char = element.parentNode.getElementsByClassName("nb_char")[0].firstChild;
+        span_nb_char.innerText = nb_char;
         
         if (nb_char >= 290) {
-            element.nextElementSibling.nextElementSibling.firstChild.classList.add("warning");
+            span_nb_char.classList.add("warning");
         }
         else{
-            element.nextElementSibling.nextElementSibling.firstChild.classList.remove("warning");
+            span_nb_char.classList.remove("warning");
         }
         
+        const btn_send = document.getElementById("btn_send");
+        
         if (element.value == ""){
-            document.getElementById("envoyer").disabled = true;
-            document.getElementById("envoyer").title="Aucun post ne doit être vide pour envoyer le thread";
+            btn_send.disabled = true;
+            btn_send.title="Aucun post ne doit être vide pour envoyer le thread";
         }
         else {
-           document.getElementById("envoyer").disabled = false;
-           document.getElementById("envoyer").title="";
+           btn_send.disabled = false;
+           btn_send.title="";
         }
         
     }
@@ -133,47 +134,48 @@
     
     /* Adds a new post at the botom of the posts */
     function addPost(element){
-        const new_ta = document.getElementById("post1").cloneNode(true);
-        const new_number = document.getElementsByClassName("post").length+1;
+        /* Copy of the first div_post */
+        const new_div = document.getElementById("div_post1").cloneNode(true);
+        const new_ta = new_div.getElementsByClassName("ta_post").post
+      //  const new_label = new_div.getElementsByTagName("label").label
+        const new_input = new_div.getElementsByClassName("input_images").input_images
+        const new_nb_char = new_div.getElementsByClassName("nb_char").nb_char1
+        const new_thumbnail_zone = new_div.getElementsByTagName("output").thumbnail_zone1
+        const new_number = document.getElementsByClassName("div_post").length+1;
         
-        new_ta.id = "post"+new_number;
+        new_div.id="div_post"+new_number;
+        
+        new_ta.id = "ta_post"+new_number;
         new_ta.innerText="";
         
-        new_input = document.getElementById("file_btn1").cloneNode(true);
-        new_input.id="file_btn"+new_number;
+        new_input.id="input_images"+new_number;
         
-        new_nb_char = document.getElementById("nb_char1").cloneNode(true);
         new_nb_char.id="nb_char"+new_number;
         new_nb_char.firstChild.innerText="0";
-        
-        new_thumbnail_zone = document.getElementById("thumbnail_zone1").cloneNode(true);
+                
         new_thumbnail_zone.id="thumbnail_zone"+new_number;
+        new_thumbnail_zone.getElementsByTagName("tr").output_table_row1.innerHTML = "";
+        new_thumbnail_zone.getElementsByTagName("tr").output_table_row1.id="output_table_row"+new_number;
         
-        element.parentNode.insertBefore(new_ta, document.getElementById("btn_remove_post"));
-        element.parentNode.insertBefore(new_input, document.getElementById("btn_remove_post"));
-        element.parentNode.insertBefore(new_nb_char, document.getElementById("btn_remove_post"));
-        element.parentNode.insertBefore(new_thumbnail_zone, document.getElementById("btn_remove_post"));
-      
+        element.parentNode.insertBefore(new_div, document.getElementById("btn_remove_post"));
+ 
         resizeTextarea(new_ta);
         
         /* If there is only 2 posts (we just added one so there was only one before), we activate the remove button again */
-        if (document.getElementsByClassName("post").length == 2){
+        if (document.getElementsByClassName("div_post").length == 2){
             document.getElementById("btn_remove_post").hidden = false;
-            document.getElementById("btn_add_post").style.marginLeft = "50px";
+            document.getElementById("btn_add_post").style.marginLeft = "15px";
         }
     }
     
     /* Removes the last post of the thread */
     function removePost(element){
     
-        /* Deletes 4 previous elements (textarea, button etc). */
-        element.previousElementSibling.remove();
-        element.previousElementSibling.remove();
-        element.previousElementSibling.remove();
+        /* Deletes the previous post */
         element.previousElementSibling.remove();
         
         /* If there is only one post left, we hide the "remove post" button */
-        if (document.getElementsByClassName("post").length == 1){
+        if (document.getElementsByClassName("div_post").length == 1){
             element.hidden = true;
             document.getElementById("btn_add_post").style.marginLeft = "0px";
         }

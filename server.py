@@ -97,7 +97,7 @@ def thread():
             # Récupération des posts
             thread=request.form.getlist("post")
             print(thread)
-            images=request.files.getlist('image')
+            images=request.files.getlist('input_images')
             #alts=request.form.getlist("alt")
             #print("alts : ", alts)
 
