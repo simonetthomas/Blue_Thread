@@ -187,7 +187,7 @@ h1{
     height:150px;
     background-color: #c8c8c8;
     border:0px;
-    border-radius:10px;
+    border-radius:5px;
     text-align: center;
     box-shadow: 2px 2px 2px gray;
 }
@@ -211,6 +211,14 @@ h1{
     font-size:100%;
     background-color: #1d4488;
     color: white;
+}
+
+#form_login #btn_valider:hover{
+    background-color: #2d54a8;
+}
+
+#form_login #btn_valider:active{
+    background-color: #4d74c8;
 }
 
 p.note{
