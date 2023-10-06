@@ -1,14 +1,12 @@
-<!DOCTYPE html>
-<html lang='fr'>
-<head>
-    <title>Blue Thread</title> 
-    <meta charset=utf-8>
-    <link href="/static/style.css" rel="stylesheet" type="text/css" />
-</head>
-<body onload="resizePosts()">
+{% extends 'base.html' %}
 
-    <div class="fond">
-    <h1>Blue Thread <span id="version">v0.1.1</span></h1>
+{% block body_function %}onload="resizePosts()"{%endblock %}
+
+{% block h1 %}
+    {% block title %}Blue Thread{% endblock %}
+{% endblock %}
+    
+{% block content %}
     
     {% with messages = get_flashed_messages()%}
         {% if messages%}
@@ -42,7 +40,6 @@
         {% endif %}
         </div>
     </form>
-    </div>
     
     <script>
     const btn_cut = document.getElementById("btn_cut");
@@ -184,6 +181,5 @@
     }
     
     </script>
-
-</body>
-<html>
+    
+{% endblock %}

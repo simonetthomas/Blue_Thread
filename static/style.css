@@ -1,6 +1,6 @@
 body{
     width:1240px;
-    background-color:#b9c7df;
+    background-color:#1d4488;
     font-family:"Segoe UI";
     margin-left:auto;
     margin-right:auto;
@@ -10,7 +10,7 @@ body{
 div.fond{
     display: block;
     overflow: auto;
-    background-color:white;
+    background-color:#f9faff;
     padding:20px;
     border:0px solid aliceblue;
     border-radius:10px;
@@ -18,7 +18,7 @@ div.fond{
 
 /* Titles */
 h1{
-    color:#eee;  
+
 }
 
 /* Version number */
@@ -185,10 +185,11 @@ h1{
     padding : 10px;
     width:300px;
     height:150px;
-    background-color: white;
+    background-color: #c8c8c8;
     border:0px;
     border-radius:10px;
     text-align: center;
+    box-shadow: 2px 2px 2px gray;
 }
 
  
@@ -197,7 +198,7 @@ h1{
     padding-left:10px;
     height:35px;
     width:250px;
-    background-color: #eee;
+    background-color: #fff;
     border: 0px;
     font-size:100%;
 }
@@ -208,10 +209,12 @@ h1{
     height:30px;
     border:0px;
     font-size:100%;
+    background-color: #1d4488;
+    color: white;
 }
 
 p.note{
-    margin-top:50px;
+    margin:50px auto 20px;
     font-size:80%;
 }
 

@@ -1,24 +1,12 @@
-<!DOCTYPE html>
-<html lang='fr'>
-<head>
-    <title>Blue Thread - Thread envoyé</title>
-    <meta charset=utf-8>
-    <link href="/static/style.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
+{% extends 'base.html' %}
 
-    <div class="fond">
-    <h1>Blue Thread</h1>
-    
-<!--    {% with messages = get_flashed_messages()%}
-        {% if messages%}
-            {% for message in messages%}
-            <p><strong>{{message}}</strong></p>
-            {%endfor%}
-        {%endif%}
-    {%endwith%}-->
+{% block title %}Blue Thread - Thread envoyé{% endblock %}
+
+{% block h1 %}
+    Blue Thread
+{% endblock %}
+ 
+{% block content %}
     <p>Thread envoyé avec succès sur le compte de {{session.name}} !</p>
-    <a href="/thread"><button>Retour</button></a>
-    </div>
-</body>
-<html>
+    <a href="/thread"><button class="btn">Retour</button></a>
+{% endblock %}
