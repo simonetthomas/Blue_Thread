@@ -37,6 +37,13 @@
         <button type="button" id="btn_remove_post" title="Supprimer un post" onclick="removePost(this)">-</button>
         <button type="button" id="btn_add_post" title="Ajouter un post" onclick="addPost(this)">+</button>
         <input id="btn_send" type="Submit" name="action" value="Envoyer" {{disabled}}class="btn" />
+        <select id="select_lang" class="btn" name="lang" required>
+            <option value="">Langue</option>
+            <option value="de">de</option>
+            <option value="en">en</option>
+            <option value="es">es</option>
+            <option value="fr">fr</option>
+        </select>
         {% endif %}
         </div>
     </form>

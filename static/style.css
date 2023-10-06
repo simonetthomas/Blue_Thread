@@ -170,10 +170,21 @@ h1{
     margin-left:15px;
 }
 
+#select_lang{
+    float:right;
+    margin-right: 20px
+}
+
+#select_lang:hover{
+    background-color:#cfcfcf;
+    float:right;
+    margin-right: 20px
+}
+
+
 /* Button to send the thread */
 #btn_send{
     float: right;
-    clear: right;
 }
 
 
