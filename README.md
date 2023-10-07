@@ -20,15 +20,15 @@ Connect with your account, type in a text, and Blue Thread will cut it into sepa
 * Sends the entire thread all at once
 
 You can :
-* Edit each post before sending the thread on Bluesky.
+* Review and edit each post before sending the thread on Bluesky.
 * Manually add or remove a post before sending the thread.
+* Choose the language of the thread.
 
 ## Possible future features
 
 Here is a list of possible features I'd like to add :
 * Add several pictures to a post (up to 4)
 * Add an alt text to each picture.
-* Chose the language of the thread.
 * Customize the way the thread is cut ?
 * Cut the text and show you the posts in real time ?
 
