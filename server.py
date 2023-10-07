@@ -79,10 +79,10 @@ def thread():
         return redirect("/")
 
     if request.method == 'POST':
+        print ('Entrée avec la méthode POST')
         text = request.form.get('text')
         if request.form.get('action') == "Découper le texte":
-            print ('Entrée avec la méthode POST')
-
+            print("- Decoupage du texte")
             # Récupération du texte du formulaire
             text = request.form.get('text')
             try:
@@ -94,6 +94,7 @@ def thread():
                 disabled=""
 
         elif request.form.get('action') == "Envoyer":
+            print("- Envoi du thread")
             # Récupération des posts
             thread=request.form.getlist("post")
             print(thread)
@@ -109,6 +110,7 @@ def thread():
                     print("Erreur lors de l'envoi...")
             else:
                 print("Utilisateur non connecté, envoi impossible")
+                flash ("Utilisateur non connecté, envoi impossible. Veuillez vous connecter à nouveau.")
 
     # Affichage de la page thread, éventuellement avec le texte s'il existe déjà
     return render_template("thread.html", text=text, thread=thread, disabled=disabled)
@@ -123,10 +125,11 @@ def page_not_found(error):
 # Prend en entree le texte à découper
 # Retourne un array de strings
 def decoupage(text):
-    longueur=292    # Nombre de caractères d'un post (300 moins la place pour la numérotation)
+    longueur=291    # Nombre de caractères d'un post (300 moins la place pour la numérotation)
     debut=0         # Indice de début du post en cours
     fin=longueur    # Indice de fin du post en cours
     thread = []     # Array contenant les posts à envoyer
+    dernier_post=False
 
     while (debut < len(text)-1 ):
         #print ("debut : "+str(debut)+", fin : "+str(fin))
@@ -134,16 +137,24 @@ def decoupage(text):
         # Pour éviter que l'indice dépasse la fin de la chaine, pour le dernier post
         if fin >= len(text):
             fin = len(text)-1
-           # print ("nouvelle fin : "+str(fin)+ ", len(text)="+str(len(text)))
+            #print ("Fin du texte -> nouvelle fin : "+str(fin)+ ", len(text)="+str(len(text)))
+            dernier_post=True
 
-        # On cherche une fin de phrase (points) entre les caractères 150 et 292
+        # On cherche une fin de phrase (points) entre les caractères 150 et 291
         fin_phrase = trouver_fin_phrase(text[debut+150:fin])
-        if (fin_phrase != -1):
+        if (fin_phrase != -1 and not dernier_post):
             fin = fin_phrase+debut+150
+            #print("Fin trouvée avec la ponctuation : " + str(fin))
         else:
-            #Si pas de ponctuation, si on coupe un mot en cours, on fixe la fin du post au début du mot
-            while (text[fin-1] != " " and text[fin]) != " " and fin < len(text)-1:
+            # Si pas de ponctuation, si on coupe un mot en cours, on fixe la fin du post au début du mot
+            while (text[fin-1] != " " and text[fin]) != " " and fin > debut and not dernier_post:
                 fin-=1
+                #print ("Recherche début de mot : nouvelle fin = " + str(fin));
+                
+            # Si on n'a pas réussi à trouver un début de mot, alors on le coupe à la fin
+            if (fin == debut):
+                #print("pas trouvé de début de mot, on coupe à 291")
+                fin = debut+longueur
 
         # Elimination des retours à la ligne en début de post
         while (text[debut] == '\n' or text[debut] == ' ' ):
@@ -151,7 +162,7 @@ def decoupage(text):
 
         # Création du texte du post
         post=text[debut:fin+1]
-        print("Post : ", post)
+        #print("Post : ", post)
 
         # Ajout à l'array
         thread.append(post)
@@ -215,13 +226,13 @@ def envoi_thread (thread, images, form, client):
             alt = form.get("alt"+str(index+1))
         except Exception:
             alt = ""  # no alt for this post
-            print("pas de alt récupéré")
+            #print("pas de alt récupéré")
         
         if (premier):
             # Envoi du premier post, qui ne fait référence à aucun post
             # print("image", images[index])
             if (images[index].filename==''):    # Si pas d'image
-                print("pas d'image")
+                #print("pas d'image")
                 root_post_ref = models.create_strong_ref(client.send_post(text=post, langs=[langue]))
 
             else:   # S'il y a une image
