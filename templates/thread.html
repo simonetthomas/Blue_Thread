@@ -37,18 +37,26 @@
         <button type="button" id="btn_remove_post" title="Supprimer un post" onclick="removePost(this)">-</button>
         <button type="button" id="btn_add_post" title="Ajouter un post" onclick="addPost(this)">+</button>
         <input id="btn_send" type="Submit" name="action" value="Envoyer" {{disabled}}class="btn" />
-        <select id="select_lang" class="btn" name="lang" required>
+        <select id="select_lang" class="btn" name="lang" required title="Choisissez la langue dans laquelle est écrit le thread">
             <option value="">Langue</option>
-            <option value="de">de</option>
-            <option value="en">en</option>
-            <option value="es">es</option>
-            <option value="fr">fr</option>
+            <option value="ar">🇸🇦 Arab</option>
+            <option value="zh">🇨🇳 Chinese</option>
+            <option value="en">🇬🇧 English</option>
+            <option value="fr">🇫🇷 French</option>
+            <option value="de">🇩🇪 German</option>
+            <option value="it">🇮🇹 Italian</option>
+            <option value="ja">🇯🇵 Japanese</option>
+            <option value="po">🇵🇹 Portuguese</option>
+            <option value="ru">🇷🇺 Russian</option>
+            <option value="es">🇪🇸 Spanish</option>
+            <option value="en">❓ Other</option>
         </select>
         {% endif %}
         </div>
     </form>
     
     <script>
+    
     const btn_cut = document.getElementById("btn_cut");
     const ta_text = document.getElementById("ta_text");
     // Only allow to click on the cut button if the text is long enough
@@ -187,6 +195,8 @@
         resizePosts();
     }
     
+
+
     </script>
     
 {% endblock %}

@@ -176,9 +176,13 @@ h1{
 }
 
 #select_lang:hover{
-    background-color:#cfcfcf;
+    background-color:#ddd;
     float:right;
     margin-right: 20px
+}
+
+#select_lang option{
+    background-color:#eee;
 }
 
 

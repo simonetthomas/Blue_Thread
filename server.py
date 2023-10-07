@@ -102,7 +102,7 @@ def thread():
             #print("alts : ", alts)
 
             if (profile is not None):   # Si le client a bien une connexion valide à Bluesky
-                if (envoi_thread(thread, images, request.form, client, "fr") == 0):
+                if (envoi_thread(thread, images, request.form, client) == 0):
                     print("Thread envoyé sur le compte bluesky de " + profile.handle + "!\n")
                     return render_template('thread_sent.html')
                 else :
@@ -198,11 +198,12 @@ def connexion(client, login, password):
 
 
 # Poste le thread sur Bluesky
-# Prend en entree un array de strings, un client et une langue
+# Prend en entree un array de strings, des images, les valeurs du formulaire et un client
 # retourne 0 si ok
-def envoi_thread (thread, images, form, client, langue):
+def envoi_thread (thread, images, form, client):
     premier=True
     str_nb_posts = str(len(thread))
+    langue = form.get("lang")
     
     print("Envoi_thread")
 
