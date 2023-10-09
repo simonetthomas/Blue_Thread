@@ -6,14 +6,22 @@ body{
     margin-right:auto;
 }
 
+body.dark_mode{
+    background-color:#050d39;
+}
 
-div.fond{
+div#fond{
     display: block;
     overflow: auto;
     background-color:#f9faff;
     padding:20px;
     border:0px solid aliceblue;
     border-radius:10px;
+}
+
+.dark_mode div#fond{
+    background-color:#050814;
+    color:#ddd;
 }
 
 /* Titles */
@@ -48,6 +56,16 @@ h1{
     line-height: 20.8px;
 }
 
+.dark_mode #ta_text{
+    border-color:#194487;
+    color:#ccc;
+}
+
+.dark_mode textarea{
+    background-color:black;
+    color:#ccc;
+    border-color:#194487;
+}
 
 /* * Right side * */
 
@@ -146,10 +164,34 @@ h1{
     padding:5px 10px 5px 10px;
     border:1px solid skyblue;
     border-radius:3px;
+    cursor:pointer;
+}
+
+.dark_mode .btn{
+    background-color:#050d39;
+    color:#ddd;
+    border-color:#194487;
+}
+
+.dark_mode .btn:hover{
+    background-color:#151d49;
 }
  
+#btn_toggle_dark_mode{
+    float:right;
+}
+
 #btn_cut{
     margin-top:10px;
+}
+
+#btn_cut.disabled{
+    cursor:default;
+    color:gray;
+}
+
+.dark_mode #btn_cut.disabled:hover{
+    background-color:#050d39;
 }
 
 /* Button to add / remove a post at the bottom */
@@ -160,14 +202,21 @@ h1{
     border-radius: 50%;
     font-size: 120%;
     line-height: 0px;
-}
-
-#btn_remove_post{
-
+    cursor:pointer;
 }
 
 #btn_add_post{
     margin-left:15px;
+}
+
+.dark_mode #btn_add_post, .dark_mode #btn_remove_post{
+    background-color: #050d39;
+    color:#ddd;
+    border-color:#194487;
+}
+
+.dark_mode #btn_add_post:hover, .dark_mode #btn_remove_post:hover{
+    background-color:#151d49;
 }
 
 #select_lang{
@@ -177,12 +226,15 @@ h1{
 
 #select_lang:hover{
     background-color:#ddd;
-    float:right;
-    margin-right: 20px
 }
 
-#select_lang option{
-    background-color:#eee;
+.dark_mode #select_lang{
+    background-color:#050d39;
+    color:#ddd;
+}
+
+.dark_mode #select_lang:hover{
+    background-color:#151d49;
 }
 
 
@@ -207,7 +259,11 @@ h1{
     box-shadow: 2px 2px 2px gray;
 }
 
- 
+.dark_mode #form_login{
+    background-color: #202020;
+    box-shadow: 2px 2px 2px black;
+}
+    
 #form_login input{
     margin-top:12px;
     padding-left:10px;
@@ -218,7 +274,12 @@ h1{
     font-size:100%;
 }
 
-#form_login #btn_valider{
+.dark_mode #form_login input{
+    background-color: #000;
+    color:#ddd;
+}
+
+#btn_valider{
     margin-top:12px;
     width:150px;
     height:30px;
@@ -226,15 +287,31 @@ h1{
     font-size:100%;
     background-color: #1d4488;
     color: white;
+    cursor:pointer;
 }
 
-#form_login #btn_valider:hover{
+#btn_valider:hover{
     background-color: #2d54a8;
 }
 
-#form_login #btn_valider:active{
+#btn_valider:active{
     background-color: #4d74c8;
 }
+
+.dark_mode #btn_valider{
+    background-color: #0d3478;
+    color:#ddd;
+}
+
+.dark_mode #btn_valider:hover{
+    background-color: #1d4488;
+}
+
+.dark_mode #btn_valider:active{
+    background-color: #2d54a8;
+}
+
+
 
 p.note{
     margin:50px auto 20px;

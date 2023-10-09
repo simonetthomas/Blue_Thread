@@ -81,7 +81,7 @@ def thread():
     if request.method == 'POST':
         print ('Entrée avec la méthode POST')
         text = request.form.get('text')
-        if request.form.get('action') == "Découper le texte":
+        if request.form.get('action') == "✂ Découper le texte":
             print("- Decoupage du texte")
             # Récupération du texte du formulaire
             text = request.form.get('text')
@@ -266,7 +266,7 @@ def envoi_thread (thread, images, form, client):
                     text=post, reply_to=models.AppBskyFeedPost.ReplyRef(parent=parent_post_ref, root=root_post_ref), langs=[langue], embed=embed
                 ))
                 
-        print("- Post "+numerotation+" envoyé\n")
+        print("- Post "+numerotation+" envoyé")
 
     return 0
 
