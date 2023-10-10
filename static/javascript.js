@@ -178,3 +178,82 @@ function toggleDarkMode(){
     }
     document.body.classList.toggle("dark_mode");
 }
+
+/* Gets the text from the textarea, and cuts it in several posts */
+function cut_thread(){
+    
+    const text = document.getElementById("ta_text").value;
+    
+    const longueur = 291; // Nombre de caractères d'un post (300 moins la place pour la numérotation)
+    let debut = 0; // Indice de début du post en cours
+    let fin = longueur; // Indice de fin du post en cours
+    const thread = []; // Array contenant les posts à envoyer
+    let dernier_post = false;
+    let post="";
+    
+    while (debut < text.length - 1) {
+        
+        // Pour éviter que l'indice dépasse la fin de la chaine, pour le dernier post
+        if (fin >= text.length) {
+          fin = text.length - 1;
+          dernier_post = true;
+        }
+
+        // On cherche une fin de phrase (points) entre les caractères 150 et 291
+        const fin_phrase = trouver_fin_phrase(text.substring(debut + 150, fin));
+        if (fin_phrase !== -1 && !dernier_post) {
+          fin = fin_phrase + debut + 150;
+        } else {
+          // Si pas de ponctuation, si on coupe un mot en cours, on fixe la fin du post au début du mot
+          while (text[fin - 1] !== " " && text[fin] !== " " && fin > debut && !dernier_post) {
+            fin--;
+          }
+
+          // Si on n'a pas réussi à trouver un début de mot, alors on le coupe à la fin
+          if (fin === debut) {
+            fin = debut + longueur;
+          }
+        }
+
+        // Elimination des retours à la ligne en début de post
+        while (text[debut] === '\n' || text[debut] === ' ') {
+          debut++;
+        }
+
+        // Création du texte du post
+        post = text.substring(debut, fin + 1);
+
+        // Ajout à l'array
+        thread.push(post);
+
+        // Calcul des variables pour le prochain post
+        debut = fin + 1;
+        fin += longueur;
+    }
+
+    // Ajout de la numérotation à la fin du post
+    const str_nb_posts = String(thread.length);
+    for (let index = 0; index < thread.length; index++) {
+    const numerotation = (index + 1) + '/' + str_nb_posts;
+    thread[index] = post + ' (' + numerotation + ')';
+    }
+
+    console.log(thread);
+    
+    
+}
+
+/* Cherche la dernière fin de phrase dans la chaine en entrée
+ Prend en entrée une chaine
+ Retourne l'indice de la fin de phrase trouvée, -1 si pas de ponctuation trouvée
+ */
+function trouver_fin_phrase(post) {
+  const regex = /[\.?!👇🧵]\s[^\.\?!👇🧵]*$/;
+  const match = post.match(regex);
+
+  if (match) {
+    return match.index;
+  } else {
+    return -1;
+  }
+}
