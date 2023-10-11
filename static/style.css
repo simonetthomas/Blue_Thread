@@ -26,7 +26,7 @@ div#fond{
 
 /* Titles */
 h1{
-
+    color:#eee;
 }
 
 /* Version number */
@@ -241,6 +241,15 @@ h1{
 /* Button to send the thread */
 #btn_send{
     float: right;
+}
+
+#btn_send.disabled{
+    cursor:default;
+    color:gray;
+}
+
+.dark_mode #btn_send.disabled:hover{
+    background-color:#050d39;
 }
 
 

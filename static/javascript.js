@@ -40,10 +40,11 @@ var loadFile = function(event, i) {
     
 };
 
-/* Resizes a textarea to matchy the content height */
+/* Resizes a textarea to match the content height */
 function resizeTextarea(element){
     element.style.height = "auto";
     element.style.height = element.scrollHeight-10 + "px";
+    element.style.height = element.scrollHeight-10 + "px";   //  2e resize nécessaire sinon le premier textarea se met pas à la bonne taille ??
     
     /* Updating the displayed number of characters */
     var nb_char = element.value.length;
@@ -62,21 +63,21 @@ function resizeTextarea(element){
     if (element.value == ""){
         btn_send.disabled = true;
         btn_send.title="Aucun post ne doit être vide pour envoyer le thread";
+        btn_send.classList.add("disabled");
     }
     else {
        btn_send.disabled = false;
        btn_send.title="";
+       btn_send.classList.remove("disabled");
     }
     
 }
 
 /* Resizes all the posts textareas */
 function resizePosts(){
-    var ta = document.getElementById('form_posts').getElementsByTagName('textarea');
-    var i = 1;
+    var ta = document.getElementById('div_posts').getElementsByTagName('textarea');
     for (let element of ta) {
       resizeTextarea(element);
-      i=i+1;
     }
 }
 
@@ -130,17 +131,17 @@ function addPost(element){
     new_div.id="div_post"+new_number;
     
     new_ta.id = "ta_post"+new_number;
-    new_ta.innerText="";
+    new_ta.value="";
     
     new_input.id="input_images"+new_number;
     
     new_nb_char.id="nb_char"+new_number;
     new_nb_char.firstChild.innerText="0";
-            
+            /*
     new_thumbnail_zone.id="thumbnail_zone"+new_number;
     new_thumbnail_zone.getElementsByTagName("tr").output_table_row1.innerHTML = "";
     new_thumbnail_zone.getElementsByTagName("tr").output_table_row1.id="output_table_row"+new_number;
-    
+    */
     element.parentNode.insertBefore(new_div, document.getElementById("btn_remove_post"));
 
     resizeTextarea(new_ta);
@@ -180,37 +181,43 @@ function toggleDarkMode(){
 }
 
 /* Gets the text from the textarea, and cuts it in several posts */
-function cut_thread(){
+function cutThread(){
     
     const text = document.getElementById("ta_text").value;
     
     const longueur = 291; // Nombre de caractères d'un post (300 moins la place pour la numérotation)
     let debut = 0; // Indice de début du post en cours
     let fin = longueur; // Indice de fin du post en cours
-    const thread = []; // Array contenant les posts à envoyer
+    const thread = new Array(); // Array contenant les posts à envoyer
     let dernier_post = false;
     let post="";
     
     while (debut < text.length - 1) {
-        
+       // console.log("debut : "+debut+", fin : "+fin);
+
         // Pour éviter que l'indice dépasse la fin de la chaine, pour le dernier post
         if (fin >= text.length) {
           fin = text.length - 1;
+        //  console.log("Fin du texte -> nouvelle fin : "+fin+ ", len(text)="+text.length);
           dernier_post = true;
         }
 
         // On cherche une fin de phrase (points) entre les caractères 150 et 291
-        const fin_phrase = trouver_fin_phrase(text.substring(debut + 150, fin));
+        const fin_phrase = trouverFinPhrase(text.substring(debut + 150, fin));
         if (fin_phrase !== -1 && !dernier_post) {
           fin = fin_phrase + debut + 150;
+        //  console.log("Fin trouvée avec la ponctuation : "+fin);
+
         } else {
           // Si pas de ponctuation, si on coupe un mot en cours, on fixe la fin du post au début du mot
-          while (text[fin - 1] !== " " && text[fin] !== " " && fin > debut && !dernier_post) {
+          while (text[fin] !== " " && text[fin+1] !== " " && fin > debut && !dernier_post) {
             fin--;
+          //  console.log("Recherche début de mot : nouvelle fin = " + fin);
           }
 
           // Si on n'a pas réussi à trouver un début de mot, alors on le coupe à la fin
           if (fin === debut) {
+           // console.log("pas trouvé de début de mot, on coupe à 291");
             fin = debut + longueur;
           }
         }
@@ -234,20 +241,18 @@ function cut_thread(){
     // Ajout de la numérotation à la fin du post
     const str_nb_posts = String(thread.length);
     for (let index = 0; index < thread.length; index++) {
-    const numerotation = (index + 1) + '/' + str_nb_posts;
-    thread[index] = post + ' (' + numerotation + ')';
+        const numerotation = (index + 1) + '/' + str_nb_posts;
+        thread[index] = thread[index] + ' (' + numerotation + ')';
     }
-
-    console.log(thread);
     
-    
+    addPosts(thread);
 }
 
 /* Cherche la dernière fin de phrase dans la chaine en entrée
  Prend en entrée une chaine
  Retourne l'indice de la fin de phrase trouvée, -1 si pas de ponctuation trouvée
  */
-function trouver_fin_phrase(post) {
+function trouverFinPhrase(post) {
   const regex = /[\.?!👇🧵]\s[^\.\?!👇🧵]*$/;
   const match = post.match(regex);
 
@@ -256,4 +261,110 @@ function trouver_fin_phrase(post) {
   } else {
     return -1;
   }
+}
+
+/* Input : a thread (array of strings)
+   Create the posts and add them in the html page
+ */
+function addPosts(thread){
+    
+    document.getElementById("div_posts").innerHTML="";
+    
+    // Iteration on the thread elements to create the posts divs, buttons etc
+    thread.forEach(function (post_text, i){
+        
+        const new_div = document.createElement("div");
+        new_div.id="div_post"+(i+1);
+        new_div.classList.add("div_post");
+        
+        const new_ta = document.createElement("textarea");
+        new_ta.id = "ta_post"+(i+1);
+        new_ta.name="post";
+        new_ta.value=post_text;
+        new_ta.classList.add("ta_post");
+        new_ta.setAttribute("maxlength", 300);
+        new_ta.setAttribute("oninput", "resizeTextarea(this)");
+
+        const new_label = document.createElement("label");
+        
+//      <label for="input_images{{loop.index}}"><img src="static/image_icon.png" /></label>
+
+        const new_input = document.createElement("input");
+        new_input.id="input_images"+(i+1);
+        new_input.type="file";
+        new_input.name="input_images";
+        new_input.setAttribute("accept", "image/png, image/jpg, image/jpeg");
+        new_input.setAttribute("onchange", "loadFile(event, "+i+")");
+        new_input.classList.add("input_images");
+        
+        const new_nb_char = document.createElement("div");
+        new_nb_char.id="nb_char"+(i+1);
+        new_nb_char.innerHTML="<span>0</span>/300";
+        new_nb_char.classList.add("nb_char");
+
+        const new_thumbnail_zone = document.createElement("output");
+        new_thumbnail_zone.id="thumbnail_zone"+(i+1);
+        new_thumbnail_zone.classList.add("thumbnail_zone")
+        
+        // créer les lignes de la table etc
+        
+        new_div.appendChild(new_ta);
+        new_div.appendChild(new_label);
+        new_div.appendChild(new_input);
+        new_div.appendChild(new_nb_char);
+        new_div.appendChild(new_thumbnail_zone);
+        
+        document.getElementById("div_posts").appendChild(new_div);
+
+        
+    });
+    
+    if (thread.length > 0) {
+        const btn_remove_post = document.createElement("button");
+        btn_remove_post.id="btn_remove_post";
+        btn_remove_post.type="button";
+        btn_remove_post.title="Supprimer un post";
+        btn_remove_post.setAttribute("onclick","removePost(this);");
+        btn_remove_post.innerText="-";
+        
+        const btn_add_post = document.createElement("button");
+        btn_add_post.id="btn_add_post";
+        btn_add_post.type="button";
+        btn_add_post.title="Ajouter un post";
+        btn_add_post.setAttribute("onclick","addPost(this);");
+        btn_add_post.innerText="+";
+        
+        const btn_send = document.createElement("input");
+        btn_send.id="btn_send";
+        btn_send.type="Submit";
+        btn_send.name="action";
+        btn_send.value="Envoyer";
+        btn_send.classList.add("btn");
+        
+        /* 
+        <select id="select_lang" class="btn" name="lang" required title="Choisissez la langue dans laquelle est écrit le thread">
+                <option value="">Langue</option>
+                <option value="ar">🇸🇦 Arab</option>
+                <option value="zh">🇨🇳 Chinese</option>
+                <option value="en">🇬🇧 English</option>
+                <option value="fr">🇫🇷 French</option>
+                <option value="de">🇩🇪 German</option>
+                <option value="it">🇮🇹 Italian</option>
+                <option value="ja">🇯🇵 Japanese</option>
+                <option value="po">🇵🇹 Portuguese</option>
+                <option value="ru">🇷🇺 Russian</option>
+                <option value="es">🇪🇸 Spanish</option>
+                <option value="en">❓ Other</option>
+            </select>
+            */
+       
+        document.getElementById("div_posts").appendChild(btn_remove_post);
+        document.getElementById("div_posts").appendChild(btn_add_post);
+        document.getElementById("div_posts").appendChild(btn_send);
+        
+    }
+    
+    resizePosts();
+    
+    console.log("fin add_posts");
 }

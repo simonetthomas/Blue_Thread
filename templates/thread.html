@@ -16,41 +16,12 @@
     <p>Connecté en tant que {{session.name}} <a href="/logout"><button id="btn_logout" class="btn">Déconnexion</button></a></p>
     
     <form method="POST" id="form_text">
-        <textarea id="ta_text" name="text" rows="30" cols="70" minlength="300" autocomplete="off" autocorrect="on"  autofocus="on" placeholder="Racontez-nous tout" oninput="updateBtnCut()">{{text}}</textarea>
-        <input id="btn_cut" type="button" value="✂ Découper le texte" class="btn" onclick="cut_thread()" />
+        <textarea id="ta_text" name="text" rows="30" cols="70" minlength="300" autocomplete="off" autocorrect="on"  autofocus="on" placeholder="Racontez-nous tout" oninput="updateBtnCut();cutThread();">{{text}}</textarea>
+        <input id="btn_cut" type="button" value="✂ Découper le texte" class="btn" onclick="cutThread()" />
     </form>
     
     <form method="POST" id="form_posts" enctype="multipart/form-data" >
-        <div id="div_posts">
-        {% for post in thread %}
-            <div id="div_post{{loop.index}}" class="div_post">
-                <textarea id="ta_post{{loop.index}}" name="post" class="ta_post" maxlength="300" oninput="resizeTextarea(this)">{{post}}</textarea>
-                <!-- <label for="input_images{{loop.index}}"><img src="static/image_icon.png" /></label> -->
-                <input id="input_images{{loop.index}}" type="file" name="input_images" accept="image/png, image/jpg, image/jpeg" class="input_images"  onchange="loadFile(event, {{loop.index}})"/>
-                <div id="nb_char{{loop.index}}" class="nb_char"><span>0</span>/300</div>
-                <output id="thumbnail_zone{{loop.index}}"><table><tr id="output_table_row{{loop.index}}"></tr></table></output>
-            </div>
-        {%endfor%}
-        {% if thread | length%}
-        <button type="button" id="btn_remove_post" title="Supprimer un post" onclick="removePost(this)">-</button>
-        <button type="button" id="btn_add_post" title="Ajouter un post" onclick="addPost(this)">+</button>
-        <input id="btn_send" type="Submit" name="action" value="Envoyer" {{disabled}}class="btn" />
-        <select id="select_lang" class="btn" name="lang" required title="Choisissez la langue dans laquelle est écrit le thread">
-            <option value="">Langue</option>
-            <option value="ar">🇸🇦 Arab</option>
-            <option value="zh">🇨🇳 Chinese</option>
-            <option value="en">🇬🇧 English</option>
-            <option value="fr">🇫🇷 French</option>
-            <option value="de">🇩🇪 German</option>
-            <option value="it">🇮🇹 Italian</option>
-            <option value="ja">🇯🇵 Japanese</option>
-            <option value="po">🇵🇹 Portuguese</option>
-            <option value="ru">🇷🇺 Russian</option>
-            <option value="es">🇪🇸 Spanish</option>
-            <option value="en">❓ Other</option>
-        </select>
-        {% endif %}
-        </div>
+        <div id="div_posts"></div>
     </form>
     
 {% endblock %}
