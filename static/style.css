@@ -26,7 +26,7 @@ div#fond{
 
 /* Titles */
 h1{
-    color:#eee;
+/*    color:#eee; */
 }
 
 /* Version number */
@@ -152,10 +152,12 @@ h1{
 
 /* In case the characters count closes the limit */
 .nb_char .warning{
-    color : red;
-    transition:0.5s;
+    color : #d60;
 }
 
+.dark_mode .nb_char .warning{
+    color : #b60;
+}
 
 /* * BUTTONS * */
 

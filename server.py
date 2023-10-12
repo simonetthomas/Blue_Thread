@@ -68,7 +68,6 @@ def logout():
 @app.route('/thread',  methods=['GET', 'POST'])
 def thread():
     print ('/thread')
-    text=""
     thread=[]
     disabled="disabled='true'"
     global client
@@ -80,24 +79,12 @@ def thread():
 
     if request.method == 'POST':
         print ('Entrée avec la méthode POST')
-        text = request.form.get('text')
-        if request.form.get('action') == "✂ Découper le texte":
-            print("- Decoupage du texte")
-            # Récupération du texte du formulaire
-            text = request.form.get('text')
-            try:
-                thread=decoupage(text)
-            except Exception as error:
-                print("Erreur lors du découpage du texte : ", error)
-                flash ("Erreur lors du découpage");
-            else:
-                disabled=""
 
-        elif request.form.get('action') == "Envoyer":
+        if request.form.get('action') == "✉ Envoyer":
             print("- Envoi du thread")
             # Récupération des posts
             thread=request.form.getlist("post")
-            print(thread)
+            # print(thread)
             images=request.files.getlist('input_images')
             #alts=request.form.getlist("alt")
             #print("alts : ", alts)
@@ -108,88 +95,19 @@ def thread():
                     return render_template('thread_sent.html')
                 else :
                     print("Erreur lors de l'envoi...")
+                    flash ("Erreur lors de l'envoi")
             else:
                 print("Utilisateur non connecté, envoi impossible")
                 flash ("Utilisateur non connecté, envoi impossible. Veuillez vous connecter à nouveau.")
 
     # Affichage de la page thread, éventuellement avec le texte s'il existe déjà
-    return render_template("thread.html", text=text, thread=thread, disabled=disabled)
+    return render_template("thread.html", thread=thread)
 
 
 @app.errorhandler(404)
 def page_not_found(error):
     return ('Page non trouvée :(')
 
-
-# Parcourt le texte et le découpe en posts, puis les place dans un array
-# Prend en entree le texte à découper
-# Retourne un array de strings
-def decoupage(text):
-    longueur=291    # Nombre de caractères d'un post (300 moins la place pour la numérotation)
-    debut=0         # Indice de début du post en cours
-    fin=longueur    # Indice de fin du post en cours
-    thread = []     # Array contenant les posts à envoyer
-    dernier_post=False
-
-    while (debut < len(text)-1 ):
-        #print ("debut : "+str(debut)+", fin : "+str(fin))
-
-        # Pour éviter que l'indice dépasse la fin de la chaine, pour le dernier post
-        if fin >= len(text):
-            fin = len(text)-1
-            #print ("Fin du texte -> nouvelle fin : "+str(fin)+ ", len(text)="+str(len(text)))
-            dernier_post=True
-
-        # On cherche une fin de phrase (points) entre les caractères 150 et 291
-        fin_phrase = trouver_fin_phrase(text[debut+150:fin])
-        if (fin_phrase != -1 and not dernier_post):
-            fin = fin_phrase+debut+150
-            #print("Fin trouvée avec la ponctuation : " + str(fin))
-        else:
-            # Si pas de ponctuation, si on coupe un mot en cours, on fixe la fin du post au début du mot
-            while (text[fin-1] != " " and text[fin]) != " " and fin > debut and not dernier_post:
-                fin-=1
-                #print ("Recherche début de mot : nouvelle fin = " + str(fin));
-                
-            # Si on n'a pas réussi à trouver un début de mot, alors on le coupe à la fin
-            if (fin == debut):
-                #print("pas trouvé de début de mot, on coupe à 291")
-                fin = debut+longueur
-
-        # Elimination des retours à la ligne en début de post
-        while (text[debut] == '\n' or text[debut] == ' ' ):
-            debut+=1
-
-        # Création du texte du post
-        post=text[debut:fin+1]
-        #print("Post : ", post)
-
-        # Ajout à l'array
-        thread.append(post)
-
-        # Calcul des variables pour le prochain post
-        debut=fin+1
-        fin+=longueur
-
-    # Ajout de la numérotation à la fin du post
-    str_nb_posts = str(len(thread))
-    for index, post in enumerate(thread):
-        numerotation = str(index+1)+"/"+str_nb_posts
-        thread[index]=post+" ("+numerotation+")"
-
-
-    return (thread)
-
-# Cherche la dernière fin de phrase dans la chaine en entrée
-# Prend en entrée une chaine
-# Retourne l'indice de la fin de phrase trouvée, -1 si pas de ponctuation trouvée
-def trouver_fin_phrase(post):
-    x = re.search("[\.?!👇🧵]\s[^\.\?!👇🧵]*$", post)
-    #print(x)
-    if (x) :
-        return x.start()
-    else:
-        return -1
 
 # Connecte le client avec les identifiants fournis
 # Prend en entrée le client, un login et un password
@@ -216,7 +134,7 @@ def envoi_thread (thread, images, form, client):
     str_nb_posts = str(len(thread))
     langue = form.get("lang")
     
-    print("Envoi_thread")
+    print("Envoi_thread : ", thread)
 
     for index, post in enumerate(thread):
         numerotation = str(index+1)+"/"+str_nb_posts

@@ -1,5 +1,4 @@
 
-
 /* Displays a dialog to ask the alt text and updates the input value */
 var inputAlt = function (event){
     // console.log(event);
@@ -70,6 +69,14 @@ function resizeTextarea(element){
        btn_send.title="";
        btn_send.classList.remove("disabled");
     }
+    
+}
+
+function resizeText(){
+    const ta = document.getElementById("ta_text");
+    
+    ta.style.height = "auto";
+    ta.style.height = ta.scrollHeight-10 + "px";
     
 }
 
@@ -195,6 +202,13 @@ function cutThread(){
     while (debut < text.length - 1) {
        // console.log("debut : "+debut+", fin : "+fin);
 
+
+        // Elimination des retours à la ligne en début de post
+        while (text[debut] === '\n' || text[debut] === ' ') {
+          debut++;
+          fin++;
+        }
+
         // Pour éviter que l'indice dépasse la fin de la chaine, pour le dernier post
         if (fin >= text.length) {
           fin = text.length - 1;
@@ -222,10 +236,6 @@ function cutThread(){
           }
         }
 
-        // Elimination des retours à la ligne en début de post
-        while (text[debut] === '\n' || text[debut] === ' ') {
-          debut++;
-        }
 
         // Création du texte du post
         post = text.substring(debut, fin + 1);
@@ -338,12 +348,17 @@ function addPosts(thread){
         btn_send.id="btn_send";
         btn_send.type="Submit";
         btn_send.name="action";
-        btn_send.value="Envoyer";
+        btn_send.value="✉ Envoyer";
         btn_send.classList.add("btn");
         
-        /* 
-        <select id="select_lang" class="btn" name="lang" required title="Choisissez la langue dans laquelle est écrit le thread">
-                <option value="">Langue</option>
+        const btn_select=document.createElement("select");
+        btn_select.id="select_lang";
+        btn_select.name="lang";
+        btn_select.classList.add("btn");
+        btn_select.setAttribute("required", true);
+        btn_select.title="Choisissez la langue dans laquelle est écrit le thread";
+        
+        btn_select.innerHTML=`<option value="">Langue</option>
                 <option value="ar">🇸🇦 Arab</option>
                 <option value="zh">🇨🇳 Chinese</option>
                 <option value="en">🇬🇧 English</option>
@@ -354,17 +369,17 @@ function addPosts(thread){
                 <option value="po">🇵🇹 Portuguese</option>
                 <option value="ru">🇷🇺 Russian</option>
                 <option value="es">🇪🇸 Spanish</option>
-                <option value="en">❓ Other</option>
-            </select>
-            */
+                <option value="en">❓ Other</option>`;
        
         document.getElementById("div_posts").appendChild(btn_remove_post);
         document.getElementById("div_posts").appendChild(btn_add_post);
         document.getElementById("div_posts").appendChild(btn_send);
+        document.getElementById("div_posts").appendChild(btn_select);
+        
         
     }
     
     resizePosts();
     
-    console.log("fin add_posts");
+    // console.log("fin add_posts");
 }
