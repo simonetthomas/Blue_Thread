@@ -18,6 +18,7 @@
     <form method="POST" id="form_text">
         <textarea id="ta_text" name="text" rows="30" cols="70" minlength="300" autocomplete="off" autocorrect="on"  autofocus="on" placeholder="Racontez-nous tout" oninput="updateBtnCut();cutThread();resizeText();">{{text}}</textarea>
         <input id="btn_cut" type="button" value="✂ Découper le texte" class="btn" onclick="cutThread()" />
+        <input id="btn_clear" type="button" value="✖ Effacer" class="btn" onclick="clearText()" />
     </form>
     
     <form method="POST" id="form_posts" enctype="multipart/form-data" >

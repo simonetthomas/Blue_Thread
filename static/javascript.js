@@ -99,13 +99,16 @@ function onLoadUpdate(){
         document.body.classList.remove("dark_mode");
         document.getElementById("btn_toggle_dark_mode").innerText = "Light mode";
     }
+
+    document.getElementById("ta_text").value = localStorage.getItem("text");
+    
+    cutThread();
     
     if (document.getElementById('div_posts')){
         resizePosts();
     }
     
     updateBtnCut()
-    
 }
 
 function updateBtnCut(){
@@ -190,7 +193,21 @@ function toggleDarkMode(){
 /* Gets the text from the textarea, and cuts it in several posts */
 function cutThread(){
     
+    /* Saving the text in the localStorage */
     const text = document.getElementById("ta_text").value;
+    localStorage.setItem("text", text);
+    
+    btn_clear = document.getElementById("btn_clear");
+    
+    /* If the text is empty, disabling the clear button */
+    if (text.length == 0){
+        btn_clear.disabled = true;
+        btn_clear.classList.add("disabled");
+    }
+    else{
+        btn_clear.disabled = false;
+        btn_clear.classList.remove("disabled");
+    }
     
     const longueur = 291; // Nombre de caractères d'un post (300 moins la place pour la numérotation)
     let debut = 0; // Indice de début du post en cours
@@ -382,4 +399,12 @@ function addPosts(thread){
     resizePosts();
     
     // console.log("fin add_posts");
+}
+
+/* Clears the text and the posts */
+function clearText(){
+    document.getElementById("ta_text").value = "";
+    localStorage.setItem("text", "");
+    cutThread();
+    
 }

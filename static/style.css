@@ -187,12 +187,12 @@ h1{
     margin-top:10px;
 }
 
-#btn_cut.disabled{
+.btn.disabled{
     cursor:default;
     color:gray;
 }
 
-.dark_mode #btn_cut.disabled:hover{
+.dark_mode .btn.disabled:hover{
     background-color:#050d39;
 }
 
@@ -243,15 +243,6 @@ h1{
 /* Button to send the thread */
 #btn_send{
     float: right;
-}
-
-#btn_send.disabled{
-    cursor:default;
-    color:gray;
-}
-
-.dark_mode #btn_send.disabled:hover{
-    background-color:#050d39;
 }
 
 
