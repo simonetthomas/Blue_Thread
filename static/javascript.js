@@ -100,32 +100,13 @@ function onLoadUpdate(){
         document.getElementById("btn_toggle_dark_mode").innerText = "Light mode";
     }
 
-    document.getElementById("ta_text").value = localStorage.getItem("text");
-    
-    cutThread();
-    
-    if (document.getElementById('div_posts')){
-        resizePosts();
+    // Puts the last saved test in the textarea
+    if(document.getElementById("ta_text")){
+        document.getElementById("ta_text").value = localStorage.getItem("text");
+        cutThread();
     }
-    
-    updateBtnCut()
 }
 
-function updateBtnCut(){
-    const btn_cut = document.getElementById("btn_cut");
-    const ta_text = document.getElementById("ta_text");
-    // Only allow to click on the cut button if the text is long enough
-    if (document.getElementById("ta_text")){
-        if (ta_text.value.length < 300){
-            btn_cut.disabled = true;
-            btn_cut.classList.add("disabled");
-        }
-        else{
-            btn_cut.disabled = false;
-            btn_cut.classList.remove("disabled");
-        }
-    }
-}
 
 /* Adds a new post at the botom of the posts */
 function addPost(element){
