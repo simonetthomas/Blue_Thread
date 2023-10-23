@@ -71,28 +71,27 @@ def thread():
     if request.method == 'POST':
         print ('Entrée avec la méthode POST')
 
-        if request.form.get('action') == "✉ Envoyer":
-            print("- Envoi du thread")
-            # Récupération des posts
-            thread=request.form.getlist("post")
-            # print(thread)
-            images=request.files.getlist('input_images')
-            #alts=request.form.getlist("alt")
-            #print("alts : ", alts)
+        print("- Envoi du thread")
+        # Récupération des posts
+        thread=request.form.getlist("post")
+        # print(thread)
+        images=request.files.getlist('input_images')
+        #alts=request.form.getlist("alt")
+        #print("alts : ", alts)
 
-            if (session.get("profile") is not None):   # Si le client a bien une connexion valide à Bluesky
-                if (envoi_thread(thread, images, request.form) == 0):
-                    print("Thread envoyé sur le compte bluesky de " + session.get("name") + " !")
-                    return render_template('thread_sent.html')
-                else :
-                    print("Erreur lors de l'envoi...")
-                    flash ("Erreur lors de l'envoi")
-            else:
-                print("Utilisateur non connecté, envoi impossible")
-                flash ("Utilisateur non connecté, envoi impossible. Veuillez vous connecter à nouveau.")
+        if (session.get("profile") is not None):   # Si le client a bien une connexion valide à Bluesky
+            if (envoi_thread(thread, images, request.form) == 0):
+                print("Thread envoyé sur le compte bluesky de " + session.get("name") + " !")
+                return render_template('thread_sent.html')
+            else :
+                print("Erreur lors de l'envoi...")
+                flash ("Erreur lors de l'envoi")
+        else:
+            print("Utilisateur non connecté, envoi impossible")
+            flash ("Utilisateur non connecté, envoi impossible. Veuillez vous connecter à nouveau.")
 
-    # Affichage de la page thread, éventuellement avec le texte s'il existe déjà
-    return render_template("thread.html", thread=thread)
+    # Affichage de la page thread
+    return render_template("thread.html")
 
 
 @app.errorhandler(404)

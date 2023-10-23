@@ -8,5 +8,5 @@
  
 {% block content %}
     <p>Thread envoyé avec succès sur le compte de {{session.name}} !</p>
-    <a href="/thread"><button class="btn">Retour</button></a>
+    <a href="/thread"><button class="btn" onclick="localStorage.setItem('text', '');">Retour</button></a>
 {% endblock %}
