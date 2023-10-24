@@ -8,5 +8,6 @@
  
 {% block content %}
     <p>The thread has been successfully sent on {{session.name}}'s account!</p>
+    <p><a href="{{post_url}}" target="_blank">🧵 Open the thread in a new tab</a></p>
     <a href="/thread"><button class="btn" onclick="localStorage.setItem('text', '');">Retour</button></a>
 {% endblock %}

@@ -80,9 +80,10 @@ def thread():
         #print("alts : ", alts)
 
         if (session.get("profile") is not None):   # If the client has a valid connection to Bluesky
-            if (envoi_thread(thread, images, request.form) == 0):
+            post_url=envoi_thread(thread, images, request.form)
+            if (post_url != -1):
                 print("Thread envoyé sur le compte bluesky de " + session.get("name") + " !")
-                return render_template('thread_sent.html')
+                return render_template('thread_sent.html', post_url=post_url)
             else :
                 print("Erreur lors de l'envoi...")
                 flash ("Error when sending the thread...")
@@ -122,7 +123,7 @@ def connexion(client, login, password):
 
 # Posts the thread on Bluesky
 # Input : array of strings, images, form
-# Returns 0 if ok
+# Returns the thread first post's url if ok, else returns -1
 def envoi_thread (thread, images, form):
     premier=True
     str_nb_posts = str(len(thread))
@@ -185,12 +186,17 @@ def envoi_thread (thread, images, form):
                     ))
                     
             print("- Post "+numerotation+" envoyé")
-            
+        
+        # Once all the thread has been sent : we get the first post's url to return it
+        post_id = re.match(r"^.*\/(.*)$", root_post_ref.uri).group(1)
+        post_url = "https://bsky.app/profile/"+session.get("name")+"/post/"+post_id
+
     else:
         print("Erreur de connexion du client lors de l'envoi...")
         flash ("Connexion error when trying to send...")
+        post_url=-1
 
-    return 0
+    return post_url
 
 
 if __name__ == '__main__':
