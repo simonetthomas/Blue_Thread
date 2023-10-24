@@ -13,11 +13,11 @@
             {%endfor%}
         {%endif%}
     {%endwith%}
-    <p>Connecté en tant que {{session.name}} <a href="/logout"><button id="btn_logout" class="btn">Déconnexion</button></a></p>
+    <p>Logged in as {{session.name}} <a href="/logout"><button id="btn_logout" class="btn">Log out</button></a></p>
     
     <form method="POST" id="form_text">
-        <textarea id="ta_text" name="text" rows="30" cols="70" minlength="300" autocomplete="off" autocorrect="on"  autofocus="on" placeholder="Racontez-nous tout" oninput="cutThread();">{{text}}</textarea>
-        <input id="btn_clear" type="button" value="✖ Effacer" class="btn" onclick="clearText()" />
+        <textarea id="ta_text" name="text" rows="30" cols="70" autocomplete="off" autocorrect="on"  autofocus="on" placeholder="Racontez-nous tout" oninput="cutThread();">{{text}}</textarea>
+        <input id="btn_clear" type="button" value="✖ Clear" class="btn" onclick="clearText()" />
     </form>
     
     <form method="POST" id="form_posts" enctype="multipart/form-data" >

@@ -35,7 +35,7 @@ def fctn_login():
         if (connexion(client, login, password) == 0):
             return redirect('/thread')
         else:
-            error="Erreur de connexion, veuillez vérifier l'identifiant et le mot de passe."
+            error="Connection error, please check the login and password."
             return render_template("index.html", error=error)
 
     elif request.method == 'GET':
@@ -46,7 +46,7 @@ def fctn_login():
             print("Déjà connecté, on va sur /thread")
             return redirect('/thread')
 
-    # Au cas ou
+    # Just in case
     return redirect('/')
 
 @app.route("/logout", methods=['GET'])
@@ -72,23 +72,23 @@ def thread():
         print ('Entrée avec la méthode POST')
 
         print("- Envoi du thread")
-        # Récupération des posts
+        # Getting the posts
         thread=request.form.getlist("post")
         # print(thread)
         images=request.files.getlist('input_images')
         #alts=request.form.getlist("alt")
         #print("alts : ", alts)
 
-        if (session.get("profile") is not None):   # Si le client a bien une connexion valide à Bluesky
+        if (session.get("profile") is not None):   # If the client has a valid connection to Bluesky
             if (envoi_thread(thread, images, request.form) == 0):
                 print("Thread envoyé sur le compte bluesky de " + session.get("name") + " !")
                 return render_template('thread_sent.html')
             else :
                 print("Erreur lors de l'envoi...")
-                flash ("Erreur lors de l'envoi")
+                flash ("Error when sending the thread...")
         else:
             print("Utilisateur non connecté, envoi impossible")
-            flash ("Utilisateur non connecté, envoi impossible. Veuillez vous connecter à nouveau.")
+            flash ("User not logged in, the thread could not be sent. Please log in again.")
 
     # Affichage de la page thread
     return render_template("thread.html")
@@ -96,17 +96,17 @@ def thread():
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return ('Page non trouvée :(')
+    return ('Page not found :(')
 
 
-# Connecte le client avec les identifiants fournis
-# Prend en entrée le client, un login et un password
-# Retourne 0 si connexion ok, 1 sinon
+# Connects the client using the login and password
+# Input : client, login, password
+# Returns 0 if connection ok, else returns 1
 def connexion(client, login, password):
     try:
         print("- Connexion...")
         profile = client.login(login, password)
-        session["profile"] = profile    # Permet de garder les infos du profil bluesky
+        session["profile"] = profile    # Keeps the infos of the Bluesky profile
         session["name"] = login
         session["password"] = password
     except Exception as error:
@@ -120,9 +120,9 @@ def connexion(client, login, password):
         return 0;
 
 
-# Poste le thread sur Bluesky
-# Prend en entree un array de strings, des images, les valeurs du formulaire et un client
-# retourne 0 si ok
+# Posts the thread on Bluesky
+# Input : array of strings, images, form
+# Returns 0 if ok
 def envoi_thread (thread, images, form):
     premier=True
     str_nb_posts = str(len(thread))
@@ -140,20 +140,20 @@ def envoi_thread (thread, images, form):
             numerotation = str(index+1)+"/"+str_nb_posts
             embed=''
             
-            try:    # Essai de recupation d'un alt pour ce post
+            try:    # Trying to get an alt for this post
                 alt = form.get("alt"+str(index+1))
             except Exception:
                 alt = ""  # no alt for this post
                 #print("pas de alt récupéré")
             
             if (premier):
-                # Envoi du premier post, qui ne fait référence à aucun post
+                # Sending of the first post, which doesn't reference any post
                 # print("image", images[index])
-                if (images[index].filename==''):    # Si pas d'image
+                if (images[index].filename==''):    # If no image
                     #print("pas d'image")
                     root_post_ref = models.create_strong_ref(client.send_post(text=post, langs=[langue]))
 
-                else:   # S'il y a une image
+                else:   # If there is an image
                     print("Premier post avec une image")
                     img_data=images[index].read()
                     print("Juste avant ''upload_blob''")
@@ -166,15 +166,15 @@ def envoi_thread (thread, images, form):
                         text=post, langs=[langue], embed=embed
                     ))
                                             
-                parent_post_ref = root_post_ref     # Le premier post devient la ref du post parent
+                parent_post_ref = root_post_ref     # The first post ref becomes the ref for the parent post
                 premier=False
             else:
-                # Envoi d'un post suivant, en réponse au précedent
-                if (images[index].filename==''):    # Si pas d'image
+                # Sending of another post, replying to the previous one
+                if (images[index].filename==''):    # If no image
                     parent_post_ref = models.create_strong_ref(client.send_post(
                         text=post, reply_to=models.AppBskyFeedPost.ReplyRef(parent=parent_post_ref, root=root_post_ref), langs=[langue]
                     ))
-                else:   # S'il y a une image
+                else:   # If there is an image
                     img_data=images[index].read()
                     upload = client.com.atproto.repo.upload_blob(img_data)
                     pics = [models.AppBskyEmbedImages.Image(alt=alt, image=upload.blob)]
@@ -188,7 +188,7 @@ def envoi_thread (thread, images, form):
             
     else:
         print("Erreur de connexion du client lors de l'envoi...")
-        flash ("Erreur de connexion du client lors de l'envoi...")
+        flash ("Connexion error when trying to send...")
 
     return 0
 

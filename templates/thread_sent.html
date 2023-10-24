@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
-{% block title %}Blue Thread - Thread envoyé{% endblock %}
+{% block title %}Blue Thread - Thread sent{% endblock %}
 
 {% block h1 %}
     Blue Thread
 {% endblock %}
  
 {% block content %}
-    <p>Thread envoyé avec succès sur le compte de {{session.name}} !</p>
+    <p>The thread has been successfully sent on {{session.name}}'s account!</p>
     <a href="/thread"><button class="btn" onclick="localStorage.setItem('text', '');">Retour</button></a>
 {% endblock %}

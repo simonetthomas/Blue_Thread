@@ -1,25 +1,25 @@
 {% extends 'base.html' %}
 
-{% block title %}Blue Thread - Connexion{% endblock %}
+{% block title %}Blue Thread - Connection{% endblock %}
 
 {% block h1 %}
-    Bienvenue sur Blue Thread !
+    Welcome on Blue Thread!
 {% endblock %}
 
 {% block content %}
-    <p>Postez un thread automatiquement sur le réseau Bluesky.</p>
-    <p>Pour commencer, veuillez vous connecter.</p>
+    <p>Post a thread easily on the Bluesky network.</p>
+    <p>To begin, please log in.</p>
 
     <form id="form_login" method="POST" action="/login">
         <input id="login" name="login" placeholder="Login" autofocus required ></input>
         <input id="password" type="password" name="password" placeholder="App password" required></input>
-        <button id="btn_valider" type="Submit">Connexion</button>
+        <button id="btn_valider" type="Submit">Connection</button>
     </form>
 
     {% if error%}
         <p class="flash_error"><strong>{{error}}</strong></p>
     {% endif%}
 
-    <p class="note"><strong>Note</strong> : par sécurité, n'utilisez pas le mot de passe principal de votre compte Bluesky, mais générez un <em>app password</em> que vous utiliserez seulement pour cette application.<br /><br />Vous pouvez gérer vos app passwords sur la page : Settings > Advanced > <a href="https://bsky.app/settings/app-passwords">App Passwords</a>.</p>
+    <p class="note"><strong>Note</strong> : for security reasons, don't use the main password for you Bluesky account, but generate an <em>app password</em> that you'll use only for this application.<br /><br />You can manage your app passwords on this page : Settings > Advanced > <a href="https://bsky.app/settings/app-passwords">App Passwords</a>.</p>
 
 {% endblock %}
