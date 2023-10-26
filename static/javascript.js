@@ -20,10 +20,10 @@ var loadFile = function(event, i) {
     image.id="img"+i+"_"+num_image;
     
     // Link that opens the picture in a new tab
-    const lien=document.createElement("a");
-    lien.href=URL.createObjectURL(event.target.files[0]);
-    lien.target="_blank"
-    lien.appendChild(image);
+    const image_link=document.createElement("a");
+    image_link.href=URL.createObjectURL(event.target.files[0]);
+    image_link.target="_blank"
+    image_link.appendChild(image);
     
     const alt=document.createElement("input");
     alt.placeholder="alt";
@@ -32,7 +32,7 @@ var loadFile = function(event, i) {
     alt.addEventListener("click", inputAlt);
     
     const td=document.createElement("td");
-    td.appendChild(lien);
+    td.appendChild(image_link);
     td.appendChild(alt);
     
     tr.appendChild(td);        
@@ -108,7 +108,7 @@ function onLoadUpdate(){
 }
 
 
-/* Adds a new post at the botom of the posts */
+/* Adds a new post at the bottom of the posts */
 function addPost(element){
     /* Copy of the first div_post */
     const new_div = document.getElementById("div_post1").cloneNode(true);
@@ -190,67 +190,67 @@ function cutThread(){
         btn_clear.classList.remove("disabled");
     }
     
-    const longueur = 291; // Number of characters of a post (300 minus space for the number)
-    let debut = 0; // Start index of the current post
-    let fin = longueur; // End index of the current post
+    const length = 291; // Number of characters of a post (300 minus space for the number)
+    let start = 0; // Start index of the current post
+    let end = length; // End index of the current post
     const thread = new Array(); // Array containing the posts to send
-    let dernier_post = false;
+    let last_post = false;
     let post="";
     
-    while (debut < text.length - 1) {
-       // console.log("debut : "+debut+", fin : "+fin);
+    while (start < text.length - 1) {
+       // console.log("debut : "+start+", fin : "+end);
 
 
         // Elimination des retours à la ligne en début de post
-        while (text[debut] === '\n' || text[debut] === ' ') {
-          debut++;
-          fin++;
+        while (text[start] === '\n' || text[start] === ' ') {
+          start++;
+          end++;
         }
 
         // To avoid the index to exceed the text end, for the last post
-        if (fin >= text.length) {
-          fin = text.length - 1;
-        //  console.log("Fin du texte -> nouvelle fin : "+fin+ ", len(text)="+text.length);
-          dernier_post = true;
+        if (end >= text.length) {
+          end = text.length - 1;
+        //  console.log("Fin du texte -> nouvelle fin : "+end+ ", len(text)="+text.length);
+          last_post = true;
         }
 
         // Searching for a sentence ending (punctuation) between characters 150 and 291
-        const fin_phrase = trouverFinPhrase(text.substring(debut + 150, fin));
-        if (fin_phrase !== -1 && !dernier_post) {
-          fin = fin_phrase + debut + 150;
-        //  console.log("Fin trouvée avec la ponctuation : "+fin);
+        const end_sentence = findSentenceEnd(text.substring(start + 150, end));
+        if (end_sentence !== -1 && !last_post) {
+          end = end_sentence + start + 150;
+        //  console.log("Fin trouvée avec la ponctuation : "+end);
 
         } else {
           // If no punctuation found, if we are inside a word, we set the post end to the word's beginning
-          while (text[fin] !== " " && text[fin+1] !== " " && fin > debut && !dernier_post) {
-            fin--;
-          //  console.log("Recherche début de mot : nouvelle fin = " + fin);
+          while (text[end] !== " " && text[end+1] !== " " && end > start && !last_post) {
+            end--;
+          //  console.log("Recherche début de mot : nouvelle fin = " + end);
           }
 
           // If we didn't succeed to find a word's beginning, then we cut it at the end
-          if (fin === debut) {
+          if (end === start) {
            // console.log("pas trouvé de début de mot, on coupe à 291");
-            fin = debut + longueur;
+            end = start + length;
           }
         }
 
 
         // Creation of the post's text
-        post = text.substring(debut, fin + 1);
+        post = text.substring(start, end + 1);
 
         // Adding the post to the array
         thread.push(post);
 
         // Updating the variables for the next post
-        debut = fin + 1;
-        fin += longueur;
+        start = end + 1;
+        end += length;
     }
 
     // Adding the numbering to the post's end
     const str_nb_posts = String(thread.length);
     for (let index = 0; index < thread.length; index++) {
-        const numerotation = (index + 1) + '/' + str_nb_posts;
-        thread[index] = thread[index] + ' (' + numerotation + ')';
+        const numbering = (index + 1) + '/' + str_nb_posts;
+        thread[index] = thread[index] + ' (' + numbering + ')';
     }
     
     addPosts(thread);
@@ -260,7 +260,7 @@ function cutThread(){
  Input : a string
  Returns the index of the found sentence ending, or -1 if no punctuation found
  */
-function trouverFinPhrase(post) {
+function findSentenceEnd(post) {
   const regex = /[\.?!👇🧵]\s[^\.\?!👇🧵]*$/;
   const match = post.match(regex);
 

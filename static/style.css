@@ -10,7 +10,7 @@ body.dark_mode{
     background-color:#050d39;
 }
 
-div#fond{
+div#background{
     display: block;
     overflow: auto;
     background-color:#f9faff;
@@ -19,7 +19,7 @@ div#fond{
     border-radius:10px;
 }
 
-.dark_mode div#fond{
+.dark_mode div#background{
     background-color:#050814;
     color:#ddd;
 }
@@ -281,7 +281,7 @@ h1{
     color:#ddd;
 }
 
-#btn_valider{
+#btn_validate{
     margin-top:12px;
     width:150px;
     height:30px;
@@ -292,27 +292,26 @@ h1{
     cursor:pointer;
 }
 
-#btn_valider:hover{
+#btn_validate:hover{
     background-color: #2d54a8;
 }
 
-#btn_valider:active{
+#btn_validate:active{
     background-color: #4d74c8;
 }
 
-.dark_mode #btn_valider{
+.dark_mode #btn_validate{
     background-color: #0d3478;
     color:#ddd;
 }
 
-.dark_mode #btn_valider:hover{
+.dark_mode #btn_validate:hover{
     background-color: #1d4488;
 }
 
-.dark_mode #btn_valider:active{
+.dark_mode #btn_validate:active{
     background-color: #2d54a8;
 }
-
 
 
 p.note{

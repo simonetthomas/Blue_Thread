@@ -32,7 +32,7 @@ def fctn_login():
         login = request.form.get('login')
         password = request.form.get('password')
 
-        if (connexion(client, login, password) == 0):
+        if (connection(client, login, password) == 0):
             return redirect('/thread')
         else:
             error="Connection error, please check the login and password."
@@ -62,7 +62,6 @@ def logout():
 def thread():
     print ('/thread')
     thread=[]
-    disabled="disabled='true'"
 
     if not session.get("name"):
         print("Utilisateur non connecté, redirection vers la page de connexion")
@@ -80,7 +79,7 @@ def thread():
         #print("alts : ", alts)
 
         if (session.get("profile") is not None):   # If the client has a valid connection to Bluesky
-            post_url=envoi_thread(thread, images, request.form)
+            post_url=send_thread(thread, images, request.form)
             if (post_url != -1):
                 print("Thread envoyé sur le compte bluesky de " + session.get("name") + " !")
                 return render_template('thread_sent.html', post_url=post_url)
@@ -103,7 +102,7 @@ def page_not_found(error):
 # Connects the client using the login and password
 # Input : client, login, password
 # Returns 0 if connection ok, else returns 1
-def connexion(client, login, password):
+def connection(client, login, password):
     try:
         print("- Connexion...")
         profile = client.login(login, password)
@@ -124,10 +123,10 @@ def connexion(client, login, password):
 # Posts the thread on Bluesky
 # Input : array of strings, images, form
 # Returns the thread first post's url if ok, else returns -1
-def envoi_thread (thread, images, form):
-    premier=True
+def send_thread (thread, images, form):
+    firstPost=True
     str_nb_posts = str(len(thread))
-    langue = form.get("lang")
+    langs = form.get("lang")
     
     client = Client()
     login=session["name"]
@@ -135,7 +134,7 @@ def envoi_thread (thread, images, form):
     
     print("- Envoi_thread : ", thread)
     
-    if (connexion(client, login, password) == 0):
+    if (connection(client, login, password) == 0):
 
         for index, post in enumerate(thread):
             numerotation = str(index+1)+"/"+str_nb_posts
@@ -147,12 +146,12 @@ def envoi_thread (thread, images, form):
                 alt = ""  # no alt for this post
                 #print("pas de alt récupéré")
             
-            if (premier):
+            if (firstPost):
                 # Sending of the first post, which doesn't reference any post
                 # print("image", images[index])
                 if (images[index].filename==''):    # If no image
                     #print("pas d'image")
-                    root_post_ref = models.create_strong_ref(client.send_post(text=post, langs=[langue]))
+                    root_post_ref = models.create_strong_ref(client.send_post(text=post, langs=[langs]))
 
                 else:   # If there is an image
                     print("Premier post avec une image")
@@ -164,16 +163,16 @@ def envoi_thread (thread, images, form):
                     embed = models.AppBskyEmbedImages.Main(images=pics)
                     
                     root_post_ref = models.create_strong_ref(client.send_post(
-                        text=post, langs=[langue], embed=embed
+                        text=post, langs=[langs], embed=embed
                     ))
                                             
                 parent_post_ref = root_post_ref     # The first post ref becomes the ref for the parent post
-                premier=False
+                firstPost=False
             else:
                 # Sending of another post, replying to the previous one
                 if (images[index].filename==''):    # If no image
                     parent_post_ref = models.create_strong_ref(client.send_post(
-                        text=post, reply_to=models.AppBskyFeedPost.ReplyRef(parent=parent_post_ref, root=root_post_ref), langs=[langue]
+                        text=post, reply_to=models.AppBskyFeedPost.ReplyRef(parent=parent_post_ref, root=root_post_ref), langs=[langs]
                     ))
                 else:   # If there is an image
                     img_data=images[index].read()
@@ -182,7 +181,7 @@ def envoi_thread (thread, images, form):
                     embed = models.AppBskyEmbedImages.Main(images=pics)
                     
                     parent_post_ref = models.create_strong_ref(client.send_post(
-                        text=post, reply_to=models.AppBskyFeedPost.ReplyRef(parent=parent_post_ref, root=root_post_ref), langs=[langue], embed=embed
+                        text=post, reply_to=models.AppBskyFeedPost.ReplyRef(parent=parent_post_ref, root=root_post_ref), langs=[langs], embed=embed
                     ))
                     
             print("- Post "+numerotation+" envoyé")
@@ -193,7 +192,7 @@ def envoi_thread (thread, images, form):
 
     else:
         print("Erreur de connexion du client lors de l'envoi...")
-        flash ("Connexion error when trying to send...")
+        flash ("connection error when trying to send...")
         post_url=-1
 
     return post_url
