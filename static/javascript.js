@@ -133,14 +133,16 @@ function addPost(element){
     new_thumbnail_zone.getElementsByTagName("tr").output_table_row1.innerHTML = "";
     new_thumbnail_zone.getElementsByTagName("tr").output_table_row1.id="output_table_row"+new_number;
     */
-    element.parentNode.insertBefore(new_div, document.getElementById("btn_remove_post"));
+    
+    div_posts = document.querySelectorAll(".div_post");
+    last_div = div_posts[div_posts.length-1];
+    document.getElementById("div_posts").insertBefore(new_div, last_div.nextSibling);
 
     resizeTextarea(new_ta);
     
     /* If there is only 2 posts (we just added one so there was only one before), we activate the remove button again */
     if (document.getElementsByClassName("div_post").length == 2){
         document.getElementById("btn_remove_post").hidden = false;
-        document.getElementById("btn_add_post").style.marginLeft = "15px";
     }
 }
 
@@ -326,15 +328,21 @@ function addPosts(thread){
 
         
     });
-    
+
+      
+            
     if (thread.length > 0) {
+        
         const btn_remove_post = document.createElement("button");
         btn_remove_post.id="btn_remove_post";
         btn_remove_post.type="button";
         btn_remove_post.title="Remove a post";
         btn_remove_post.setAttribute("onclick","removePost(this);");
         btn_remove_post.innerText="-";
-        
+        if (thread.length == 1) {
+            btn_remove_post.setAttribute("hidden", "true");
+        }        
+
         const btn_add_post = document.createElement("button");
         btn_add_post.id="btn_add_post";
         btn_add_post.type="button";

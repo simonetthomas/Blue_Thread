@@ -206,9 +206,12 @@ h1{
     line-height: 0px;
     cursor:pointer;
 }
+#btn_remove_post{
+    margin-right:15px;
+}
 
 #btn_add_post{
-    margin-left:15px;
+    
 }
 
 .dark_mode #btn_add_post, .dark_mode #btn_remove_post{
