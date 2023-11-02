@@ -59,17 +59,26 @@ function resizeTextarea(element){
     
     const btn_send = document.getElementById("btn_send");
     
-    if (element.value == ""){
-        btn_send.disabled = true;
-        btn_send.title="None of the posts must be empty to send the thread";
-        btn_send.classList.add("disabled");
-    }
-    else {
-       btn_send.disabled = false;
-       btn_send.title="";
-       btn_send.classList.remove("disabled");
-    }
+    valid_thread = 1;
+    ta_posts = document.querySelectorAll(".ta_post");
+    /* Loop over every post textarea, and if one is empty, the send button is disabled. */
+    try{
+        ta_posts.forEach ( function (ta) { 
+            if (ta.value==""){
+                btn_send.disabled = true;
+                btn_send.title="None of the posts must be empty to send the thread";
+                btn_send.classList.add("disabled");
+                valid_thread = 0;
+                throw BreakException;
+            }
+        });
+    } catch(e){ /* Breaking out of the loop */ }
     
+    if (valid_thread){
+        btn_send.disabled = false;
+        btn_send.title="";
+        btn_send.classList.remove("disabled");
+    }
 }
 
 function resizeText(){
