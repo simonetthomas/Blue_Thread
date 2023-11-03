@@ -18,6 +18,10 @@
     <form method="POST" id="form_text">
         <textarea id="ta_text" name="text" rows="30" cols="70" autocomplete="off" autocorrect="on"  autofocus="on" placeholder="Put your rambling here" oninput="cutThread();">{{text}}</textarea>
         <input id="btn_clear" type="button" value="✖ Clear" class="btn" onclick="clearText()" />
+        <span id="numbering_section">Numbering : <select name="numbering" id="numbering" class="btn" onChange="cutThread()">
+            <option value="slash">1/x</option>
+            <option value="none">None</option>
+        </select></span>
     </form>
     
     <form method="POST" id="form_posts" enctype="multipart/form-data" >

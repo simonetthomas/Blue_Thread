@@ -201,7 +201,13 @@ function cutThread(){
         btn_clear.classList.remove("disabled");
     }
     
-    const length = 291; // Number of characters of a post (300 minus space for the number)
+    const numbering = document.getElementById("numbering").value;
+    
+    length = 299;
+    if (numbering == "slash"){
+        length = 291; // Number of characters of a post (300 minus space for the number)
+    }
+    
     let start = 0; // Start index of the current post
     let end = length; // End index of the current post
     const thread = new Array(); // Array containing the posts to send
@@ -258,12 +264,13 @@ function cutThread(){
     }
 
     // Adding the numbering to the post's end
-    const str_nb_posts = String(thread.length);
-    for (let index = 0; index < thread.length; index++) {
-        const numbering = (index + 1) + '/' + str_nb_posts;
-        thread[index] = thread[index] + ' (' + numbering + ')';
+    if (numbering == "slash"){
+        const str_nb_posts = String(thread.length);
+        for (let index = 0; index < thread.length; index++) {
+            const numbering = (index + 1) + '/' + str_nb_posts;
+            thread[index] = thread[index] + ' (' + numbering + ')';
+        }
     }
-    
     addPosts(thread);
 }
 
