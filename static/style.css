@@ -253,6 +253,10 @@ h1{
     float: right;
 }
 
+#btn_back{
+    float:left;
+}
+
 
 /* * LOGIN PAGE * */
 
@@ -330,4 +334,14 @@ p.note{
 .flash_error{
     text-align:center;
     color:red;
+}
+
+footer{
+    margin-top:30px;
+    padding-top:10px;
+    width:400px;
+    float:left;
+    clear:both;
+    border-top:1px solid gray;
+    font-size:75%;
 }
