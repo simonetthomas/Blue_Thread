@@ -368,9 +368,10 @@ function addPosts(thread){
         
         const btn_send = document.createElement("input");
         btn_send.id="btn_send";
-        btn_send.type="Submit";
+        btn_send.type="Button";
         btn_send.name="action";
         btn_send.value="✉ Send";
+        btn_send.setAttribute("onclick","clickSend()");
         btn_send.classList.add("btn");
         
         const btn_select=document.createElement("select");
@@ -412,4 +413,46 @@ function clearText(){
     localStorage.setItem("text", "");
     cutThread();
     
+}
+
+function clickSend(){
+    console.log("envoi du thread");
+    document.getElementById("modal_sending").showModal();
+    
+    
+    ta_posts.forEach ( function (ta) { 
+            if (ta.value==""){
+                btn_send.disabled = true;
+                btn_send.title="None of the posts must be empty to send the thread";
+                btn_send.classList.add("disabled");
+                valid_thread = 0;
+                throw BreakException;
+            }
+        });
+    
+    
+    my_form = document.getElementById("form_posts");
+    const formData = new FormData(my_form);
+    
+    console.log(formData);
+    
+    fetch("", {
+    method: 'post',
+    body: formData,
+    headers: {
+        
+    }
+    }).then((response) => {
+        console.log(response);
+        if (response.status == "200") {
+            document.getElementById("sending_state").textContent = "Thread sent";
+        }
+        return response.json()
+    }).then((res) => {
+        if (res.status === "201") {
+            console.log("Thread successfully posted!");
+        }
+    }).catch((error) => {
+        console.log(error)
+    })
 }

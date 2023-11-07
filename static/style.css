@@ -345,3 +345,20 @@ footer{
     border-top:1px solid gray;
     font-size:75%;
 }
+
+:modal{
+    border: 1px solid blue;
+    border-radius:5px;
+    box-shadow: 3px 3px 10px rgba(0 0 0 / 0.5);
+    width:400px;
+    height:200px;
+}
+
+.dark_mode :modal{
+    background-color: #050814;
+    color:white;
+}
+
+::backdrop #background{
+    opacity: 0.5;
+}
