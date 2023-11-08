@@ -29,8 +29,10 @@
     </form>
     
     <dialog id="modal_sending">
-        <p id="sending_state">Sending the thread...</p>
-        <button class="btn" id="confirmBtn" value="default">Back</button>
+        <header><h2>Blue Thread</h2><button class="btn" id="btn_close_modal" onclick="closeModal(1)">🗙</button></header>
+        <p id="sending_state"></p>
+        <p id="output"></p>
+        <button class="btn" id="btn_modal_back" value="default" style="display:none;" onclick="closeModal(0)">Start a new thread</button>
     </dialog>
     
 {% endblock %}
