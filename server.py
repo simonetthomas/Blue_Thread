@@ -73,7 +73,7 @@ def thread():
         print("- Envoi du thread")
         # Getting the posts
         thread=request.form.getlist("post")
-        # print(thread)
+        print(thread)
         images=request.files.getlist('input_images')
         #alts=request.form.getlist("alt")
         #print("alts : ", alts)
@@ -82,10 +82,12 @@ def thread():
             post_url=send_thread(thread, images, request.form)
             if (post_url != -1):
                 print("Thread envoyé sur le compte bluesky de " + session.get("name") + " !")
-                return render_template('thread_sent.html', post_url=post_url)
+                #return render_template('thread_sent.html', post_url=post_url)
+                return {"status" : 200, "name" : session.get("name"), "url" : post_url};
             else :
                 print("Erreur lors de l'envoi...")
                 flash ("Error when sending the thread...")
+                return {"status" : 500};
         else:
             print("Utilisateur non connecté, envoi impossible")
             flash ("User not logged in, the thread could not be sent. Please log in again.")
@@ -127,6 +129,8 @@ def send_thread (thread, images, form):
     firstPost=True
     str_nb_posts = str(len(thread))
     langs = form.get("lang")
+    
+    print("nb posts : "+str_nb_posts)
     
     client = Client()
     login=session["name"]

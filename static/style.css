@@ -345,3 +345,69 @@ footer{
     border-top:1px solid gray;
     font-size:75%;
 }
+
+:modal{
+    border: 1px solid blue;
+    border-radius:5px;
+    box-shadow: 3px 3px 10px rgba(0 0 0 / 0.5);
+    width:600px;
+    height:200px;
+}
+
+.dark_mode :modal{
+    background-color: #050814;
+    color:white;
+}
+
+::backdrop #background{
+    opacity: 0.5;
+}
+
+
+#modal_sending h2{
+    margin-top:0;
+}
+
+#btn_modal_back{
+    display:block;
+    margin:auto;
+    margin-top:50px;
+}
+
+#btn_close_modal{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 42px;
+    height: 36px;
+    display: block;
+    text-align: center;
+    font-size: 100%;
+    padding: 0;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 0;
+    }
+    30% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+#sending_state span{
+    animation-name: blink;
+    animation-duration: 1.5s;
+    animation-fill-mode: both;
+    animation-iteration-count: infinite;
+}
+
+#sending_state span:nth-child(2) {
+    animation-delay: .2s;
+}
+
+#sending_state span:nth-child(3) {
+    animation-delay: .4s;
+}

@@ -57,10 +57,17 @@ function resizeTextarea(element){
         span_nb_char.classList.remove("warning");
     }
     
+    checkThreadValidity();
+}
+
+/* Checks if the thread is valid before activating the send button :
+    - All posts must be non-empty
+    - A language must be selected */
+function checkThreadValidity(){
     const btn_send = document.getElementById("btn_send");
-    
     valid_thread = 1;
     ta_posts = document.querySelectorAll(".ta_post");
+    
     /* Loop over every post textarea, and if one is empty, the send button is disabled. */
     try{
         ta_posts.forEach ( function (ta) { 
@@ -75,9 +82,16 @@ function resizeTextarea(element){
     } catch(e){ /* Breaking out of the loop */ }
     
     if (valid_thread){
-        btn_send.disabled = false;
-        btn_send.title="";
-        btn_send.classList.remove("disabled");
+        if (document.getElementById("select_lang").value != ""){
+            btn_send.disabled = false;
+            btn_send.title="";
+            btn_send.classList.remove("disabled");
+        }
+        else{
+            btn_send.disabled = true;
+            btn_send.title="Select a language";
+            btn_send.classList.add("disabled");
+        }
     }
 }
 
@@ -368,9 +382,10 @@ function addPosts(thread){
         
         const btn_send = document.createElement("input");
         btn_send.id="btn_send";
-        btn_send.type="Submit";
+        btn_send.type="Button";
         btn_send.name="action";
         btn_send.value="✉ Send";
+        btn_send.setAttribute("onclick","clickSend()");
         btn_send.classList.add("btn");
         
         const btn_select=document.createElement("select");
@@ -379,6 +394,7 @@ function addPosts(thread){
         btn_select.classList.add("btn");
         btn_select.setAttribute("required", true);
         btn_select.title="Select the language in which the thread is written";
+        btn_select.setAttribute("onchange","checkThreadValidity()");
         
         btn_select.innerHTML=`<option value="">Language</option>
                 <option value="ar">🇸🇦 Arab</option>
@@ -412,4 +428,74 @@ function clearText(){
     localStorage.setItem("text", "");
     cutThread();
     
+}
+
+/* When the user clicks on the "send" button
+   The thread is sent via Ajax to stay on the same page */
+function clickSend(){
+    initializeModal();
+    document.getElementById("modal_sending").showModal();
+    
+    ta_posts.forEach ( function (ta) { 
+            if (ta.value==""){
+                btn_send.disabled = true;
+                btn_send.title="None of the posts must be empty to send the thread";
+                btn_send.classList.add("disabled");
+                valid_thread = 0;
+                throw BreakException;
+            }
+        });
+    
+    my_form = document.getElementById("form_posts");
+    const formData = new FormData(my_form);
+    
+    // console.log(formData);
+    
+    /* Fetch does a request to the server in ajax, and waits for a response */
+    fetch("", {
+        method: 'post',
+        body: formData,
+        headers: {}
+    }).then((response) => {
+        //console.log(response);
+        if (response.status != "200"){
+            document.getElementById("sending_state").textContent = "Error 😞";
+            document.getElementById("output").innerHTML="<p>Please try again or contact <a href='https://bsky.app/profile/bluethread.bsky.social'>@BlueThread</a> if it happens again</p>";
+        }
+        return response.json()
+    }).then((res) => {
+        //console.log(res);
+        document.getElementById("modal_sending").showModal(); // in case the modal has been closed before the response if received
+        if (res.status == 200) {
+            //console.log("Thread successfully posted!");
+            document.getElementById("sending_state").textContent = "The thread has been successfully sent on "+res.name+"'s account! 😊";
+            document.getElementById("btn_modal_back").style.display="";
+            document.getElementById("output").innerHTML="<p><a href='"+res.url+"' target='_blank'>🧵 Open the thread in a new tab</a></p>";
+        }
+        else{
+            console.log(res);
+            document.getElementById("sending_state").textContent = "Error 😞";
+            document.getElementById("output").innerHTML="<p>Please try again or contact <a href='https://bsky.app/profile/bluethread.bsky.social'>@BlueThread</a> if it happens again</p>";
+        }
+    }).catch((error) => {
+        console.log(error)
+    })
+    
+}
+
+/* Initializes the modal window showing the thread is being sent */
+function initializeModal(){
+    document.getElementById("sending_state").innerHTML = "Sending the thread<span>.</span><span>.</span><span>.</span>";
+    document.getElementById("output").innerHTML="";
+    document.getElementById("btn_modal_back").style.display="none";
+}
+
+/* Closes the modal window
+    i = 1 means cancel
+    i = 0 means clear the text to start a new thread */
+function closeModal(i){
+    document.getElementById("modal_sending").close();
+    if (i == 0){
+        clearText();
+    }
 }
