@@ -56,8 +56,6 @@ function resizeTextarea(element){
     else{
         span_nb_char.classList.remove("warning");
     }
-    
-    checkThreadValidity();
 }
 
 /* Checks if the thread is valid before activating the send button :
@@ -109,9 +107,10 @@ function resizePosts(){
     for (let element of ta) {
       resizeTextarea(element);
     }
+    checkThreadValidity();
 }
 
-/* On body load : check dark_mode and update the posts size */
+/* On body load : check dark_mode, update the posts size, and populate the languages list */
 function onLoadUpdate(){
     /* Puts in dark mode if the dark mode was stored in the localStorage object */
     if (localStorage.getItem("dark_mode") == "true"){
@@ -128,6 +127,7 @@ function onLoadUpdate(){
         document.getElementById("ta_text").value = localStorage.getItem("text");
         cutThread();
     }
+    populateLanguages();
 }
 
 
@@ -172,7 +172,7 @@ function addPost(element){
 /* Removes the last post of the thread */
 function removePost(element){
     /* Deletes the previous post */
-    element.previousElementSibling.remove();
+    document.querySelector('.div_post:last-of-type').remove();
     
     /* If there is only one post left, we hide the "remove post" button */
     if (document.getElementsByClassName("div_post").length == 1){
@@ -323,7 +323,7 @@ function addPosts(thread){
         new_ta.value=post_text;
         new_ta.classList.add("ta_post");
         new_ta.setAttribute("maxlength", 300);
-        new_ta.setAttribute("oninput", "resizeTextarea(this)");
+        new_ta.setAttribute("oninput", "resizeTextarea(this); checkThreadValidity();");
 
         const new_label = document.createElement("label");
         
@@ -358,63 +358,27 @@ function addPosts(thread){
 
         
     });
+    
 
-      
-            
-    if (thread.length > 0) {
+    if (thread.length > 0) {    // If there is at least 1 post, the buttons are displayed        
+        document.getElementById("btn_remove_post").removeAttribute("hidden");
+        document.getElementById("btn_add_post").removeAttribute("hidden");
+        document.getElementById("select_lang").removeAttribute("hidden");
+        document.getElementById("btn_send").removeAttribute("hidden");
         
-        const btn_remove_post = document.createElement("button");
-        btn_remove_post.id="btn_remove_post";
-        btn_remove_post.type="button";
-        btn_remove_post.title="Remove a post";
-        btn_remove_post.setAttribute("onclick","removePost(this);");
-        btn_remove_post.innerText="-";
-        if (thread.length == 1) {
-            btn_remove_post.setAttribute("hidden", "true");
-        }        
-
-        const btn_add_post = document.createElement("button");
-        btn_add_post.id="btn_add_post";
-        btn_add_post.type="button";
-        btn_add_post.title="Add a post";
-        btn_add_post.setAttribute("onclick","addPost(this);");
-        btn_add_post.innerText="+";
-        
-        const btn_send = document.createElement("input");
-        btn_send.id="btn_send";
-        btn_send.type="Button";
-        btn_send.name="action";
-        btn_send.value="✉ Send";
-        btn_send.setAttribute("onclick","clickSend()");
-        btn_send.classList.add("btn");
-        
-        const btn_select=document.createElement("select");
-        btn_select.id="select_lang";
-        btn_select.name="lang";
-        btn_select.classList.add("btn");
-        btn_select.setAttribute("required", true);
-        btn_select.title="Select the language in which the thread is written";
-        btn_select.setAttribute("onchange","checkThreadValidity()");
-        
-        btn_select.innerHTML=`<option value="">Language</option>
-                <option value="ar">🇸🇦 Arab</option>
-                <option value="zh">🇨🇳 Chinese</option>
-                <option value="en">🇬🇧 English</option>
-                <option value="fr">🇫🇷 French</option>
-                <option value="de">🇩🇪 German</option>
-                <option value="it">🇮🇹 Italian</option>
-                <option value="ja">🇯🇵 Japanese</option>
-                <option value="po">🇵🇹 Portuguese</option>
-                <option value="ru">🇷🇺 Russian</option>
-                <option value="es">🇪🇸 Spanish</option>
-                <option value="en">❓ Other</option>`;
-       
-        document.getElementById("div_posts").appendChild(btn_remove_post);
-        document.getElementById("div_posts").appendChild(btn_add_post);
-        document.getElementById("div_posts").appendChild(btn_send);
-        document.getElementById("div_posts").appendChild(btn_select);
-        
-        
+        if (thread.length == 1) {   // If there is only 1 post, no need to display the remove button
+            document.getElementById("btn_remove_post").setAttribute("hidden", "true");
+        }
+        else {
+            document.getElementById("btn_remove_post").removeAttribute("hidden");
+        }
+    
+    }
+    else{       // If there is no post, the buttons are hidden
+        document.getElementById("btn_remove_post").setAttribute("hidden", "true");
+        document.getElementById("btn_add_post").setAttribute("hidden", "true");
+        document.getElementById("select_lang").setAttribute("hidden", "true");
+        document.getElementById("btn_send").setAttribute("hidden", "true");
     }
     
     resizePosts();
@@ -427,6 +391,20 @@ function clearText(){
     document.getElementById("ta_text").value = "";
     localStorage.setItem("text", "");
     cutThread();
+    
+}
+
+/* populates the languages list from a json file */
+function populateLanguages(){
+    select_lang = document.getElementById("select_lang");
+    fetch('../static/languages.json')
+    .then((response) => response.json())
+    .then((json) => {
+        for (let lang in json){
+            select_lang.innerHTML+="<option value=\""+lang+"\">"+json[lang]+"</option>";
+        }
+    }
+    );
     
 }
 
