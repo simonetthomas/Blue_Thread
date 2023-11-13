@@ -437,6 +437,7 @@ select option {
 div.ts-wrapper{
     float:right;
     margin-right: 20px;
+    font-family: 'Twemoji Country Flags', sans-serif;
 }
 
 div.ts-control{
@@ -444,6 +445,7 @@ div.ts-control{
     padding:5px;
     border : 1px solid deepskyblue;
     min-width: 117px;
+    
 }
 
 .dark_mode .ts-wrapper.single.input-active .ts-control{
