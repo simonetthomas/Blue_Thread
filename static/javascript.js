@@ -416,7 +416,8 @@ function populateLanguages(){
         
         // Use Tom Select to transform the basic language <select> to a nice one
         new TomSelect("#select_lang",{
-            create: false
+            create: false,
+            maxOptions:null
         });
         if (document.getElementById("div_posts").children.length == 0) {    // If there is no post, the languages button is hidden
             document.querySelector(".ts-wrapper").setAttribute("hidden", true);
