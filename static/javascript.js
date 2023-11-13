@@ -137,11 +137,11 @@ function onLoadUpdate(){
 function addPost(element){
     /* Copy of the first div_post */
     const new_div = document.getElementById("div_post1").cloneNode(true);
-    const new_ta = new_div.getElementsByClassName("ta_post").post
-  //  const new_label = new_div.getElementsByTagName("label").label
-    const new_input = new_div.getElementsByClassName("input_images").input_images
-    const new_nb_char = new_div.getElementsByClassName("nb_char").nb_char1
-    const new_thumbnail_zone = new_div.getElementsByTagName("output").thumbnail_zone1
+    const new_ta = new_div.getElementsByClassName("ta_post").post;
+    const new_label = new_div.getElementsByTagName("label")[0];
+    const new_input = new_div.getElementsByClassName("input_images").input_images;
+    const new_nb_char = new_div.getElementsByClassName("nb_char").nb_char1;
+    const new_thumbnail_zone = new_div.getElementsByTagName("output").thumbnail_zone1;
     const new_number = document.getElementsByClassName("div_post").length+1;
     
     new_div.id="div_post"+new_number;
@@ -149,15 +149,18 @@ function addPost(element){
     new_ta.id = "ta_post"+new_number;
     new_ta.value="";
     
+    new_label.setAttribute("for", "input_images"+new_number);
+    
     new_input.id="input_images"+new_number;
+    new_input.setAttribute("onchange", "loadFile(event, "+(new_number)+")");
     
     new_nb_char.id="nb_char"+new_number;
     new_nb_char.firstChild.innerText="0";
-            /*
+            
     new_thumbnail_zone.id="thumbnail_zone"+new_number;
     new_thumbnail_zone.getElementsByTagName("tr").output_table_row1.innerHTML = "";
     new_thumbnail_zone.getElementsByTagName("tr").output_table_row1.id="output_table_row"+new_number;
-    */
+    
     
     div_posts = document.querySelectorAll(".div_post");
     last_div = div_posts[div_posts.length-1];
@@ -327,16 +330,19 @@ function addPosts(thread){
         new_ta.setAttribute("maxlength", 300);
         new_ta.setAttribute("oninput", "resizeTextarea(this); checkThreadValidity();");
 
+        const new_img = document.createElement("img");
+        new_img.src="static/image_icon.png";
+
         const new_label = document.createElement("label");
-        
-//      <label for="input_images{{loop.index}}"><img src="static/image_icon.png" /></label>
+        new_label.setAttribute("for", "input_images"+(i+1));
+        new_label.appendChild(new_img);
 
         const new_input = document.createElement("input");
         new_input.id="input_images"+(i+1);
         new_input.type="file";
         new_input.name="input_images";
         new_input.setAttribute("accept", "image/png, image/jpg, image/jpeg");
-        new_input.setAttribute("onchange", "loadFile(event, "+i+")");
+        new_input.setAttribute("onchange", "loadFile(event, "+(i+1)+")");
         new_input.classList.add("input_images");
         
         const new_nb_char = document.createElement("div");
@@ -349,11 +355,17 @@ function addPosts(thread){
         new_thumbnail_zone.classList.add("thumbnail_zone")
         
         // create the table rows etc.
+        const new_table_row = document.createElement("tr");
+        new_table_row.id="output_table_row"+(i+1);
+        
+        new_thumbnail_zone.appendChild(new_table_row);
         
         new_div.appendChild(new_ta);
         new_div.appendChild(new_label);
         new_div.appendChild(new_input);
         new_div.appendChild(new_nb_char);
+        new_div.appendChild(new_label);
+        new_div.appendChild(new_input);
         new_div.appendChild(new_thumbnail_zone);
         
         document.getElementById("div_posts").appendChild(new_div);
