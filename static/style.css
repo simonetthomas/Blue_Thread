@@ -231,7 +231,8 @@ h1{
 
 #select_lang{
     float:right;
-    margin-right: 20px
+    margin-right: 20px;
+    display:none;
 }
 
 #select_lang:hover{
@@ -430,4 +431,54 @@ select option {
     font-family: 'Twemoji Country Flags', sans-serif;
    /* font-size: 20px !important; */
     /* line-height: 30px !important; */
+}
+
+
+div.ts-wrapper{
+    float:right;
+    margin-right: 20px;
+}
+
+div.ts-control{
+    margin-right: 5px;
+    padding:5px;
+    border : 1px solid deepskyblue;
+    min-width: 117px;
+}
+
+.dark_mode .ts-wrapper.single.input-active .ts-control{
+    background:#050d39;
+}
+
+.dark_mode div.ts-control{
+    background:#050d39;
+    border-color:#194487;
+    color:white;
+}
+
+
+.dark_mode div.ts-dropdown{
+    background:#050d39;
+}
+
+.dark_mode div.ts-dropdown .option{
+    background:#050d39;
+    color:#ccc;
+}
+
+.dark_mode div.ts-dropdown .option.active{
+    background:#151d49;
+    color:white;
+}
+
+div.ts-control input{   
+    min-width : 0px;
+}
+
+.dark_mode div.ts-control input{   
+    color:#ccc;
+}
+
+.dark_mode .ts-dropdown {
+    border: 1px solid #194487;
 }

@@ -110,7 +110,7 @@ function resizePosts(){
     checkThreadValidity();
 }
 
-/* On body load : check dark_mode, update the posts size, and populate the languages list */
+/* On body load : check dark_mode, get the text back, cut the thread, and populate the languages list */
 function onLoadUpdate(){
     /* Puts in dark mode if the dark mode was stored in the localStorage object */
     if (localStorage.getItem("dark_mode") == "true"){
@@ -121,13 +121,15 @@ function onLoadUpdate(){
         document.body.classList.remove("dark_mode");
         document.getElementById("btn_toggle_dark_mode").innerText = "Light mode";
     }
-
+    
     // Puts the last saved test in the textarea
     if(document.getElementById("ta_text")){
         document.getElementById("ta_text").value = localStorage.getItem("text");
         cutThread();
     }
+    
     populateLanguages();
+    
 }
 
 
@@ -365,6 +367,9 @@ function addPosts(thread){
         document.getElementById("btn_add_post").removeAttribute("hidden");
         document.getElementById("select_lang").removeAttribute("hidden");
         document.getElementById("btn_send").removeAttribute("hidden");
+        if(document.querySelector(".ts-wrapper") != null){
+            document.querySelector(".ts-wrapper").removeAttribute("hidden");
+        }
         
         if (thread.length == 1) {   // If there is only 1 post, no need to display the remove button
             document.getElementById("btn_remove_post").setAttribute("hidden", "true");
@@ -379,7 +384,12 @@ function addPosts(thread){
         document.getElementById("btn_add_post").setAttribute("hidden", "true");
         document.getElementById("select_lang").setAttribute("hidden", "true");
         document.getElementById("btn_send").setAttribute("hidden", "true");
+        if(document.querySelector(".ts-wrapper") != null){
+            document.querySelector(".ts-wrapper").setAttribute("hidden", "true");
+        }
     }
+    
+    
     
     resizePosts();
     
@@ -402,6 +412,14 @@ function populateLanguages(){
     .then((json) => {
         for (let lang in json){
             select_lang.innerHTML+="<option value=\""+lang+"\">"+json[lang]+"</option>";
+        }
+        
+        // Use Tom Select to transform the basic language <select> to a nice one
+        new TomSelect("#select_lang",{
+            create: false
+        });
+        if (document.getElementById("div_posts").children.length == 0) {    // If there is no post, the languages button is hidden
+            document.querySelector(".ts-wrapper").setAttribute("hidden", true);
         }
     }
     );
