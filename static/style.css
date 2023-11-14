@@ -73,6 +73,15 @@ h1{
     float:right;    
 }
 
+.div_post:not(:first-child){
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #ccf;
+}
+
+.dark_mode .div_post:not(:first-child){
+    border-color : #558;
+}
 
 /* Each post textarea in the thread */
 .ta_post{
@@ -96,14 +105,16 @@ h1{
 /* File input button */
 #div_posts label{
     clear: left;
-    float: left;
-    margin-bottom:10px;
+    width: 24px;
+    height: 24px;
+    display: block;    
+    background-image: url("image_icon.png");
+    background-size: 24px;
+    cursor:pointer;
 }
 
-/* File input button img */
-#div_posts label img{
-    width:24px;
-    cursor:pointer;
+.dark_mode #div_posts label{
+    filter: invert(0.8);
 }
 
 /* input type = file */
@@ -115,38 +126,74 @@ h1{
 
 /* Zone in which we insert the images thumbnails */
 #div_posts output{
-    float: left;
     width: 490px;
+    margin-bottom: 5px;
+    display:block;
 }
 
 /* Output zone cell */
 #div_posts output td{
-    width: 100px;
+    position:relative;
 }
 
 /* Thumbnail in the output zone */
 #div_posts output img{
-    height:80px;
+    width:120px;
+    height:100px;
     clear: both;
     float: left;
     object-fit: cover;
-    max-width:125px;
     margin-right:5px;
     border: 1px solid #bbb;
     border-radius: 3px;
+}
+
+.dark_mode #div_posts output img{
+    border-color:#194487;
+}
+
+
+/* Span button to remove an image from a post */
+.remove_picture{
+    position: absolute;
+    right: 2px;
+    top: 2px;
+    background-color: #f00;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    font-size: 110%;
+    line-height: 1;
+    cursor : pointer;
+}
+
+.remove_picture{
+    background-color: #d00;
 }
 
 /* Alt input in the output zone */
 #div_posts output input{
     clear: both;
     float: left;
-    width: 90%;
+    width: 116px;
+    border:1px solid gray;
+    border-radius:3px;
+}
+
+.dark_mode #div_posts output input{
+    background-color:black;
+    color:#ccc;
+    border-color:#194487;
 }
 
 /* Display of the post characters count*/
 .nb_char{
+    clear:both;
+    float:right;
     text-align: right;
-    margin-bottom: 10px;
     color:gray;
 }
 
@@ -201,6 +248,13 @@ h1{
     background-color:#050d39;
 }
 
+
+/* Section of buttons under the div_posts */
+#div_buttons{
+    float:left;
+    clear:left;
+}
+
 /* Button to add / remove a post at the bottom */
 #btn_add_post, #btn_remove_post{
     width: 30px;
@@ -210,8 +264,11 @@ h1{
     font-size: 120%;
     line-height: 0px;
     cursor:pointer;
+    float:left;
 }
 #btn_remove_post{
+    clear:left;
+    float:left;
     margin-right:15px;
 }
 

@@ -5,8 +5,10 @@ var inputAlt = function (event){
     const input = event.target;
     const old_alt_text = document.getElementById(input.id).value;  // get the previous alt value which is in the input field
     new_alt_text = prompt("Describe the picture :", old_alt_text);      // Prompts the user to input a new alt text
-    document.getElementById(input.id).value=new_alt_text;          // Sets the input value with the new alt text
-    document.getElementById(input.previousElementSibling.firstChild.id).title=new_alt_text;    // Sets the img title property which displays a tooltip over the picture
+    if (new_alt_text !== null){
+        document.getElementById(input.id).value=new_alt_text;          // Sets the input value with the new alt text
+        document.getElementById(input.previousElementSibling.previousElementSibling.firstChild.id).title=new_alt_text;    // Sets the img title property which displays a tooltip over the picture
+    }
 };
 
 /* Called when a picture is added 
@@ -24,6 +26,12 @@ var loadFile = function(event, i) {
     image_link.href=URL.createObjectURL(event.target.files[0]);
     image_link.target="_blank"
     image_link.appendChild(image);
+    image_link.setAttribute("tabindex", "-1");
+    
+    const remove_picture=document.createElement("span");
+    remove_picture.innerText="×";
+    remove_picture.classList.add("remove_picture");
+    remove_picture.setAttribute("onclick", "alert('test" + i +"')");
     
     const alt=document.createElement("input");
     alt.placeholder="alt";
@@ -33,6 +41,7 @@ var loadFile = function(event, i) {
     
     const td=document.createElement("td");
     td.appendChild(image_link);
+    td.appendChild(remove_picture);
     td.appendChild(alt);
     
     tr.appendChild(td);        
@@ -330,12 +339,9 @@ function addPosts(thread){
         new_ta.setAttribute("maxlength", 300);
         new_ta.setAttribute("oninput", "resizeTextarea(this); checkThreadValidity();");
 
-        const new_img = document.createElement("img");
-        new_img.src="static/image_icon.png";
-
         const new_label = document.createElement("label");
+        new_label.title="Add a picture to the post";
         new_label.setAttribute("for", "input_images"+(i+1));
-        new_label.appendChild(new_img);
 
         const new_input = document.createElement("input");
         new_input.id="input_images"+(i+1);
