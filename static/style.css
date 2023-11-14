@@ -251,8 +251,7 @@ h1{
 
 /* Section of buttons under the div_posts */
 #div_buttons{
-    float:left;
-    clear:left;
+    
 }
 
 /* Button to add / remove a post at the bottom */
