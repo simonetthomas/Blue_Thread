@@ -17,34 +17,54 @@ var loadFile = function(event, i) {
     const tr = document.getElementById('output_table_row'+i);
     const num_image = tr.cells.length+1;
             
-    const image=document.createElement("img");
-    image.src = URL.createObjectURL(event.target.files[0]);
-    image.id="img"+i+"_"+num_image;
+    const fileInput = this;
+    const dataTransfer = new DataTransfer();
+   
+          
+            
+    files = event.target.files ;
+    /* Test the number of images does not exceed the limit */
+    if (files.length > 4){
+        alert('You are only allowed to upload a maximum of 4 files at a time. Only the first 4 have been added.');
+    }
     
-    // Link that opens the picture in a new tab
-    const image_link=document.createElement("a");
-    image_link.href=URL.createObjectURL(event.target.files[0]);
-    image_link.target="_blank"
-    image_link.appendChild(image);
-    image_link.setAttribute("tabindex", "-1");
-    
-    const remove_picture=document.createElement("span");
-    remove_picture.innerText="×";
-    remove_picture.classList.add("remove_picture");
-    remove_picture.setAttribute("onclick", "alert('test" + i +"')");
-    
-    const alt=document.createElement("input");
-    alt.placeholder="alt";
-    alt.id="alt"+i+"_"+num_image;
-    alt.name="alt"+i
-    alt.addEventListener("click", inputAlt);
-    
-    const td=document.createElement("td");
-    td.appendChild(image_link);
-    td.appendChild(remove_picture);
-    td.appendChild(alt);
-    
-    tr.appendChild(td);        
+    for (var j = 0; j < files.length && j <= 3 ; ++j) {
+        
+        dataTransfer.items.add(files[j]);
+        
+        const image=document.createElement("img");
+        image.src = URL.createObjectURL(files[j]);
+        image.id="img"+i+"_"+num_image+j;
+        
+        // Link that opens the picture in a new tab
+        const image_link=document.createElement("a");
+        image_link.href=URL.createObjectURL(files[j]);
+        image_link.target="_blank"
+        image_link.appendChild(image);
+        image_link.setAttribute("tabindex", "-1");
+        
+        const remove_picture=document.createElement("span");
+        remove_picture.innerText="×";
+        remove_picture.classList.add("remove_picture");
+        remove_picture.setAttribute("onclick", "alert()");
+        
+        const alt=document.createElement("input");
+        alt.placeholder="alt";
+        alt.id="alt"+i+"_"+(num_image+j);
+        alt.name="alt"+i; /* +"_"+(num_image+j); */
+        alt.addEventListener("click", inputAlt);
+        
+        const td=document.createElement("td");
+        td.appendChild(image_link);
+        td.appendChild(remove_picture);
+        td.appendChild(alt);
+        
+        tr.appendChild(td);        
+        
+        
+    }
+  
+    fileInput.files = dataTransfer.files;  
     
 };
 
@@ -148,7 +168,7 @@ function addPost(element){
     const new_div = document.getElementById("div_post1").cloneNode(true);
     const new_ta = new_div.getElementsByClassName("ta_post").post;
     const new_label = new_div.getElementsByTagName("label")[0];
-    const new_input = new_div.getElementsByClassName("input_images").input_images;
+    const new_input = document.getElementById("input_images1");
     const new_nb_char = new_div.getElementsByClassName("nb_char").nb_char1;
     const new_thumbnail_zone = new_div.getElementsByTagName("output").thumbnail_zone1;
     const new_number = document.getElementsByClassName("div_post").length+1;
@@ -161,7 +181,9 @@ function addPost(element){
     new_label.setAttribute("for", "input_images"+new_number);
     
     new_input.id="input_images"+new_number;
+    new_input.name="input_images"+new_number;
     new_input.setAttribute("onchange", "loadFile(event, "+(new_number)+")");
+    new_input.value= null;
     
     new_nb_char.id="nb_char"+new_number;
     new_nb_char.firstChild.innerText="0";
@@ -346,10 +368,11 @@ function addPosts(thread){
         const new_input = document.createElement("input");
         new_input.id="input_images"+(i+1);
         new_input.type="file";
-        new_input.name="input_images";
+        new_input.name="input_images"+(i+1);
         new_input.setAttribute("accept", "image/png, image/jpg, image/jpeg");
         new_input.setAttribute("onchange", "loadFile(event, "+(i+1)+")");
         new_input.classList.add("input_images");
+        new_input.setAttribute("multiple", "");
         
         const new_nb_char = document.createElement("div");
         new_nb_char.id="nb_char"+(i+1);
@@ -361,10 +384,13 @@ function addPosts(thread){
         new_thumbnail_zone.classList.add("thumbnail_zone")
         
         // create the table rows etc.
+        const new_table=document.createElement("table");
+        
         const new_table_row = document.createElement("tr");
         new_table_row.id="output_table_row"+(i+1);
         
-        new_thumbnail_zone.appendChild(new_table_row);
+        new_table.appendChild(new_table_row);
+        new_thumbnail_zone.appendChild(new_table);
         
         new_div.appendChild(new_ta);
         new_div.appendChild(new_label);
