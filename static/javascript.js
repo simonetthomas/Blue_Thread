@@ -83,7 +83,12 @@ function removeImage(i, j){
         }        
     }
     
-    td.remove()
+    /* Removes the td after the transition has ended */
+    td.addEventListener("transitionend", () => {
+        td.remove();
+    });
+    
+    td.classList.add("shrink");    /* Add the 'removed' class which triggers the transition to shrink the td */
     
     //console.log(dataTransfer);
     fileInput.files = dataTransfer.files;

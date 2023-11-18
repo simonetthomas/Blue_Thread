@@ -126,7 +126,6 @@ h1{
 
 /* Zone in which we insert the images thumbnails */
 #div_posts output{
-    width: 490px;
     margin-bottom: 5px;
     display:block;
 }
@@ -135,6 +134,25 @@ h1{
 #div_posts output td{
     position:relative;
     padding:0;
+    display:block;
+    float:left;
+    overflow:hidden;
+    height:130px;
+    width:125px;
+    transition : all ease-out 0.2s;
+    opacity:1;
+    margin-right:5px;
+}
+
+#div_posts output td:last-child{
+    margin-right:0px;
+}
+
+#div_posts output td.shrink{
+    width:0px;
+    height:0px;
+    opacity:0;
+    margin:0px;
 }
 
 /* Thumbnail in the output zone */
@@ -148,6 +166,7 @@ h1{
     border: 1px solid #bbb;
     border-radius: 3px;
 }
+
 
 .dark_mode #div_posts output img{
     border-color:#194487;
