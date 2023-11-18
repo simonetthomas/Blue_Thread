@@ -134,11 +134,12 @@ h1{
 /* Output zone cell */
 #div_posts output td{
     position:relative;
+    padding:0;
 }
 
 /* Thumbnail in the output zone */
 #div_posts output img{
-    width:120px;
+    width:123px;
     height:100px;
     clear: both;
     float: left;
@@ -167,10 +168,11 @@ h1{
     justify-content: center;
     font-size: 110%;
     line-height: 1;
+    color:white;
     cursor : pointer;
 }
 
-.remove_picture{
+.dark_mode .remove_picture{
     background-color: #d00;
 }
 
@@ -178,7 +180,7 @@ h1{
 #div_posts output input{
     clear: both;
     float: left;
-    width: 116px;
+    width: 119px;
     border:1px solid gray;
     border-radius:3px;
 }

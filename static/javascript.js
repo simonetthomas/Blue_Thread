@@ -17,24 +17,26 @@ var loadFile = function(event, i) {
     const tr = document.getElementById('output_table_row'+i);
     const num_image = tr.cells.length+1;
             
-    const fileInput = this;
+    const fileInput = document.getElementById("input_images"+i);    // The input elements that contains the selected files
     const dataTransfer = new DataTransfer();
-   
-          
             
     files = event.target.files ;
-    /* Test the number of images does not exceed the limit */
+    
+    /* Warns the user that the number of images exceeds the limit */
     if (files.length > 4){
         alert('You are only allowed to upload a maximum of 4 files at a time. Only the first 4 have been added.');
     }
     
+    document.getElementById("output_table_row"+i).innerHTML="";
+    
+    /* Adds only the 4 first files to the input and to the thumbnail zone */
     for (var j = 0; j < files.length && j <= 3 ; ++j) {
         
         dataTransfer.items.add(files[j]);
         
         const image=document.createElement("img");
         image.src = URL.createObjectURL(files[j]);
-        image.id="img"+i+"_"+num_image+j;
+        image.id="img"+i+"_"+(j+1);
         
         // Link that opens the picture in a new tab
         const image_link=document.createElement("a");
@@ -46,27 +48,47 @@ var loadFile = function(event, i) {
         const remove_picture=document.createElement("span");
         remove_picture.innerText="×";
         remove_picture.classList.add("remove_picture");
-        remove_picture.setAttribute("onclick", "alert()");
+        remove_picture.setAttribute("onclick", "removeImage("+i+","+(j+1)+")");
         
         const alt=document.createElement("input");
         alt.placeholder="alt";
-        alt.id="alt"+i+"_"+(num_image+j);
-        alt.name="alt"+i; /* +"_"+(num_image+j); */
+        alt.id="alt"+i+"_"+(j+1);
+        alt.name="alt"+i;
         alt.addEventListener("click", inputAlt);
         
         const td=document.createElement("td");
         td.appendChild(image_link);
         td.appendChild(remove_picture);
         td.appendChild(alt);
-        
-        tr.appendChild(td);        
-        
-        
+        tr.appendChild(td);
     }
   
-    fileInput.files = dataTransfer.files;  
+    fileInput.files = dataTransfer.files;   // This affects the manipulated filelist to the input element
     
 };
+
+/* Removes an image from the thumbnail zone and input list */
+function removeImage(i, j){
+    // alert(i+"_"+j);
+    
+    td = document.getElementById("img"+i+"_"+j).parentNode.parentNode;  // selects the td element that contains the img
+    cell_index = td.cellIndex;
+    
+    const fileInput = document.getElementById("input_images"+i);    // The input element that contains the selected files
+    const dataTransfer = new DataTransfer();
+    
+    for (var index = 0 ; index < fileInput.files.length ; ++index){
+        if (index != cell_index){
+            dataTransfer.items.add(fileInput.files[index]);     // Adding all the files except the one we want to remove
+        }        
+    }
+    
+    td.remove()
+    
+    //console.log(dataTransfer);
+    fileInput.files = dataTransfer.files;
+    
+}
 
 /* Resizes a textarea to match the content height */
 function resizeTextarea(element){
@@ -168,7 +190,7 @@ function addPost(element){
     const new_div = document.getElementById("div_post1").cloneNode(true);
     const new_ta = new_div.getElementsByClassName("ta_post").post;
     const new_label = new_div.getElementsByTagName("label")[0];
-    const new_input = document.getElementById("input_images1");
+    const new_input = new_div.getElementsByClassName("input_images").input_images1;
     const new_nb_char = new_div.getElementsByClassName("nb_char").nb_char1;
     const new_thumbnail_zone = new_div.getElementsByTagName("output").thumbnail_zone1;
     const new_number = document.getElementsByClassName("div_post").length+1;

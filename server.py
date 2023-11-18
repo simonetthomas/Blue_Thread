@@ -74,9 +74,6 @@ def thread():
         # Getting the posts
         thread=request.form.getlist("post")
         print(thread)
-        # images=request.files.getlist('input_images')
-        alts=request.form.getlist("alt")
-        print("alts : ", alts)
 
         if (session.get("profile") is not None):   # If the client has a valid connection to Bluesky
             post_url=send_thread(thread, request)
@@ -131,46 +128,51 @@ def send_thread (thread, request):
     langs = request.form.get("lang")
     
     print("nb posts : "+str_nb_posts)
-    
+           
     client = Client()
     login=session["name"]
     password=session["password"]
     
     print("- Envoi_thread : ", thread)
+    print("form : "+str(request.form));
     
     if (connection(client, login, password) == 0):
 
         for index, post in enumerate(thread):
+            print("index : "+str(index))
             numerotation = str(index+1)+"/"+str_nb_posts
             embed=''
             
             try:    # Trying to get an alt for this post
-                alts = request.form.get("alt"+str(index+1))
-                print("alts : "+alts)
+                alts = request.form.getlist("alt"+str(index+1))
+                print("alts : ", alts)
             except Exception:
                 alts = ""  # no alt for this post
                 print("pas de alt récupéré")
             
             print("input_images"+str(index+1))
             images = request.files.getlist("input_images"+str(index+1))
-            print("images : "+str(images))
             
             if (firstPost):
                 # Sending of the first post, which doesn't reference any post
-                print("image", images[index])
-                if (images[index].filename==''):
-                    print("pas d'image")
+                if (images[0].filename == ""):
+                    print("pas d'image pour ce post")
                     root_post_ref = models.create_strong_ref(client.send_post(text=post, langs=[langs]))
 
                 else:   # If there is an image
                     print("Premier post avec une image")
-                    img_data=images[index].read()
-                    print("Juste avant ''upload_blob''")
-                    upload = client.com.atproto.repo.upload_blob(img_data)
-                    print("Juste après ''upload_blob''")
-                    pics = [models.AppBskyEmbedImages.Image(alt=alts[index], image=upload.blob)]
+                    pics = []
+                    # Loop over the post images to add them to the embed object
+                    for (image_index, image) in enumerate(images):
+                        print("index de l'image : "+str(image_index))
+                        img_data=images[image_index].read()
+                        print("Juste avant ''upload_blob''")
+                        upload = client.com.atproto.repo.upload_blob(img_data)
+                        print("Juste après ''upload_blob''")
+                        pics.append(models.AppBskyEmbedImages.Image(alt=alts[image_index], image=upload.blob))
+                        
+                    print(str(embed))
                     embed = models.AppBskyEmbedImages.Main(images=pics)
-                    
                     root_post_ref = models.create_strong_ref(client.send_post(
                         text=post, langs=[langs], embed=embed
                     ))
@@ -179,14 +181,21 @@ def send_thread (thread, request):
                 firstPost=False
             else:
                 # Sending of another post, replying to the previous one
-                if (images[index].filename==''):    # If no image
+                if (images[0].filename == ""):    # If no image
                     parent_post_ref = models.create_strong_ref(client.send_post(
                         text=post, reply_to=models.AppBskyFeedPost.ReplyRef(parent=parent_post_ref, root=root_post_ref), langs=[langs]
                     ))
                 else:   # If there is an image
-                    img_data=images[index].read()
-                    upload = client.com.atproto.repo.upload_blob(img_data)
-                    pics = [models.AppBskyEmbedImages.Image(alt=alts[index], image=upload.blob)]
+                
+                    pics = []
+                    for (image_index, image) in enumerate(images):
+                        print("index de l'image : "+str(image_index))
+                        img_data=images[image_index].read()
+                        print("Juste avant ''upload_blob''")
+                        upload = client.com.atproto.repo.upload_blob(img_data)
+                        print("Juste après ''upload_blob''")
+                        pics.append(models.AppBskyEmbedImages.Image(alt=alts[image_index], image=upload.blob))
+                        
                     embed = models.AppBskyEmbedImages.Main(images=pics)
                     
                     parent_post_ref = models.create_strong_ref(client.send_post(
