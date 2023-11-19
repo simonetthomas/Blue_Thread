@@ -18,49 +18,58 @@ var loadFile = function(event, i) {
     const num_image = tr.cells.length+1;
             
     const fileInput = document.getElementById("input_images"+i);    // The input elements that contains the selected files
-    const dataTransfer = new DataTransfer();
-            
+    
+    const dataTransfer = new DataTransfer();    // to store temporarily the valid files that will be added to the input
     files = event.target.files ;
-    
-    /* Warns the user that the number of images exceeds the limit */
-    if (files.length > 4){
-        alert('You are only allowed to upload a maximum of 4 files at a time. Only the first 4 have been added.');
-    }
-    
+        
     document.getElementById("output_table_row"+i).innerHTML="";
     
+    const maxSize = 1000000;    // Max size of a file (976 KB)
+    var filesTooBig = 0;        // Number of files rejected because they exceed the max size
+    
     /* Adds only the 4 first files to the input and to the thumbnail zone */
-    for (var j = 0; j < files.length && j <= 3 ; ++j) {
+    for (var j = 0; j < files.length && j <= 3+filesTooBig ; ++j) {
         
-        dataTransfer.items.add(files[j]);
-        
-        const image=document.createElement("img");
-        image.src = URL.createObjectURL(files[j]);
-        image.id="img"+i+"_"+(j+1);
-        
-        // Link that opens the picture in a new tab
-        const image_link=document.createElement("a");
-        image_link.href=URL.createObjectURL(files[j]);
-        image_link.target="_blank"
-        image_link.appendChild(image);
-        image_link.setAttribute("tabindex", "-1");
-        
-        const remove_picture=document.createElement("span");
-        remove_picture.innerText="×";
-        remove_picture.classList.add("remove_picture");
-        remove_picture.setAttribute("onclick", "removeImage("+i+","+(j+1)+")");
-        
-        const alt=document.createElement("input");
-        alt.placeholder="alt";
-        alt.id="alt"+i+"_"+(j+1);
-        alt.name="alt"+i;
-        alt.addEventListener("click", inputAlt);
-        
-        const td=document.createElement("td");
-        td.appendChild(image_link);
-        td.appendChild(remove_picture);
-        td.appendChild(alt);
-        tr.appendChild(td);
+        /* If the file is not too big, we add it */
+        if (files[j].size <= maxSize ){
+            
+            dataTransfer.items.add(files[j]);
+            
+            const image=document.createElement("img");
+            image.src = URL.createObjectURL(files[j]);
+            image.id="img"+i+"_"+(j+1);
+            
+            // Link that opens the picture in a new tab
+            const image_link=document.createElement("a");
+            image_link.href=URL.createObjectURL(files[j]);
+            image_link.target="_blank"
+            image_link.appendChild(image);
+            image_link.setAttribute("tabindex", "-1");
+            
+            const remove_picture=document.createElement("span");
+            remove_picture.innerText="×";
+            remove_picture.classList.add("remove_picture");
+            remove_picture.setAttribute("onclick", "removeImage("+i+","+(j+1)+")");
+            
+            const alt=document.createElement("input");
+            alt.placeholder="alt";
+            alt.id="alt"+i+"_"+(j+1);
+            alt.name="alt"+i;
+            alt.addEventListener("click", inputAlt);
+            
+            const td=document.createElement("td");
+            td.appendChild(image_link);
+            td.appendChild(remove_picture);
+            td.appendChild(alt);
+            tr.appendChild(td);
+        }
+        else{
+            filesTooBig += 1;
+        }
+    }
+  
+    if (filesTooBig > 0){
+        alert ("The pictures must be less than 976 KB. The bigger files have not been added.")
     }
   
     fileInput.files = dataTransfer.files;   // This affects the manipulated filelist to the input element
@@ -69,7 +78,6 @@ var loadFile = function(event, i) {
 
 /* Removes an image from the thumbnail zone and input list */
 function removeImage(i, j){
-    // alert(i+"_"+j);
     
     td = document.getElementById("img"+i+"_"+j).parentNode.parentNode;  // selects the td element that contains the img
     cell_index = td.cellIndex;
@@ -224,7 +232,7 @@ function addPost(element){
     last_div = div_posts[div_posts.length-1];
     document.getElementById("div_posts").insertBefore(new_div, last_div.nextSibling);
 
-    resizeTextarea(new_ta);
+    resizePosts();
     
     /* If there is only 2 posts (we just added one so there was only one before), we activate the remove button again */
     if (document.getElementsByClassName("div_post").length == 2){
