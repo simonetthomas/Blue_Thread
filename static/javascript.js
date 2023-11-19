@@ -1,3 +1,5 @@
+var nb_images_total=0;
+var warned = false;
 
 /* Displays a dialog to ask the alt text and updates the input value */
 var inputAlt = function (event){
@@ -62,6 +64,8 @@ var loadFile = function(event, i) {
             td.appendChild(remove_picture);
             td.appendChild(alt);
             tr.appendChild(td);
+            
+            nb_images_total+=1;
         }
         else{
             filesTooBig += 1;
@@ -100,6 +104,8 @@ function removeImage(i, j){
     
     //console.log(dataTransfer);
     fileInput.files = dataTransfer.files;
+    
+    nb_images_total-=1;
     
 }
 
@@ -380,6 +386,7 @@ function findSentenceEnd(post) {
 function addPosts(thread){
     
     document.getElementById("div_posts").innerHTML="";
+    nb_images_total = 0;
     
     // Iteration on the thread elements to create the posts divs, buttons etc
     thread.forEach(function (post_text, i){
@@ -573,5 +580,13 @@ function closeModal(i){
     document.getElementById("modal_sending").close();
     if (i == 0){
         clearText();
+    }
+}
+
+/* Checks the presence if images to warn the use it will erase them */
+function checkImages(){
+    if (nb_images_total && !warned > 0){
+        alert ("Warning : editing the text will remove all the images.");
+        warned = true;
     }
 }
