@@ -2,16 +2,34 @@ var nb_images_total=0;
 var warned = false;
 
 /* Displays a dialog to ask the alt text and updates the input value */
-var inputAlt = function (event){
-    // console.log(event);
-    const input = event.target;
-    const old_alt_text = document.getElementById(input.id).value;  // get the previous alt value which is in the input field
-    new_alt_text = prompt("Describe the picture :", old_alt_text);      // Prompts the user to input a new alt text
-    if (new_alt_text !== null){
-        document.getElementById(input.id).value=new_alt_text;          // Sets the input value with the new alt text
-        document.getElementById(input.previousElementSibling.previousElementSibling.firstChild.id).title=new_alt_text;    // Sets the img title property which displays a tooltip over the picture
-    }
+var inputAlt = function (i, j){
+    const img_src = document.getElementById("img"+i+"_"+j).src;
+    
+    document.getElementById("modal_image").showModal();
+    
+    document.getElementById("ta_alt").value = document.getElementById("alt"+i+"_"+j).value; // get the previous alt value which is in the input field
+    document.getElementById("img_modal").src=img_src;
+    document.getElementById("btn_modal_validate").setAttribute("onclick", "validateModalImage("+i+", "+j+")");
+    document.getElementById("btn_modal_cancel").setAttribute("onclick", "cancelModalImage("+i+", "+j+")");
+    document.getElementById("btn_close_modal_image").setAttribute("onclick", "cancelModalImage("+i+", "+j+")");
+    
+    // Link that opens the picture in a new tab
+    document.getElementById("link_image_modal").href=img_src;
+    document.getElementById("link_image_modal").target="_blank"
+
 };
+
+/* Closes the modal that asks for the alt text */
+function cancelModalImage(i, j){
+    document.getElementById("modal_image").close();    
+}
+
+/* Takes the alt value of the modal and puts it into the input for the right image */
+function validateModalImage(i, j){
+    document.getElementById("alt"+i+"_"+j).value = document.getElementById("ta_alt").value;
+    document.getElementById("modal_image").close();    
+}
+
 
 /* Called when a picture is added 
    It adds the picture's thumbnail, and an input field for the alt text */
@@ -40,13 +58,12 @@ var loadFile = function(event, i) {
             const image=document.createElement("img");
             image.src = URL.createObjectURL(files[j]);
             image.id="img"+i+"_"+(j+1);
-            
-            // Link that opens the picture in a new tab
-            const image_link=document.createElement("a");
-            image_link.href=URL.createObjectURL(files[j]);
-            image_link.target="_blank"
-            image_link.appendChild(image);
-            image_link.setAttribute("tabindex", "-1");
+                        
+            const btn_alt=document.createElement("span");
+            btn_alt.innerText="ALT";
+            btn_alt.classList.add("btn_alt");
+            btn_alt.setAttribute("onclick", "inputAlt("+i+","+(j+1)+")");
+            btn_alt.setAttribute("tabindex", 0);
             
             const remove_picture=document.createElement("span");
             remove_picture.innerText="×";
@@ -54,13 +71,13 @@ var loadFile = function(event, i) {
             remove_picture.setAttribute("onclick", "removeImage("+i+","+(j+1)+")");
             
             const alt=document.createElement("input");
-            alt.placeholder="alt";
             alt.id="alt"+i+"_"+(j+1);
             alt.name="alt"+i;
-            alt.addEventListener("click", inputAlt);
+            alt.style.display = "none";
             
             const td=document.createElement("td");
-            td.appendChild(image_link);
+            td.appendChild(image);
+            td.appendChild(btn_alt);
             td.appendChild(remove_picture);
             td.appendChild(alt);
             tr.appendChild(td);
@@ -83,7 +100,7 @@ var loadFile = function(event, i) {
 /* Removes an image from the thumbnail zone and input list */
 function removeImage(i, j){
     
-    td = document.getElementById("img"+i+"_"+j).parentNode.parentNode;  // selects the td element that contains the img
+    td = document.getElementById("img"+i+"_"+j).parentNode;  // selects the td element that contains the img
     cell_index = td.cellIndex;
     
     const fileInput = document.getElementById("input_images"+i);    // The input element that contains the selected files
