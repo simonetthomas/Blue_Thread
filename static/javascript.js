@@ -26,8 +26,24 @@ function cancelModalImage(i, j){
 
 /* Takes the alt value of the modal and puts it into the input for the right image */
 function validateModalImage(i, j){
-    document.getElementById("alt"+i+"_"+j).value = document.getElementById("ta_alt").value;
-    document.getElementById("modal_image").close();    
+    const new_alt_value = document.getElementById("ta_alt").value;
+    const alt = document.getElementById("alt"+i+"_"+j);
+    const btn_alt = document.getElementById("btn_alt"+i+"_"+j)
+    const img = document.getElementById("img"+i+"_"+j)
+    
+    alt.value = new_alt_value;
+    btn_alt.title = new_alt_value;
+    img.title=new_alt_value;
+    
+    document.getElementById("modal_image").close();
+
+    if (alt.value != ""){
+        btn_alt.classList.add("green");
+    }
+    else{
+        btn_alt.classList.remove("green");
+    }
+    
 }
 
 
@@ -59,11 +75,11 @@ var loadFile = function(event, i) {
             image.src = URL.createObjectURL(files[j]);
             image.id="img"+i+"_"+(j+1);
                         
-            const btn_alt=document.createElement("span");
+            const btn_alt=document.createElement("button");
+            btn_alt.id = "btn_alt"+i+"_"+(j+1);
             btn_alt.innerText="ALT";
             btn_alt.classList.add("btn_alt");
             btn_alt.setAttribute("onclick", "inputAlt("+i+","+(j+1)+")");
-            btn_alt.setAttribute("tabindex", 0);
             
             const remove_picture=document.createElement("span");
             remove_picture.innerText="×";
