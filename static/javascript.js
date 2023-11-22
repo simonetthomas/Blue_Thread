@@ -86,7 +86,7 @@ var loadFile = function(event, i) {
             remove_picture.classList.add("remove_picture");
             remove_picture.setAttribute("onclick", "removeImage("+i+","+(j+1)+")");
             
-            const alt=document.createElement("input");
+            const alt=document.createElement("textarea");
             alt.id="alt"+i+"_"+(j+1);
             alt.name="alt"+i;
             alt.style.display = "none";
@@ -153,7 +153,7 @@ function resizeTextarea(element){
     const span_nb_char = element.parentNode.getElementsByClassName("nb_char")[0].firstChild;
     span_nb_char.innerText = nb_char;
     
-    if (nb_char >= 290) {
+    if (nb_char > 300) {
         span_nb_char.classList.add("warning");
     }
     else{
@@ -174,7 +174,14 @@ function checkThreadValidity(){
         ta_posts.forEach ( function (ta) { 
             if (ta.value==""){
                 btn_send.disabled = true;
-                btn_send.title="None of the posts must be empty to send the thread";
+                btn_send.title="Some of the posts are empty. The thread cannot be sent.";
+                btn_send.classList.add("disabled");
+                valid_thread = 0;
+                throw BreakException;
+            }
+            if(ta.value.length > 300){
+                btn_send.disabled = true;
+                btn_send.title="Some of the posts exceed 300 characters. The thread cannot be sent.";
                 btn_send.classList.add("disabled");
                 valid_thread = 0;
                 throw BreakException;
@@ -329,7 +336,7 @@ function cutThread(){
     
     length = 299;
     if (numbering == "slash"){
-        length = 291; // Number of characters of a post (300 minus space for the number)
+        length = 289; // Number of characters of a post (300 minus space for the number)
     }
     
     let start = 0; // Start index of the current post
