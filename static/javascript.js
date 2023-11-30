@@ -1,5 +1,8 @@
 var nb_images_total=0;
 var warned = false;
+var formData = new FormData();
+
+
 
 /* Displays a dialog to ask the alt text and updates the input value */
 var inputAlt = function (i, j){
@@ -57,22 +60,34 @@ var loadFile = function(event, i) {
     
     const dataTransfer = new DataTransfer();    // to store temporarily the valid files that will be added to the input
     files = event.target.files ;
+    
+    // Initialization of the datatransfer with the aleady present files of this post
+    const oldFiles = formData.getAll("input_images"+i);
+    console.log("previous images : ", oldFiles);
+    
+    for (let f of oldFiles){
+        dataTransfer.items.add(f);
+    }
         
-    document.getElementById("output_table_row"+i).innerHTML="";
+    //document.getElementById("output_table_row"+i).innerHTML="";
     
     const maxSize = 1000000;    // Max size of a file (976 KB)
     
     /* Adds only the 4 first files to the input and to the thumbnail zone */
-    for (var j = 0; j < files.length && j <= 3 ; ++j) {
+    for (var j = dataTransfer.items.length; j < files.length+oldFiles.length && j <= 3 ; ++j) {
         console.log("j : ",j);
+        console.log("dataTransfer.items.length : ", dataTransfer.items.length);
+        console.log("files.length : ", files.length);
+        
+        var newFile = files[j-dataTransfer.items.length];
         
         /* If the file is not too big, we add it */
-        if (files[j].size <= maxSize ){
+        if (newFile.size <= maxSize ){
             
-            dataTransfer.items.add(files[j]);
+            dataTransfer.items.add(newFile);
             
             const image=document.createElement("img");
-            image.src = URL.createObjectURL(files[j]);
+            image.src = URL.createObjectURL(newFile);
             image.id="img"+i+"_"+(j+1);
                         
             const btn_alt=document.createElement("button");
@@ -101,9 +116,9 @@ var loadFile = function(event, i) {
             nb_images_total+=1;
         }
         else{
-            console.log ("The picture " + files[j].name +" is larger than 976 KB. It will be compressed.");
+            console.log ("The picture " + newFile.name +" is larger than 976 KB. It will be compressed.");
             
-            const blobURL = window.URL.createObjectURL(files[j]);
+            const blobURL = window.URL.createObjectURL(newFile);
             
             const img = new Image();
             img.src = blobURL;
@@ -140,13 +155,14 @@ var loadFile = function(event, i) {
                     
                     dataTransfer.items.add(myFile);
                     fileInput.files = dataTransfer.files;
+                    formData.append("input_images"+i, myFile);
                     
                 }, "image/jpeg", 0.80);
                 
             };
             
             const image=document.createElement("img");
-            image.src = window.URL.createObjectURL(files[j]);
+            image.src = window.URL.createObjectURL(newFile);
             image.id="img"+i+"_"+(j+1);
                         
             const btn_alt=document.createElement("button");
@@ -177,6 +193,12 @@ var loadFile = function(event, i) {
   
     fileInput.files = dataTransfer.files;   // This affects the manipulated filelist to the input element
     
+    /* Updating the formData with the new images */
+    formData.delete("input_images"+i);
+    
+    for (let f of fileInput.files){
+        formData.append("input_images"+i, f);
+    }
 };
 
 /* Removes an image from the thumbnail zone and input list */
