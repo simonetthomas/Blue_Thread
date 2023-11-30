@@ -61,10 +61,10 @@ var loadFile = function(event, i) {
     document.getElementById("output_table_row"+i).innerHTML="";
     
     const maxSize = 1000000;    // Max size of a file (976 KB)
-    var filesTooBig = 0;        // Number of files rejected because they exceed the max size
     
     /* Adds only the 4 first files to the input and to the thumbnail zone */
-    for (var j = 0; j < files.length && j <= 3+filesTooBig ; ++j) {
+    for (var j = 0; j < files.length && j <= 3 ; ++j) {
+        console.log("j : ",j);
         
         /* If the file is not too big, we add it */
         if (files[j].size <= maxSize ){
@@ -101,13 +101,79 @@ var loadFile = function(event, i) {
             nb_images_total+=1;
         }
         else{
-            filesTooBig += 1;
+            console.log ("The picture " + files[j].name +" is larger than 976 KB. It will be compressed.");
+            
+            const blobURL = window.URL.createObjectURL(files[j]);
+            
+            const img = new Image();
+            img.src = blobURL;
+            
+            img.onload = function (ev) {
+                console.log("j (dans img.onload) :", j);
+                window.URL.revokeObjectURL(blobURL); // release memory
+                
+                let scale = 1;
+                let height = img.height;
+                let width = img.width;
+                
+                if (height > 2000 || width > 2000){
+                    scale = Math.min(1, Math.min(2000/width, 2000/height));
+                    width = img.width * scale;
+                    height = img.height * scale;
+                }                
+                
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                canvas.toBlob(function (blob) {
+                    // Handle the compressed image
+                    
+                    console.log ("blob : ", blob);
+                                        
+                    const myFile = new File([blob], 'image', {
+                        type: blob.type,
+                    });
+                    
+                    dataTransfer.items.add(myFile);
+                    fileInput.files = dataTransfer.files;
+                    
+                }, "image/jpeg", 0.80);
+                
+            };
+            
+            const image=document.createElement("img");
+            image.src = window.URL.createObjectURL(files[j]);
+            image.id="img"+i+"_"+(j+1);
+                        
+            const btn_alt=document.createElement("button");
+            btn_alt.id = "btn_alt"+i+"_"+(j+1);
+            btn_alt.innerText="ALT";
+            btn_alt.classList.add("btn_alt");
+            btn_alt.setAttribute("onclick", "inputAlt("+i+","+(j+1)+")");
+            
+            const remove_picture=document.createElement("span");
+            remove_picture.innerText="×";
+            remove_picture.classList.add("remove_picture");
+            remove_picture.setAttribute("onclick", "removeImage("+i+","+(j+1)+")");
+            
+            const alt=document.createElement("textarea");
+            alt.id="alt"+i+"_"+(j+1);
+            alt.name="alt"+i;
+            alt.style.display = "none";
+            
+            const td=document.createElement("td");
+            td.appendChild(image);
+            td.appendChild(btn_alt);
+            td.appendChild(remove_picture);
+            td.appendChild(alt);
+            tr.appendChild(td);
         }
     }
   
-    if (filesTooBig > 0){
-        alert ("The pictures must be less than 976 KB. The bigger files have not been added.")
-    }
   
     fileInput.files = dataTransfer.files;   // This affects the manipulated filelist to the input element
     
