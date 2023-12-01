@@ -491,6 +491,10 @@ footer{
 
 /* Modal for the image and alt description */
 
+#link_image_modal{
+    display:block;
+}
+
 #modal_image{
     width:800px;
     text-align:center;

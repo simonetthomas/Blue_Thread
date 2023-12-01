@@ -53,6 +53,7 @@ function validateModalImage(i, j){
 /* Called when a picture is added 
    It adds the picture's thumbnail, and an input field for the alt text */
 var loadFile = function(event, i) {
+    
     const tr = document.getElementById('output_table_row'+i);
     const num_image = tr.cells.length+1;
             
@@ -205,6 +206,13 @@ var loadFile = function(event, i) {
     for (let f of fileInput.files){
         formData.append("input_images"+i, f);
     }
+    
+    /* Disable the image button if there are 4 images in the post */
+    if (tr.cells.length == 4){
+        document.getElementById("input_images"+i).setAttribute("onClick", "event.preventDefault();");
+        document.getElementById("label_input_images"+i).style.opacity = 0.4;
+    }
+    
 };
 
 /* Removes an image from the thumbnail zone and input list */
@@ -235,6 +243,10 @@ function removeImage(i, j){
     fileInput.files = dataTransfer.files;
     
     nb_images_total-=1;
+    
+    /* Enable the button again to add images */
+    document.getElementById("input_images"+i).removeAttribute ("onclick");
+    document.getElementById("label_input_images"+i).style.opacity = 1;
     
 }
 
@@ -309,7 +321,7 @@ function resizeText(){
 
 /* Resizes all the posts textareas */
 function resizePosts(){
-    var ta = document.getElementById('div_posts').getElementsByTagName('textarea');
+    var ta = document.getElementById('div_posts').getElementsByClassName('ta_post');
     for (let element of ta) {
       resizeTextarea(element);
     }
@@ -356,6 +368,8 @@ function addPost(element){
     new_ta.value="";
     
     new_label.setAttribute("for", "input_images"+new_number);
+    new_label.id="label_input_images"+new_number;
+    new_label.style.opacity = 1;
     
     new_input.id="input_images"+new_number;
     new_input.name="input_images"+new_number;
@@ -374,7 +388,8 @@ function addPost(element){
     last_div = div_posts[div_posts.length-1];
     document.getElementById("div_posts").insertBefore(new_div, last_div.nextSibling);
 
-    resizePosts();
+    resizeTextarea(new_ta);
+    checkThreadValidity();
     
     /* If there is only 2 posts (we just added one so there was only one before), we activate the remove button again */
     if (document.getElementsByClassName("div_post").length == 2){
@@ -393,7 +408,7 @@ function removePost(element){
         document.getElementById("btn_add_post").style.marginLeft = "0px";
     }
     
-    resizePosts();
+    checkThreadValidity();
 }
 
 /* Switches the dark_mode on or off when pressing the button */
@@ -523,6 +538,7 @@ function addPosts(thread){
     
     document.getElementById("div_posts").innerHTML="";
     nb_images_total = 0;
+    formData = new FormData();
     
     // Iteration on the thread elements to create the posts divs, buttons etc
     thread.forEach(function (post_text, i){
@@ -540,6 +556,7 @@ function addPosts(thread){
         new_ta.setAttribute("oninput", "resizeTextarea(this); checkThreadValidity();");
 
         const new_label = document.createElement("label");
+        new_label.id="label_input_images"+(i+1);
         new_label.title="Add a picture to the post";
         new_label.setAttribute("for", "input_images"+(i+1));
 
