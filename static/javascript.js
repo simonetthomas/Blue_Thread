@@ -61,25 +61,30 @@ var loadFile = function(event, i) {
     const dataTransfer = new DataTransfer();    // to store temporarily the valid files that will be added to the input
     files = event.target.files ;
     
-    // Initialization of the datatransfer with the aleady present files of this post
+    // oldFiles gets the images already present in this post before the input change
     const oldFiles = formData.getAll("input_images"+i);
-    console.log("previous images : ", oldFiles);
     
+    // Initialization of the datatransfer with the aleady present files of this post
     for (let f of oldFiles){
         dataTransfer.items.add(f);
     }
         
-    //document.getElementById("output_table_row"+i).innerHTML="";
+    // "new_number" is used to number the html elements (and function calls)
+    if (oldFiles.length > 0){
+        var last_id = document.getElementById("output_table_row"+i).lastChild.firstChild.id;    // id of the last image for this post
+        var new_number = parseInt(last_id.match("[1-9]+$")[0])+1;       // we take the last number of the id and add 1
+    }
+    else { 
+        var new_number = 1;     // if there is no image yet, new_number = 1
+    }
     
     const maxSize = 1000000;    // Max size of a file (976 KB)
     
     /* Adds only the 4 first files to the input and to the thumbnail zone */
     for (var j = dataTransfer.items.length; j < files.length+oldFiles.length && j <= 3 ; ++j) {
-        console.log("j : ",j);
-        console.log("dataTransfer.items.length : ", dataTransfer.items.length);
-        console.log("files.length : ", files.length);
-        
-        var newFile = files[j-dataTransfer.items.length];
+        // console.log("j : ",j);
+
+        var newFile = files[j-oldFiles.length];
         
         /* If the file is not too big, we add it */
         if (newFile.size <= maxSize ){
@@ -88,21 +93,21 @@ var loadFile = function(event, i) {
             
             const image=document.createElement("img");
             image.src = URL.createObjectURL(newFile);
-            image.id="img"+i+"_"+(j+1);
+            image.id="img"+i+"_"+(new_number);
                         
             const btn_alt=document.createElement("button");
-            btn_alt.id = "btn_alt"+i+"_"+(j+1);
+            btn_alt.id = "btn_alt"+i+"_"+(new_number);
             btn_alt.innerText="ALT";
             btn_alt.classList.add("btn_alt");
-            btn_alt.setAttribute("onclick", "inputAlt("+i+","+(j+1)+")");
+            btn_alt.setAttribute("onclick", "inputAlt("+i+","+(new_number)+")");
             
             const remove_picture=document.createElement("span");
             remove_picture.innerText="×";
             remove_picture.classList.add("remove_picture");
-            remove_picture.setAttribute("onclick", "removeImage("+i+","+(j+1)+")");
+            remove_picture.setAttribute("onclick", "removeImage("+i+","+(new_number)+")");
             
             const alt=document.createElement("textarea");
-            alt.id="alt"+i+"_"+(j+1);
+            alt.id="alt"+i+"_"+(new_number);
             alt.name="alt"+i;
             alt.style.display = "none";
             
@@ -124,7 +129,7 @@ var loadFile = function(event, i) {
             img.src = blobURL;
             
             img.onload = function (ev) {
-                console.log("j (dans img.onload) :", j);
+                // console.log("j (dans img.onload) :", j);
                 window.URL.revokeObjectURL(blobURL); // release memory
                 
                 let scale = 1;
@@ -147,9 +152,9 @@ var loadFile = function(event, i) {
                 canvas.toBlob(function (blob) {
                     // Handle the compressed image
                     
-                    console.log ("blob : ", blob);
+                    // console.log ("blob : ", blob);
                                         
-                    const myFile = new File([blob], 'image', {
+                    const myFile = new File([blob], newFile.name, {
                         type: blob.type,
                     });
                     
@@ -163,21 +168,21 @@ var loadFile = function(event, i) {
             
             const image=document.createElement("img");
             image.src = window.URL.createObjectURL(newFile);
-            image.id="img"+i+"_"+(j+1);
+            image.id="img"+i+"_"+(new_number);
                         
             const btn_alt=document.createElement("button");
-            btn_alt.id = "btn_alt"+i+"_"+(j+1);
+            btn_alt.id = "btn_alt"+i+"_"+(new_number);
             btn_alt.innerText="ALT";
             btn_alt.classList.add("btn_alt");
-            btn_alt.setAttribute("onclick", "inputAlt("+i+","+(j+1)+")");
+            btn_alt.setAttribute("onclick", "inputAlt("+i+","+(new_number)+")");
             
             const remove_picture=document.createElement("span");
             remove_picture.innerText="×";
             remove_picture.classList.add("remove_picture");
-            remove_picture.setAttribute("onclick", "removeImage("+i+","+(j+1)+")");
+            remove_picture.setAttribute("onclick", "removeImage("+i+","+(new_number)+")");
             
             const alt=document.createElement("textarea");
-            alt.id="alt"+i+"_"+(j+1);
+            alt.id="alt"+i+"_"+(new_number);
             alt.name="alt"+i;
             alt.style.display = "none";
             
@@ -188,6 +193,7 @@ var loadFile = function(event, i) {
             td.appendChild(alt);
             tr.appendChild(td);
         }
+        new_number++;
     }
   
   
@@ -209,10 +215,12 @@ function removeImage(i, j){
     
     const fileInput = document.getElementById("input_images"+i);    // The input element that contains the selected files
     const dataTransfer = new DataTransfer();
+    formData.delete("input_images"+i);
     
     for (var index = 0 ; index < fileInput.files.length ; ++index){
         if (index != cell_index){
             dataTransfer.items.add(fileInput.files[index]);     // Adding all the files except the one we want to remove
+            formData.append("input_images"+i, fileInput.files[index]);
         }        
     }
     
