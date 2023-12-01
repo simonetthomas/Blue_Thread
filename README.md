@@ -15,25 +15,24 @@ Connect with your account, type in a text, and Blue Thread will cut it into sepa
 
 ## Features
 
-* Automatically cuts the text as you type it into 300 characters posts, by respecting the punctuation to avoid cutting sentences when possible.
+* Automatically cuts the text into 300 characters posts as you type it, by respecting the punctuation to avoid cutting sentences when possible.
 * Adds a number (1/3, 2/3, 3/3 etc.) at the end of each post.
 * Sends the entire thread all at once on your account.
 
 You can :
-* Review and edit each post before sending the thread on Bluesky.
-* Manually add or remove a post before sending the thread.
+* Edit each post, and manually add or remove posts before sending the thread on Bluesky.
+* Add up to 4 pictures to a post, with an alt text for each picture.
 * Choose the language of the thread.
 * Choose whether you want to number the posts or not.
 
 ## Possible future features
 
-Here is a list of possible features I'd like to add :
-* Add several pictures to a post (up to 4)
-* Add an alt text to each picture.
-* Customize the way the thread is cut ?
+Here is a list of possible features that are not ready yet :
+* Add a way to cut the thread manually at a certain point in the text.
+* Deal with urls, hashtags, mentions to users ? For now they are considered as simple text.
 
 ## What's the tech behind it
 
-It's developped in Python, and is based on the [Flask micro framework](https://flask.palletsprojects.com/en/2.3.x/) and the [jinja2 templating engine](https://jinja.palletsprojects.com/en/3.1.x/). It uses the [atproto SDK](https://atproto.blue/en/latest/) to connect to Bluesky. The client side is done in Javascript vanilla.
+The server is developped in Python, and is based on the [Flask micro framework](https://flask.palletsprojects.com/en/2.3.x/) and the [jinja2 templating engine](https://jinja.palletsprojects.com/en/3.1.x/). It uses the [atproto SDK](https://atproto.blue/en/latest/) to connect to Bluesky. The client side is done in Javascript vanilla.
 
 Tested mainly on Firefox.
