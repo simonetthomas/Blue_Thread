@@ -16,7 +16,7 @@
     <p>Logged in as {{session.name}} <a href="/logout"><button id="btn_logout" class="btn">Log out</button></a></p>
     
     <form method="POST" id="form_text">
-        <textarea id="ta_text" name="text" rows="30" cols="70" autocomplete="off" autocorrect="on"  autofocus="on" placeholder="Put your rambling here" oninput="cutThread();" onfocus="checkImages();">{{text}}</textarea>
+        <textarea id="ta_text" name="text" rows="30" cols="70" autocomplete="off" autocorrect="on"  autofocus="on" placeholder="Put your rambling here" oninput="cutThread();">{{text}}</textarea>
         <input id="btn_clear" type="button" value="✖ Clear" class="btn" onclick="clearText()" />
         <span id="numbering_section">Numbering : <select name="numbering" id="numbering" class="btn" onChange="cutThread()">
             <option value="slash">1/x</option>
@@ -28,7 +28,7 @@
         <div id="div_posts"></div>
         <div id="div_buttons">
             <button id="btn_remove_post" type="button" title="Remove a post" onClick="removePost(this);">-</button>
-            <button id="btn_add_post" type="button" title="Add a post" onClick="addPost(this);">+</button>
+            <button id="btn_add_post" type="button" title="Add a post" onClick="addEmptyPost();">+</button>
             <input id="btn_send" class="btn" type="button" name="action" value="✉ Send" onclick="clickSend()"></input>
             <select id="select_lang" name="lang" class="" required="true" title="Select the language in which the thread is written" onchange="checkThreadValidity();" onclick ="">
                 <option value="">Language</option>

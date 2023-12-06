@@ -1,7 +1,4 @@
-var nb_images_total=0;
-var warned = false;
 var formData = new FormData();
-
 
 
 /* Displays a dialog to ask the alt text and updates the input value */
@@ -118,8 +115,6 @@ var loadFile = function(event, i) {
             td.appendChild(remove_picture);
             td.appendChild(alt);
             tr.appendChild(td);
-            
-            nb_images_total+=1;
         }
         else{
             console.log ("The picture " + newFile.name +" is larger than 976 KB. It will be compressed.");
@@ -242,8 +237,6 @@ function removeImage(i, j){
     //console.log(dataTransfer);
     fileInput.files = dataTransfer.files;
     
-    nb_images_total-=1;
-    
     /* Enable the button again to add images */
     document.getElementById("input_images"+i).removeAttribute ("onclick");
     document.getElementById("label_input_images"+i).style.opacity = 1;
@@ -254,7 +247,7 @@ function removeImage(i, j){
 function resizeTextarea(element){
     element.style.height = "auto";
     element.style.height = element.scrollHeight-10 + "px";
-    element.style.height = element.scrollHeight-10 + "px";   //  2e resize necessary or else the first textarea is not at the right size ??
+   // element.style.height = element.scrollHeight-10 + "px";   //  2e resize necessary or else the first textarea is not at the right size ??
     
     /* Updating the displayed number of characters */
     var nb_char = element.value.length;
@@ -277,25 +270,37 @@ function checkThreadValidity(){
     valid_thread = 1;
     ta_posts = document.querySelectorAll(".ta_post");
     
-    /* Loop over every post textarea, and if one is empty, the send button is disabled. */
-    try{
-        ta_posts.forEach ( function (ta) { 
-            if (ta.value==""){
-                btn_send.disabled = true;
-                btn_send.title="Some of the posts are empty. The thread cannot be sent.";
-                btn_send.classList.add("disabled");
-                valid_thread = 0;
-                throw BreakException;
-            }
-            if(ta.value.length > 300){
-                btn_send.disabled = true;
-                btn_send.title="Some of the posts exceed 300 characters. The thread cannot be sent.";
-                btn_send.classList.add("disabled");
-                valid_thread = 0;
-                throw BreakException;
-            }
-        });
-    } catch(e){ /* Breaking out of the loop */ }
+    if (ta_posts.length > 0){
+    
+        /* Loop over every post textarea, and if one is empty, the send button is disabled. */
+        try{
+            ta_posts.forEach ( function (ta) { 
+                if (ta.value==""){
+                    btn_send.disabled = true;
+                    btn_send.title="Some of the posts are empty. The thread cannot be sent.";
+                    btn_send.classList.add("disabled");
+                    valid_thread = 0;
+                    throw BreakException;
+                }
+                if(ta.value.length > 300){
+                    btn_send.disabled = true;
+                    btn_send.title="Some of the posts exceed 300 characters. The thread cannot be sent.";
+                    btn_send.classList.add("disabled");
+                    valid_thread = 0;
+                    throw BreakException;
+                }
+            });
+        } catch(e){ /* Breaking out of the loop */ }
+    }
+    else {
+        document.getElementById("btn_remove_post").setAttribute("hidden", "true");
+        document.getElementById("btn_add_post").setAttribute("hidden", "true");
+        document.getElementById("select_lang").setAttribute("hidden", "true");
+        document.getElementById("btn_send").setAttribute("hidden", "true");
+        if(document.querySelector(".ts-wrapper") != null){
+            document.querySelector(".ts-wrapper").setAttribute("hidden", "true");
+        }
+    }
     
     if (valid_thread){
         if (document.getElementById("select_lang").value != ""){
@@ -346,47 +351,70 @@ function onLoadUpdate(){
         cutThread();
     }
     
-    populateLanguages();
+    if (window.location.pathname == "/thread"){
+        populateLanguages();
+    }
     
 }
 
 
 /* Adds a new post at the bottom of the posts */
-function addPost(element){
-    /* Copy of the first div_post */
-    const new_div = document.getElementById("div_post1").cloneNode(true);
-    const new_ta = new_div.getElementsByClassName("ta_post").post;
-    const new_label = new_div.getElementsByTagName("label")[0];
-    const new_input = new_div.getElementsByClassName("input_images").input_images1;
-    const new_nb_char = new_div.getElementsByClassName("nb_char").nb_char1;
-    const new_thumbnail_zone = new_div.getElementsByTagName("output").thumbnail_zone1;
-    const new_number = document.getElementsByClassName("div_post").length+1;
+function addPost(i, post_text){
     
-    new_div.id="div_post"+new_number;
+    const new_div = document.createElement("div");
+    new_div.id="div_post"+(i+1);
+    new_div.classList.add("div_post");
     
-    new_ta.id = "ta_post"+new_number;
-    new_ta.value="";
+    const new_ta = document.createElement("textarea");
+    new_ta.id = "ta_post"+(i+1);
+    new_ta.name="post";
+    new_ta.value=post_text;
+    new_ta.classList.add("ta_post");
+    new_ta.setAttribute("maxlength", 300);
+    new_ta.setAttribute("oninput", "resizeTextarea(this); checkThreadValidity();");
+
+    const new_label = document.createElement("label");
+    new_label.id="label_input_images"+(i+1);
+    new_label.title="Add a picture to the post";
+    new_label.setAttribute("for", "input_images"+(i+1));
+
+    const new_input = document.createElement("input");
+    new_input.id="input_images"+(i+1);
+    new_input.type="file";
+    new_input.name="input_images"+(i+1);
+    new_input.setAttribute("accept", "image/png, image/jpg, image/jpeg");
+    new_input.setAttribute("onchange", "loadFile(event, "+(i+1)+")");
+    new_input.classList.add("input_images");
+    new_input.setAttribute("multiple", "");
     
-    new_label.setAttribute("for", "input_images"+new_number);
-    new_label.id="label_input_images"+new_number;
-    new_label.style.opacity = 1;
+    const new_nb_char = document.createElement("div");
+    new_nb_char.id="nb_char"+(i+1);
+    new_nb_char.innerHTML="<span>0</span>/300";
+    new_nb_char.classList.add("nb_char");
+
+    const new_thumbnail_zone = document.createElement("output");
+    new_thumbnail_zone.id="thumbnail_zone"+(i+1);
+    new_thumbnail_zone.classList.add("thumbnail_zone")
     
-    new_input.id="input_images"+new_number;
-    new_input.name="input_images"+new_number;
-    new_input.setAttribute("onchange", "loadFile(event, "+(new_number)+")");
-    new_input.value= null;
+    // create the table rows etc.
+    const new_table=document.createElement("table");
     
-    new_nb_char.id="nb_char"+new_number;
-    new_nb_char.firstChild.innerText="0";
-            
-    new_thumbnail_zone.id="thumbnail_zone"+new_number;
-    new_thumbnail_zone.getElementsByTagName("tr").output_table_row1.innerHTML = "";
-    new_thumbnail_zone.getElementsByTagName("tr").output_table_row1.id="output_table_row"+new_number;
+    const new_table_row = document.createElement("tr");
+    new_table_row.id="output_table_row"+(i+1);
     
+    new_table.appendChild(new_table_row);
+    new_thumbnail_zone.appendChild(new_table);
     
-    div_posts = document.querySelectorAll(".div_post");
-    last_div = div_posts[div_posts.length-1];
-    document.getElementById("div_posts").insertBefore(new_div, last_div.nextSibling);
+    new_div.appendChild(new_ta);
+    new_div.appendChild(new_label);
+    new_div.appendChild(new_input);
+    new_div.appendChild(new_nb_char);
+    new_div.appendChild(new_label);
+    new_div.appendChild(new_input);
+    new_div.appendChild(new_thumbnail_zone);
+    
+    document.getElementById("div_posts").appendChild(new_div);
+
 
     resizeTextarea(new_ta);
     checkThreadValidity();
@@ -395,6 +423,12 @@ function addPost(element){
     if (document.getElementsByClassName("div_post").length == 2){
         document.getElementById("btn_remove_post").hidden = false;
     }
+}
+
+/* Adds an empty post at the bottom of the posts  */
+function addEmptyPost(){
+    i = document.querySelectorAll(".ta_post").length;
+    addPost(i, "");
 }
 
 /* Removes the last post of the thread */
@@ -456,8 +490,8 @@ function cutThread(){
     let last_post = false;
     let post="";
     
-    while (start < text.length - 1) {
-       // console.log("debut : "+start+", fin : "+end);
+    while (start < text.length ) {
+        // console.log("debut : "+start+", fin : "+end);
 
 
         // Elimination des retours à la ligne en début de post
@@ -536,102 +570,72 @@ function findSentenceEnd(post) {
  */
 function addPosts(thread){
     
-    document.getElementById("div_posts").innerHTML="";
-    nb_images_total = 0;
-    formData = new FormData();
-    
-    // Iteration on the thread elements to create the posts divs, buttons etc
-    thread.forEach(function (post_text, i){
-        
-        const new_div = document.createElement("div");
-        new_div.id="div_post"+(i+1);
-        new_div.classList.add("div_post");
-        
-        const new_ta = document.createElement("textarea");
-        new_ta.id = "ta_post"+(i+1);
-        new_ta.name="post";
-        new_ta.value=post_text;
-        new_ta.classList.add("ta_post");
-        new_ta.setAttribute("maxlength", 300);
-        new_ta.setAttribute("oninput", "resizeTextarea(this); checkThreadValidity();");
+//    document.getElementById("div_posts").innerHTML="";
+    nb_divs = document.getElementById("div_posts").childNodes.length // Number of existing post divs on the right
 
-        const new_label = document.createElement("label");
-        new_label.id="label_input_images"+(i+1);
-        new_label.title="Add a picture to the post";
-        new_label.setAttribute("for", "input_images"+(i+1));
+    if (nb_divs == 0){  // If there was no post (the page has been reloaded) then we create them
+        formData = new FormData();
+        
+        // Iteration on the thread elements to create the posts divs, buttons etc
+        thread.forEach(function (post_text, i){            
+            addPost(i, post_text);
+        });
+        
 
-        const new_input = document.createElement("input");
-        new_input.id="input_images"+(i+1);
-        new_input.type="file";
-        new_input.name="input_images"+(i+1);
-        new_input.setAttribute("accept", "image/png, image/jpg, image/jpeg");
-        new_input.setAttribute("onchange", "loadFile(event, "+(i+1)+")");
-        new_input.classList.add("input_images");
-        new_input.setAttribute("multiple", "");
-        
-        const new_nb_char = document.createElement("div");
-        new_nb_char.id="nb_char"+(i+1);
-        new_nb_char.innerHTML="<span>0</span>/300";
-        new_nb_char.classList.add("nb_char");
-
-        const new_thumbnail_zone = document.createElement("output");
-        new_thumbnail_zone.id="thumbnail_zone"+(i+1);
-        new_thumbnail_zone.classList.add("thumbnail_zone")
-        
-        // create the table rows etc.
-        const new_table=document.createElement("table");
-        
-        const new_table_row = document.createElement("tr");
-        new_table_row.id="output_table_row"+(i+1);
-        
-        new_table.appendChild(new_table_row);
-        new_thumbnail_zone.appendChild(new_table);
-        
-        new_div.appendChild(new_ta);
-        new_div.appendChild(new_label);
-        new_div.appendChild(new_input);
-        new_div.appendChild(new_nb_char);
-        new_div.appendChild(new_label);
-        new_div.appendChild(new_input);
-        new_div.appendChild(new_thumbnail_zone);
-        
-        document.getElementById("div_posts").appendChild(new_div);
-
-        
-    });
-    
-
-    if (thread.length > 0) {    // If there is at least 1 post, the buttons are displayed        
-        document.getElementById("btn_remove_post").removeAttribute("hidden");
-        document.getElementById("btn_add_post").removeAttribute("hidden");
-        document.getElementById("select_lang").removeAttribute("hidden");
-        document.getElementById("btn_send").removeAttribute("hidden");
-        if(document.querySelector(".ts-wrapper") != null){
-            document.querySelector(".ts-wrapper").removeAttribute("hidden");
-        }
-        
-        if (thread.length == 1) {   // If there is only 1 post, no need to display the remove button
-            document.getElementById("btn_remove_post").setAttribute("hidden", "true");
-        }
-        else {
+        if (thread.length > 0) {    // If there is at least 1 post, the buttons are displayed        
             document.getElementById("btn_remove_post").removeAttribute("hidden");
+            document.getElementById("btn_add_post").removeAttribute("hidden");
+            document.getElementById("select_lang").removeAttribute("hidden");
+            document.getElementById("btn_send").removeAttribute("hidden");
+            if(document.querySelector(".ts-wrapper") != null){
+                document.querySelector(".ts-wrapper").removeAttribute("hidden");
+            }
+            
+            if (thread.length == 1) {   // If there is only 1 post, no need to display the remove button
+                document.getElementById("btn_remove_post").setAttribute("hidden", "true");
+            }
+            else {
+                document.getElementById("btn_remove_post").removeAttribute("hidden");
+            }
+        
         }
+        else{       // If there is no post, the buttons are hidden
+            document.getElementById("btn_remove_post").setAttribute("hidden", "true");
+            document.getElementById("btn_add_post").setAttribute("hidden", "true");
+            document.getElementById("select_lang").setAttribute("hidden", "true");
+            document.getElementById("btn_send").setAttribute("hidden", "true");
+            if(document.querySelector(".ts-wrapper") != null){
+                document.querySelector(".ts-wrapper").setAttribute("hidden", "true");
+            }
+        }
+        
+        
+        
+        resizePosts();
+    }
+    else{   // If there were already some posts
+        ta_posts = document.querySelectorAll(".ta_post");
+        
+        for (i=0 ; i < thread.length || i < ta_posts.length ; i++){
+            if (i < ta_posts.length && i < ta_posts.length ){
+                ta_posts[i].value = thread[i];      // Simply updating the textarea value
+            }
+            if (i >= thread.length){     // The new thread is shorter, we remove the following posts (including images)
+                if (formData.getAll("input_images"+(i+1)).length > 0) {
+                        formData.delete("input_images"+(i+1));  //Removing the images from the formData
+                }
+                ta_posts[i].parentNode.remove();    // Removing the div containing this textarea
+                
+            }
+            if(i >= ta_posts.length){   // The new thread is longer, we add new posts
+                addPost(i, thread[i]);
+            }
+            
+        }
+        resizePosts();
+        
     
     }
-    else{       // If there is no post, the buttons are hidden
-        document.getElementById("btn_remove_post").setAttribute("hidden", "true");
-        document.getElementById("btn_add_post").setAttribute("hidden", "true");
-        document.getElementById("select_lang").setAttribute("hidden", "true");
-        document.getElementById("btn_send").setAttribute("hidden", "true");
-        if(document.querySelector(".ts-wrapper") != null){
-            document.querySelector(".ts-wrapper").setAttribute("hidden", "true");
-        }
-    }
-    
-    
-    
-    resizePosts();
-    
     // console.log("fin add_posts");
 }
 
@@ -733,13 +737,5 @@ function closeModal(i){
     document.getElementById("modal_sending").close();
     if (i == 0){
         clearText();
-    }
-}
-
-/* Checks the presence if images to warn the use it will erase them */
-function checkImages(){
-    if (nb_images_total && !warned > 0){
-        alert ("Warning : editing the text will remove all the images.");
-        warned = true;
     }
 }
