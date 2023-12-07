@@ -5,6 +5,8 @@ import math
 import os
 import argparse
 import re
+import requests
+from typing import Dict, List
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
@@ -125,7 +127,7 @@ def connection(client, login, password):
 def send_thread (thread, request):
     firstPost=True
     str_nb_posts = str(len(thread))
-    langs = request.form.get("lang")
+    langs = [request.form.get("lang")]
     
     print("nb posts : "+str_nb_posts)
            
@@ -141,7 +143,6 @@ def send_thread (thread, request):
         for index, post in enumerate(thread):
             #print("index : "+str(index))
             numerotation = str(index+1)+"/"+str_nb_posts
-            embed=''
             
             try:    # Trying to get an alt for this post
                 alts = request.form.getlist("alt"+str(index+1))
@@ -152,32 +153,43 @@ def send_thread (thread, request):
             
             #print("input_images"+str(index+1))
             images = request.files.getlist("input_images"+str(index+1))
-            #print(images);
+            print(images);
             
             if (firstPost):
                 # Sending of the first post, which doesn't reference any post
-                if (images[0].filename == ""):
-                    print("Premier post sans image")
-                    root_post_ref = models.create_strong_ref(client.send_post(text=post, langs=[langs]))
-
-                else:   # If there is an image
+                                
+                embed_images = []
+                facet = parse_facets("https://morel.us-east.host.bsky.network", post)
+                print("facets : " + str(facet))
+                
+                # Send without embed (images)
+                if (images[0].filename != ""):
+                    embed_images = create_embed_images(client, images, alts, embed_images)
+                    
                     print("Premier post avec une image")
-                    pics = []
-                    # Loop over the post images to add them to the embed object
-                    for (image_index, image) in enumerate(images):
-                        print("index de l'image : "+str(image_index))
-                        img_data=images[image_index].read()
-                        #print("Juste avant ''upload_blob''")
-                        upload = client.com.atproto.repo.upload_blob(img_data)
-                        #print("Juste après ''upload_blob''")
-                        pics.append(models.AppBskyEmbedImages.Image(alt=alts[image_index], image=upload.blob))
-                        
-                    print(str(embed))
-                    embed = models.AppBskyEmbedImages.Main(images=pics)
-                    root_post_ref = models.create_strong_ref(client.send_post(
-                        text=post, langs=[langs], embed=embed
+                    embed = models.AppBskyEmbedImages.Main(images=embed_images)
+                    print("embed : " + str(embed))
+                    root_post_ref = models.create_strong_ref(client.com.atproto.repo.create_record(
+                        models.ComAtprotoRepoCreateRecord.Data(
+                            repo=client.me.did,
+                            collection=models.ids.AppBskyFeedPost,
+                            record=models.AppBskyFeedPost.Main(created_at=client.get_current_time_iso(), text=post, embed=embed, langs=langs, facets=facet),
+                        )
                     ))
-                                            
+                    
+                # Send without embed (images)
+                else:
+                    print("Premier post sans image")
+                    root_post_ref = models.create_strong_ref(client.com.atproto.repo.create_record(
+                        models.ComAtprotoRepoCreateRecord.Data(
+                            repo=client.me.did,
+                            collection=models.ids.AppBskyFeedPost,
+                            record=models.AppBskyFeedPost.Main(created_at=client.get_current_time_iso(), text=post, langs=langs, facets=facet),
+                        )
+                    ))
+                
+                print ("root_post_ref : " + str(root_post_ref))
+                                 
                 parent_post_ref = root_post_ref     # The first post ref becomes the ref for the parent post
                 firstPost=False
             else:
@@ -185,23 +197,23 @@ def send_thread (thread, request):
                 if (images[0].filename == ""):    # If no image
                     print("post sans image")
                     parent_post_ref = models.create_strong_ref(client.send_post(
-                        text=post, reply_to=models.AppBskyFeedPost.ReplyRef(parent=parent_post_ref, root=root_post_ref), langs=[langs]
+                        text=post, reply_to=models.AppBskyFeedPost.ReplyRef(parent=parent_post_ref, root=root_post_ref), langs=langs
                     ))
                 else:   # If there is an image
                     print("post avec une image")
-                    pics = []
+                    embed_images = []
                     for (image_index, image) in enumerate(images):
                         #print("index de l'image : "+str(image_index))
                         img_data=images[image_index].read()
                         #print("Juste avant ''upload_blob''")
                         upload = client.com.atproto.repo.upload_blob(img_data)
                         #print("Juste après ''upload_blob''")
-                        pics.append(models.AppBskyEmbedImages.Image(alt=alts[image_index], image=upload.blob))
+                        embed_images.append(models.AppBskyEmbedImages.Image(alt=alts[image_index], image=upload.blob))
                         
-                    embed = models.AppBskyEmbedImages.Main(images=pics)
+                    embed = models.AppBskyEmbedImages.Main(images=embed_images)
                     
                     parent_post_ref = models.create_strong_ref(client.send_post(
-                        text=post, reply_to=models.AppBskyFeedPost.ReplyRef(parent=parent_post_ref, root=root_post_ref), langs=[langs], embed=embed
+                        text=post, reply_to=models.AppBskyFeedPost.ReplyRef(parent=parent_post_ref, root=root_post_ref), langs=langs, embed=embed
                     ))
                     
             print("- Post "+numerotation+" envoyé")
@@ -218,5 +230,93 @@ def send_thread (thread, request):
     return post_url
 
 
+# Uploads the image blobs and returns a embed_images list
+def create_embed_images(client, images, alts, embed_images) :
+    # Loop over the post images to add them to the embed object
+    for (image_index, image) in enumerate(images):
+        print("index de l'image : "+str(image_index))
+        img_data=images[image_index].read()
+        #print("Juste avant ''upload_blob''")
+        upload = client.com.atproto.repo.upload_blob(img_data)
+        #print("Juste après ''upload_blob''")
+        embed_images.append(models.AppBskyEmbedImages.Image(alt=alts[image_index], image=upload.blob))
+    return embed_images
+
+
+def parse_facets(pds_url: str, text: str) -> List[Dict]:
+    """
+    parses post text and returns a list of app.bsky.richtext.facet objects for any mentions (@handle.example.com) or URLs (https://example.com)
+
+    indexing must work with UTF-8 encoded bytestring offsets, not regular unicode string offsets, to match Bluesky API expectations
+    """
+    facets = []
+    for m in parse_mentions(text):
+        resp = requests.get(
+            pds_url + "/xrpc/com.atproto.identity.resolveHandle",
+            params={"handle": m["handle"]},
+        )
+        # if handle couldn't be resolved, just skip it! will be text in the post
+        if resp.status_code == 400:
+            continue
+        did = resp.json()["did"]
+        facets.append(
+            {
+                "index": {
+                    "byteStart": m["start"],
+                    "byteEnd": m["end"],
+                },
+                "features": [{"$type": "app.bsky.richtext.facet#mention", "did": did}],
+            }
+        )
+    for u in parse_urls(text):
+        facets.append(
+            {
+                "index": {
+                    "byteStart": u["start"],
+                    "byteEnd": u["end"],
+                },
+                "features": [
+                    {
+                        "$type": "app.bsky.richtext.facet#link",
+                        # NOTE: URI ("I") not URL ("L")
+                        "uri": u["url"],
+                    }
+                ],
+            }
+        )
+    return facets
+
+
+def parse_urls(text: str) -> List[Dict]:
+    spans = []
+    # partial/naive URL regex based on: https://stackoverflow.com/a/3809435
+    # tweaked to disallow some training punctuation
+    url_regex = rb"[$|\W](https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*[-a-zA-Z0-9@%_\+~#//=])?)"
+    text_bytes = text.encode("UTF-8")
+    for m in re.finditer(url_regex, text_bytes):
+        spans.append(
+            {
+                "start": m.start(1),
+                "end": m.end(1),
+                "url": m.group(1).decode("UTF-8"),
+            }
+        )
+    return spans
+    
+def parse_mentions(text: str) -> List[Dict]:
+    spans = []
+    # regex based on: https://atproto.com/specs/handle#handle-identifier-syntax
+    mention_regex = rb"[$|\W](@([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)"
+    text_bytes = text.encode("UTF-8")
+    for m in re.finditer(mention_regex, text_bytes):
+        spans.append(
+            {
+                "start": m.start(1),
+                "end": m.end(1),
+                "handle": m.group(1)[1:].decode("UTF-8"),
+            }
+        )
+    return spans    
+    
 if __name__ == '__main__':
     app.run(debug=True)
