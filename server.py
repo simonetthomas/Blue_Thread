@@ -255,24 +255,24 @@ def parse_facets(pds_url: str, text: str) -> List[Dict]:
     indexing must work with UTF-8 encoded bytestring offsets, not regular unicode string offsets, to match Bluesky API expectations
     """
     facets = []
-    for m in parse_mentions(text):
-        resp = requests.get(
-            pds_url + "/xrpc/com.atproto.identity.resolveHandle",
-            params={"handle": m["handle"]},
-        )
-        # if handle couldn't be resolved, just skip it! will be text in the post
-        if resp.status_code == 400:
-            continue
-        did = resp.json()["did"]
-        facets.append(
-            {
-                "index": {
-                    "byteStart": m["start"],
-                    "byteEnd": m["end"],
-                },
-                "features": [{"$type": "app.bsky.richtext.facet#mention", "did": did}],
-            }
-        )
+    # for m in parse_mentions(text):
+        # resp = requests.get(
+            # pds_url + "/xrpc/com.atproto.identity.resolveHandle",
+            # params={"handle": m["handle"]},
+        # )
+        # # if handle couldn't be resolved, just skip it! will be text in the post
+        # if resp.status_code == 400:
+            # continue
+        # did = resp.json()["did"]
+        # facets.append(
+            # {
+                # "index": {
+                    # "byteStart": m["start"],
+                    # "byteEnd": m["end"],
+                # },
+                # "features": [{"$type": "app.bsky.richtext.facet#mention", "did": did}],
+            # }
+        # )
     for u in parse_urls(text):
         facets.append(
             {
