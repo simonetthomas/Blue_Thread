@@ -160,9 +160,9 @@ def send_thread (thread, request):
                                 
                 embed_images = []
                 facet = parse_facets("https://morel.us-east.host.bsky.network", post)
-                print("facets : " + str(facet))
+                # print("facets : " + str(facet))
                 
-                # Send without embed (images)
+                # Send with embed (images)
                 if (images[0].filename != ""):
                     embed_images = create_embed_images(client, images, alts, embed_images)
                     
@@ -194,26 +194,31 @@ def send_thread (thread, request):
                 firstPost=False
             else:
                 # Sending of another post, replying to the previous one
-                if (images[0].filename == ""):    # If no image
-                    print("post sans image")
-                    parent_post_ref = models.create_strong_ref(client.send_post(
-                        text=post, reply_to=models.AppBskyFeedPost.ReplyRef(parent=parent_post_ref, root=root_post_ref), langs=langs
-                    ))
-                else:   # If there is an image
-                    print("post avec une image")
-                    embed_images = []
-                    for (image_index, image) in enumerate(images):
-                        #print("index de l'image : "+str(image_index))
-                        img_data=images[image_index].read()
-                        #print("Juste avant ''upload_blob''")
-                        upload = client.com.atproto.repo.upload_blob(img_data)
-                        #print("Juste après ''upload_blob''")
-                        embed_images.append(models.AppBskyEmbedImages.Image(alt=alts[image_index], image=upload.blob))
-                        
+                
+                embed_images = []
+                facet = parse_facets("https://morel.us-east.host.bsky.network", post)
+                # print("facets : " + str(facet))
+                
+                if (images[0].filename != ""):    # If there is images
+                    print("Post avec images")
+                    embed_images = create_embed_images(client, images, alts, embed_images)                    
                     embed = models.AppBskyEmbedImages.Main(images=embed_images)
                     
-                    parent_post_ref = models.create_strong_ref(client.send_post(
-                        text=post, reply_to=models.AppBskyFeedPost.ReplyRef(parent=parent_post_ref, root=root_post_ref), langs=langs, embed=embed
+                    parent_post_ref = models.create_strong_ref(client.com.atproto.repo.create_record(
+                        models.ComAtprotoRepoCreateRecord.Data(
+                            repo=client.me.did,
+                            collection=models.ids.AppBskyFeedPost,
+                            record=models.AppBskyFeedPost.Main(created_at=client.get_current_time_iso(), text=post, reply=models.AppBskyFeedPost.ReplyRef(parent=parent_post_ref, root=root_post_ref), embed=embed, langs=langs, facets=facet),
+                        )
+                    ))
+                else:   # If there is no image
+                    print("Post sans image")
+                    parent_post_ref = models.create_strong_ref(client.com.atproto.repo.create_record(
+                        models.ComAtprotoRepoCreateRecord.Data(
+                            repo=client.me.did,
+                            collection=models.ids.AppBskyFeedPost,
+                            record=models.AppBskyFeedPost.Main(created_at=client.get_current_time_iso(), text=post, reply=models.AppBskyFeedPost.ReplyRef(parent=parent_post_ref, root=root_post_ref), langs=langs, facets=facet),
+                        )
                     ))
                     
             print("- Post "+numerotation+" envoyé")
@@ -291,7 +296,7 @@ def parse_urls(text: str) -> List[Dict]:
     spans = []
     # partial/naive URL regex based on: https://stackoverflow.com/a/3809435
     # tweaked to disallow some training punctuation
-    url_regex = rb"[$|\W](https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*[-a-zA-Z0-9@%_\+~#//=])?)"
+    url_regex = rb"\b(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*[-a-zA-Z0-9@%_\+~#//=])?)"
     text_bytes = text.encode("UTF-8")
     for m in re.finditer(url_regex, text_bytes):
         spans.append(
@@ -306,7 +311,7 @@ def parse_urls(text: str) -> List[Dict]:
 def parse_mentions(text: str) -> List[Dict]:
     spans = []
     # regex based on: https://atproto.com/specs/handle#handle-identifier-syntax
-    mention_regex = rb"[$|\W](@([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)"
+    mention_regex = rb"(@([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)"
     text_bytes = text.encode("UTF-8")
     for m in re.finditer(mention_regex, text_bytes):
         spans.append(
