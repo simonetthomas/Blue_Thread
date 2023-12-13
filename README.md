@@ -2,7 +2,7 @@
 
 ## Disclaimer
 
-⚠ It is in development. Some bugs are present, but a lot of improvements will come in the future. Follow [Blue Thread on Bluesky](http://bsky.app/profile/bluethread.bsky.social) for the latest news.
+⚠ It is in development. Some bugs can be present, but a lot of improvements are coming. Follow [Blue Thread on Bluesky](http://bsky.app/profile/bluethread.bsky.social) for the latest news.
 
 ## What is it ?
 
@@ -17,6 +17,7 @@ Connect with your account, type in a text, and Blue Thread will cut it into sepa
 
 * Automatically cuts the text into 300 characters posts as you type it, by respecting the punctuation to avoid cutting sentences when possible.
 * Adds a number (1/3, 2/3, 3/3 etc.) at the end of each post.
+* Creates links from urls, and mentions to users.
 * Sends the entire thread all at once on your account.
 
 You can :
@@ -29,7 +30,7 @@ You can :
 
 Here is a list of possible features that are not ready yet :
 * Add a way to cut the thread manually at a certain point in the text.
-* Deal with urls, hashtags, mentions to users ? For now they are considered as simple text.
+* Deal with hashtags
 
 ## What's the tech behind it
 
