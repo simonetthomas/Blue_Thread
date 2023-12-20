@@ -159,7 +159,7 @@ def send_thread (thread, request):
                 # Sending of the first post, which doesn't reference any post
                                 
                 embed_images = []
-                facet = parse_facets("https://morel.us-east.host.bsky.network", post)
+                facet = parse_facets(client, post)
                 # print("facets : " + str(facet))
                 
                 # Send with embed (images)
@@ -196,7 +196,7 @@ def send_thread (thread, request):
                 # Sending of another post, replying to the previous one
                 
                 embed_images = []
-                facet = parse_facets("https://morel.us-east.host.bsky.network", post)
+                facet = parse_facets(client, post)
                 # print("facets : " + str(facet))
                 
                 if (images[0].filename != ""):    # If there is images
@@ -248,31 +248,31 @@ def create_embed_images(client, images, alts, embed_images) :
     return embed_images
 
 
-def parse_facets(pds_url: str, text: str) -> List[Dict]:
+def parse_facets(client:Client, text: str) -> List[Dict]:
     """
     parses post text and returns a list of app.bsky.richtext.facet objects for any mentions (@handle.example.com) or URLs (https://example.com)
 
     indexing must work with UTF-8 encoded bytestring offsets, not regular unicode string offsets, to match Bluesky API expectations
     """
     facets = []
-    # for m in parse_mentions(text):
-        # resp = requests.get(
-            # pds_url + "/xrpc/com.atproto.identity.resolveHandle",
-            # params={"handle": m["handle"]},
-        # )
-        # # if handle couldn't be resolved, just skip it! will be text in the post
-        # if resp.status_code == 400:
-            # continue
-        # did = resp.json()["did"]
-        # facets.append(
-            # {
-                # "index": {
-                    # "byteStart": m["start"],
-                    # "byteEnd": m["end"],
-                # },
-                # "features": [{"$type": "app.bsky.richtext.facet#mention", "did": did}],
-            # }
-        # )
+    for m in parse_mentions(text):
+        try:
+            resp = client.resolve_handle(m["handle"])
+            print(resp)
+        except Exception as error:  # if handle couldn't be resolved, just skip it! will be text in the post
+            print("Error trying to resolve handle " + m["handle"] + " :", error)
+            continue
+        
+        did = resp["did"]
+        facets.append(
+            {
+                "index": {
+                    "byteStart": m["start"],
+                    "byteEnd": m["end"],
+                },
+                "features": [{"$type": "app.bsky.richtext.facet#mention", "did": did}],
+            }
+        )
     for u in parse_urls(text):
         facets.append(
             {
