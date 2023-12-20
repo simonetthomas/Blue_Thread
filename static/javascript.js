@@ -695,7 +695,7 @@ function clickSend(){
     let day = new Date().getDate();
     let month = new Date().getMonth();
     if (month == 11 && (day >= 15 && day <= 31)){
-        message_ok = "🎅 Oh oh oh! The thread has been delivered on ";   // Special message around christmas 🎅
+        message_ok = "🎅 Ho ho ho! The thread has been delivered on ";   // Special message around christmas 🎅
     }
     
     /* Fetch does a request to the server in ajax, and waits for a response */
