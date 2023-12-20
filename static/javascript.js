@@ -354,7 +354,7 @@ function onLoadUpdate(){
     if (window.location.pathname == "/thread"){
         populateLanguages();
     }
-    
+        
 }
 
 
@@ -691,6 +691,13 @@ function clickSend(){
     
     // console.log(formData);
     
+    let message_ok = "The thread has been successfully sent on ";
+    let day = new Date().getDate();
+    let month = new Date().getMonth();
+    if (month == 11 && (day >= 15 && day <= 31)){
+        message_ok = "🎅 Oh oh oh! The thread has been delivered on ";   // Special message around christmas 🎅
+    }
+    
     /* Fetch does a request to the server in ajax, and waits for a response */
     fetch("", {
         method: 'post',
@@ -708,7 +715,7 @@ function clickSend(){
         document.getElementById("modal_sending").showModal(); // in case the modal has been closed before the response if received
         if (res.status == 200) {
             //console.log("Thread successfully posted!");
-            document.getElementById("sending_state").textContent = "The thread has been successfully sent on "+res.name+"'s account! 😊";
+            document.getElementById("sending_state").textContent = message_ok+res.name+"'s account! 😊";
             document.getElementById("btn_modal_back").style.display="";
             document.getElementById("output").innerHTML="<p><a href='"+res.url+"' target='_blank'>🧵 Open the thread in a new tab</a></p>";
         }

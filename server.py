@@ -212,7 +212,7 @@ def send_thread (thread, request):
                         )
                     ))
                 else:   # If there is no image
-                    print("Post sans image")
+                    #print("Post sans image")
                     parent_post_ref = models.create_strong_ref(client.com.atproto.repo.create_record(
                         models.ComAtprotoRepoCreateRecord.Data(
                             repo=client.me.did,
