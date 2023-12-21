@@ -7,7 +7,9 @@ var inputAlt = function (i, j){
     
     document.getElementById("modal_image").showModal();
     
-    document.getElementById("ta_alt").value = document.getElementById("alt"+i+"_"+j).value; // get the previous alt value which is in the input field
+    const ta_alt = document.getElementById("ta_alt");
+    ta_alt.value = document.getElementById("alt"+i+"_"+j).value; // get the previous alt value which is in the input field
+    resizeTextarea(ta_alt);
     document.getElementById("img_modal").src=img_src;
     document.getElementById("btn_modal_validate").setAttribute("onclick", "validateModalImage("+i+", "+j+")");
     document.getElementById("btn_modal_cancel").setAttribute("onclick", "cancelModalImage("+i+", "+j+")");
@@ -243,11 +245,9 @@ function removeImage(i, j){
     
 }
 
-/* Resizes a textarea to match the content height */
-function resizeTextarea(element){
-    element.style.height = "auto";
-    element.style.height = element.scrollHeight-10 + "px";
-   // element.style.height = element.scrollHeight-10 + "px";   //  2e resize necessary or else the first textarea is not at the right size ??
+/* Resizes a post textarea and updates the character number */
+function resizePost(element){
+    resizeTextarea(element);
     
     /* Updating the displayed number of characters */
     var nb_char = element.value.length;
@@ -261,6 +261,7 @@ function resizeTextarea(element){
         span_nb_char.classList.remove("warning");
     }
 }
+
 
 /* Checks if the thread is valid before activating the send button :
     - All posts must be non-empty
@@ -316,19 +317,17 @@ function checkThreadValidity(){
     }
 }
 
-function resizeText(){
-    const ta = document.getElementById("ta_text");
-    
+/* Resizes a textarea to fit its content */
+function resizeTextarea(ta){
     ta.style.height = "auto";
     ta.style.height = ta.scrollHeight-10 + "px";
-    
 }
 
-/* Resizes all the posts textareas */
+/* Resizes all the posts textareas and calls the thread validation */
 function resizePosts(){
     var ta = document.getElementById('div_posts').getElementsByClassName('ta_post');
     for (let element of ta) {
-      resizeTextarea(element);
+      resizePost(element);
     }
     checkThreadValidity();
 }
@@ -371,7 +370,7 @@ function addPost(i, post_text){
     new_ta.value=post_text;
     new_ta.classList.add("ta_post");
     new_ta.setAttribute("maxlength", 300);
-    new_ta.setAttribute("oninput", "resizeTextarea(this); checkThreadValidity();");
+    new_ta.setAttribute("oninput", "resizePost(this); checkThreadValidity();");
 
     const new_label = document.createElement("label");
     new_label.id="label_input_images"+(i+1);
@@ -416,7 +415,7 @@ function addPost(i, post_text){
     document.getElementById("div_posts").appendChild(new_div);
 
 
-    resizeTextarea(new_ta);
+    resizePost(new_ta);
     checkThreadValidity();
     
     /* If there is only 2 posts (we just added one so there was only one before), we activate the remove button again */

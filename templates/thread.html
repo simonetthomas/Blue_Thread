@@ -16,7 +16,7 @@
     <p>Logged in as {{session.name}} <a href="/logout"><button id="btn_logout" class="btn">Log out</button></a></p>
     
     <form method="POST" id="form_text">
-        <textarea id="ta_text" name="text" rows="30" cols="70" autocomplete="off" autocorrect="on"  autofocus="on" placeholder="Put your rambling here" oninput="cutThread();">{{text}}</textarea>
+        <textarea id="ta_text" name="text" rows="30" cols="70" autocomplete="off" autocorrect="on"  autofocus="on" placeholder="Put your rambling here" oninput="resizeTextarea(this); cutThread();">{{text}}</textarea>
         <input id="btn_clear" type="button" value="✖ Clear" class="btn" onclick="clearText()" />
         <span id="numbering_section">Numbering : <select name="numbering" id="numbering" class="btn" onChange="cutThread()">
             <option value="slash">1/x</option>
@@ -60,7 +60,7 @@
         <a id="link_image_modal" tabindex="-1">
             <img id="img_modal" src="./static/gaslight.png">
         </a>
-        <textarea id="ta_alt" autocomplete="off" autocorrect="on" autofocus="on" maxlength="1000" placeholder="Describe the picture"></textarea>
+        <textarea id="ta_alt" autocomplete="off" autocorrect="on" autofocus="on" maxlength="1000" placeholder="Describe the picture" oninput="resizeTextarea(this);"></textarea>
         <div id="div_modal_image_buttons">
         <button class="btn" id="btn_modal_validate" value="default">Validate</button>
         <button class="btn" id="btn_modal_cancel">Cancel</button>

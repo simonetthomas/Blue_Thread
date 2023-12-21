@@ -421,7 +421,7 @@ footer{
 .dark_mode :modal{
     background-color: #050814;
     border-color:#2d54a8;
-    color:white;
+    color:#ddd;
 }
 
 :modal h2{
@@ -510,7 +510,7 @@ footer{
 #ta_alt{
     resize: none;   
     clear:both;
-    width:500px;
+    width:550px;
     height:100px;
     padding:5px;
     border-radius:5px;
