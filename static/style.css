@@ -1,6 +1,6 @@
 body{
     width:1240px;
-    background-color:#1d4488;
+    background-color:#248;
     font-family:"Segoe UI";
     margin-left:auto;
     margin-right:auto;
@@ -15,7 +15,6 @@ div#background{
     overflow: auto;
     background-color:#f9faff;
     padding:20px;
-    border:0px solid aliceblue;
     border-radius:10px;
 }
 
@@ -47,7 +46,6 @@ h1{
     width: 645px;
     resize: none;
     padding:5px;
-    border:2px solid deepskyblue;
     border-radius:10px;
     font-family:"Segoe UI"; 
     font-size: 16px;
@@ -56,15 +54,14 @@ h1{
     line-height: 20.8px;
 }
 
-.dark_mode #ta_text{
-    border-color:#194487;
-    color:#ccc;
+textarea{
+    border:2px solid skyblue;
 }
 
 .dark_mode textarea{
     background-color:black;
     color:#ccc;
-    border-color:#194487;
+    border-color:#248;
 }
 
 /* * Right side * */
@@ -92,7 +89,6 @@ h1{
     resize:none;
     overflow:hidden;
     width:503px;
-    border:2px solid deepskyblue;
     border-radius:5px;
     font-family:"Segoe UI"; 
     font-size: 16px;
@@ -108,13 +104,21 @@ h1{
     width: 24px;
     height: 24px;
     display: block;    
-    background-image: url("image_icon.png");
+    background-image: url("add_image_icon.png");
     background-size: 24px;
     cursor:pointer;
 }
 
+#div_posts label:hover{
+    filter:invert(0.2);
+}
+
 .dark_mode #div_posts label{
     filter: invert(0.8);
+}
+
+.dark_mode #div_posts label:hover{
+    filter:invert(0.9);
 }
 
 /* input type = file */
@@ -163,13 +167,13 @@ h1{
     float: left;
     object-fit: cover;
     margin-right:5px;
-    border: 1px solid #bbb;
+    border: 1px solid #ccc;
     border-radius: 3px;
 }
 
 
 .dark_mode #div_posts output img{
-    border-color:#194487;
+    border-color:#248;
 }
 
 
@@ -190,10 +194,6 @@ h1{
     color:white;
     cursor : pointer;
     user-select: none;
-}
-
-.dark_mode .remove_picture{
-    background-color: #d00;
 }
 
 .remove_picture:hover{
@@ -230,7 +230,7 @@ h1{
 .dark_mode .btn{
     background-color:#050d39;
     color:#ddd;
-    border-color:#194487;
+    border-color:#248;
 }
 
 .dark_mode .btn:hover{
@@ -289,7 +289,7 @@ h1{
 .dark_mode #btn_add_post, .dark_mode #btn_remove_post{
     background-color: #050d39;
     color:#ddd;
-    border-color:#194487;
+    border-color:#248;
 }
 
 .dark_mode #btn_add_post:hover, .dark_mode #btn_remove_post:hover{
@@ -321,10 +321,6 @@ h1{
     float: right;
 }
 
-#btn_back{
-    float:left;
-}
-
 
 /* * LOGIN PAGE * */
 
@@ -334,7 +330,7 @@ h1{
     padding : 10px;
     width:300px;
     height:150px;
-    background-color: #c8c8c8;
+    background-color: #ccc;
     border:0px;
     border-radius:5px;
     text-align: center;
@@ -342,7 +338,7 @@ h1{
 }
 
 .dark_mode #form_login{
-    background-color: #202020;
+    background-color: #333;
     box-shadow: 2px 2px 2px black;
 }
     
@@ -367,7 +363,7 @@ h1{
     height:30px;
     border:0px;
     font-size:100%;
-    background-color: #1d4488;
+    background-color: #248;
     color: white;
     cursor:pointer;
 }
@@ -386,7 +382,7 @@ h1{
 }
 
 .dark_mode #btn_validate:hover{
-    background-color: #1d4488;
+    background-color: #248;
 }
 
 .dark_mode #btn_validate:active{
@@ -416,13 +412,15 @@ footer{
 
 
 :modal{
-    border: 1px solid blue;
+    background-color: #f9faff;
+    border: 2px solid deepskyblue;
     border-radius:5px;
     box-shadow: 3px 3px 10px rgba(0 0 0 / 0.5);
 }
 
 .dark_mode :modal{
     background-color: #050814;
+    border-color:#2d54a8;
     color:white;
 }
 
@@ -515,13 +513,12 @@ footer{
     width:500px;
     height:100px;
     padding:5px;
-    border:2px solid deepskyblue;
     border-radius:5px;
     font-family:"Segoe UI";
 }
 
 .dark_mode #ta_alt{
-    border-color:#194487;
+    border-color:#248;
 }
 
 #div_modal_image_buttons{
@@ -590,7 +587,7 @@ div.ts-wrapper{
 div.ts-control{
     margin-right: 5px;
     padding:5px;
-    border : 1px solid deepskyblue;
+    border : 1px solid skyblue;
     min-width: 117px;
     
 }
@@ -601,7 +598,7 @@ div.ts-control{
 
 .dark_mode div.ts-control{
     background:#050d39;
-    border-color:#194487;
+    border-color:#248;
     color:white;
 }
 
@@ -629,5 +626,5 @@ div.ts-control input{
 }
 
 .dark_mode .ts-dropdown {
-    border: 1px solid #194487;
+    border: 1px solid #248;
 }
