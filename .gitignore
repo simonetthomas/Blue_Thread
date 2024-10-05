@@ -2,3 +2,4 @@ config.py
 flask_session/*
 __pycache__/
 venv/
+.env
