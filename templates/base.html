@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang='fr'>
 <head>
-    <title>{% block title %}{% endblock %}</title> 
+    <title>{% block title %}{% endblock %}</title>
     <meta charset=utf-8>
     <link href="{{url_for('static', filename='style.css')}}" rel="stylesheet" type="text/css" />
     <link rel="icon" type="image/png" href="/static/favicon_32.png">
@@ -11,18 +11,18 @@
 <body onload="onLoadUpdate()">
 
     <div id="background">
-    
+
     <button id="btn_toggle_dark_mode" class="btn" onclick="toggleDarkMode()">Dark mode</button>
-    
+
     <header>
-        <h1>{% block h1%}{% endblock %} <span id="version">v0.2.8</span></h1>
+        <h1>{% block h1%}{% endblock %} <span id="version">v0.3.0</span></h1>
     </header>
 
     {% block content %}{% endblock %}
     <script src="{{url_for('static', filename='javascript.js')}}"></script>
-    
+
     <footer>To report a bug or propose a new feature, visit <a href="https://github.com/simonetthomas/Blue_Thread/issues" target="_blank">this page</a> and create an issue!</footer>
     </div>
-    
+
 </body>
 </html>
