@@ -265,6 +265,22 @@ def parse_facets(client:Client, text: str) -> List[Dict]:
                 ],
             }
         )
+    for h in parse_hashtags(text):
+        facets.append(
+            {
+                "index": {
+                    "byteStart": h["start"],
+                    "byteEnd": h["end"],
+                },
+                "features": [
+                    {
+                        "$type": "app.bsky.richtext.facet#tag",
+                        "tag": h["tag"],
+                    }
+                ],
+            }
+        )
+
     return facets
 
 
@@ -295,6 +311,21 @@ def parse_mentions(text: str) -> List[Dict]:
                 "start": m.start(1),
                 "end": m.end(1),
                 "handle": m.group(1)[1:].decode("UTF-8"),
+            }
+        )
+    return spans
+
+def parse_hashtags(text: str) -> List[Dict]:
+    spans = []
+
+    hashtag_regex = rb"(#[^\s]+)"
+    text_bytes = text.encode("UTF-8")
+    for m in re.finditer(hashtag_regex, text_bytes):
+        spans.append(
+            {
+                "start": m.start(1),
+                "end": m.end(1),
+                "tag": m.group(1)[1:].decode("UTF-8").replace("/^#/", ""),
             }
         )
     return spans
