@@ -3,9 +3,9 @@
 {% block h1 %}
     {% block title %}Blue Thread{% endblock %}
 {% endblock %}
-    
+
 {% block content %}
-    
+
     {% with messages = get_flashed_messages()%}
         {% if messages%}
             {% for message in messages%}
@@ -14,7 +14,7 @@
         {%endif%}
     {%endwith%}
     <p>Logged in as {{session.name}} <a href="/logout"><button id="btn_logout" class="btn">Log out</button></a></p>
-    
+
     <form method="POST" id="form_text">
         <textarea id="ta_text" name="text" rows="30" cols="70" autocomplete="off" autocorrect="on"  autofocus="on" placeholder="Put your rambling here" oninput="resizeTextarea(this); cutThread();">{{text}}</textarea>
         <input id="btn_clear" type="button" value="✖ Clear" class="btn" onclick="clearText()" />
@@ -23,7 +23,7 @@
             <option value="none">None</option>
         </select></span>
     </form>
-    
+
     <form method="" id="form_posts" enctype="multipart/form-data" onsubmit="return false;">
         <div id="div_posts"></div>
         <div id="div_buttons">
@@ -31,30 +31,23 @@
             <button id="btn_add_post" type="button" title="Add a post" onClick="addEmptyPost();">+</button>
             <input id="btn_send" class="btn" type="button" name="action" value="✉ Send" onclick="clickSend()"></input>
             <select id="select_lang" name="lang" class="" required="true" title="Select the language in which the thread is written" onchange="checkThreadValidity();" onclick ="">
-                <option value="">Language</option>
-                <option value="ar">🇸🇦 Arabic</option>
-                <option value="zh">🇨🇳 Chinese</option>
-                <option value="en">🇬🇧 English</option>
-                <option value="fr">🇫🇷 French</option>
-                <option value="de">🇩🇪 German</option>
-                <option value="hi">🇮🇳 Hindi</option>
-                <option value="it">🇮🇹 Italian</option>
-                <option value="ja">🇯🇵 Japanese</option>
-                <option value="po">🇵🇹 Portuguese</option>
-                <option value="ru">🇷🇺 Russian</option>
-                <option value="es">🇪🇸 Spanish</option>
+                {% set locales_list = get_locales() -%}
+                {% set locale = get_locale() -%}
+                {% for cur_locale in locales_list.keys() -%}
+                <option value="{{ cur_locale | e }}"{% if locale == cur_locale %} selected{% endif %}>{{ locales_list[cur_locale] | e }}</option>
+                {% endfor -%}
                 <option disabled>─────────</option>
             </select>
         </div>
     </form>
-    
+
     <dialog id="modal_sending">
         <header><h2>Blue Thread</h2><button class="btn close_modal" id="btn_close_modal" onclick="closeModal(1)">🗙</button></header>
         <p id="sending_state"></p>
         <p id="output"></p>
         <button class="btn" id="btn_modal_back" value="default" style="display:none;" onclick="closeModal(0)">Start a new thread</button>
     </dialog>
-    
+
     <dialog id="modal_image">
         <header><h2>Blue Thread</h2><button class="btn close_modal" id="btn_close_modal_image">🗙</button></header>
         <a id="link_image_modal" tabindex="-1">
@@ -66,5 +59,5 @@
         <button class="btn" id="btn_modal_cancel">Cancel</button>
         </div>
     </dialog>
-    
+
 {% endblock %}

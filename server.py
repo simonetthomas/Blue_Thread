@@ -155,47 +155,23 @@ def send_thread (thread, request):
             images = request.files.getlist("input_images"+str(index+1))
             print(images);
 
-            if (firstPost):
-                # Sending of the first post, which doesn't reference any post
+            embed_images = []
+            facet = parse_facets(client, post)
 
-                embed_images = []
-                facet = parse_facets(client, post)
-                # print("facets : " + str(facet))
-
-                # Send with embed (images)
-                if (images[0].filename != ""):
+            embed = None
+            if (images[0].filename != ""):
                     embed_images = create_embed_images(client, images, alts, embed_images)
-
-                    print("Premier post avec une image")
                     embed = models.AppBskyEmbedImages.Main(images=embed_images)
-                    print("embed : " + str(embed))
-                    root_post_ref = client.send_post(text=post, embed=embed, langs=langs, facets=facet)
 
-                # Send without embed (images)
-                else:
-                    print("Premier post sans image")
-                    root_post_ref = client.send_post(text=post, langs=langs, facets=facet)
+            if (firstPost):
+                root_post_ref = client.send_post(text=post, embed=embed, langs=langs, facets=facet)
 
                 print ("root_post_ref : " + str(root_post_ref))
 
                 parent_post_ref = root_post_ref     # The first post ref becomes the ref for the parent post
                 firstPost=False
             else:
-                # Sending of another post, replying to the previous one
-
-                embed_images = []
-                facet = parse_facets(client, post)
-                # print("facets : " + str(facet))
-
-                if (images[0].filename != ""):    # If there is images
-                    print("Post avec images")
-                    embed_images = create_embed_images(client, images, alts, embed_images)
-                    embed = models.AppBskyEmbedImages.Main(images=embed_images)
-
-                    parent_post_ref = client.send_post(text=post, reply_to=models.AppBskyFeedPost.ReplyRef(parent=models.create_strong_ref(parent_post_ref), root=models.create_strong_ref(root_post_ref)), embed=embed, langs=langs, facets=facet)
-                else:   # If there is no image
-                    print("Post sans image")
-                    parent_post_ref = client.send_post(text=post, reply_to=models.AppBskyFeedPost.ReplyRef(parent=models.create_strong_ref(parent_post_ref), root=models.create_strong_ref(root_post_ref)), langs=langs, facets=facet)
+                parent_post_ref = client.send_post(text=post, reply_to=models.AppBskyFeedPost.ReplyRef(parent=models.create_strong_ref(parent_post_ref), root=models.create_strong_ref(root_post_ref)), embed=embed, langs=langs, facets=facet)
 
             print("- Post "+numerotation+" envoyé")
 
@@ -329,6 +305,28 @@ def parse_hashtags(text: str) -> List[Dict]:
             }
         )
     return spans
+
+locales = {
+    "ar": "🇸🇦 Arabic",
+    "zh": "🇨🇳 Chinese",
+    "en": "🇬🇧 English",
+    "fr": "🇫🇷 French",
+    "de": "🇩🇪 German",
+    "hi": "🇮🇳 Hindi",
+    "it": "🇮🇹 Italian",
+    "ja": "🇯🇵 Japanese",
+    "po": "🇵🇹 Portuguese",
+    "ru": "🇷🇺 Russian",
+    "es": "🇪🇸 Spanish",
+}
+
+def get_locale():
+    return request.accept_languages.best_match(locales.keys())
+app.jinja_env.globals['get_locale'] = get_locale
+
+def get_locales():
+    return locales
+app.jinja_env.globals['get_locales'] = get_locales
 
 if __name__ == '__main__':
     app.run(debug=True)
