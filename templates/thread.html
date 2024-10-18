@@ -1,70 +1,91 @@
 {% extends 'base.html' %}
 
 {% block h1 %}
-    {% block title %}Blue Thread{% endblock %}
+{% block title %}Blue Thread{% endblock %}
 {% endblock %}
-    
+
 {% block content %}
-    
-    {% with messages = get_flashed_messages()%}
-        {% if messages%}
-            {% for message in messages%}
-            <p class="flash_error"><strong>{{message}}</strong></p>
-            {%endfor%}
-        {%endif%}
-    {%endwith%}
-    <p>Logged in as {{session.name}} <a href="/logout"><button id="btn_logout" class="btn">Log out</button></a></p>
-    
-    <form method="POST" id="form_text">
-        <textarea id="ta_text" name="text" rows="30" cols="70" autocomplete="off" autocorrect="on"  autofocus="on" placeholder="Put your rambling here" oninput="resizeTextarea(this); cutThread();">{{text}}</textarea>
-        <input id="btn_clear" type="button" value="✖ Clear" class="btn" onclick="clearText()" />
-        <span id="numbering_section">Numbering : <select name="numbering" id="numbering" class="btn" onChange="cutThread()">
+
+{% with messages = get_flashed_messages()%}
+{% if messages%}
+{% for message in messages%}
+<p class="flash_error"><strong>{{message}}</strong></p>
+{%endfor%}
+{%endif%}
+{%endwith%}
+<p>Logged in as {{session.name}} <a href="/logout"><button id="btn_logout" class="btn">Log out</button></a></p>
+<script>
+    function AddBrowserLanguage() {
+        const select = document.getElementById("select_lang");
+        const newOption = document.createElement("option");
+        newOption.value = navigator.language || navigator.userLanguage;
+        newOption.textContent = "Same as Browser";
+        newOption.selected = true;
+        select.appendChild(newOption);
+    }
+
+    window.onload = function () {
+        AddBrowserLanguage();
+    }
+</script>
+<form method="POST" id="form_text">
+    <textarea id="ta_text" name="text" rows="30" cols="70" autocomplete="off" autocorrect="on" autofocus="on"
+        placeholder="Put your rambling here" oninput="resizeTextarea(this); cutThread();">{{text}}</textarea>
+    <input id="btn_clear" type="button" value="✖ Clear" class="btn" onclick="clearText()" />
+    <span id="numbering_section">Numbering : <select name="numbering" id="numbering" class="btn" onChange="cutThread()">
             <option value="slash">1/x</option>
             <option value="none">None</option>
         </select></span>
-    </form>
-    
-    <form method="" id="form_posts" enctype="multipart/form-data" onsubmit="return false;">
-        <div id="div_posts"></div>
-        <div id="div_buttons">
-            <button id="btn_remove_post" type="button" title="Remove a post" onClick="removePost(this);">-</button>
-            <button id="btn_add_post" type="button" title="Add a post" onClick="addEmptyPost();">+</button>
-            <input id="btn_send" class="btn" type="button" name="action" value="✉ Send" onclick="clickSend()"></input>
-            <select id="select_lang" name="lang" class="" required="true" title="Select the language in which the thread is written" onchange="checkThreadValidity();" onclick ="">
-                <option value="">Language</option>
-                <option value="ar">🇸🇦 Arabic</option>
-                <option value="zh">🇨🇳 Chinese</option>
-                <option value="en">🇬🇧 English</option>
-                <option value="fr">🇫🇷 French</option>
-                <option value="de">🇩🇪 German</option>
-                <option value="hi">🇮🇳 Hindi</option>
-                <option value="it">🇮🇹 Italian</option>
-                <option value="ja">🇯🇵 Japanese</option>
-                <option value="po">🇵🇹 Portuguese</option>
-                <option value="ru">🇷🇺 Russian</option>
-                <option value="es">🇪🇸 Spanish</option>
-                <option disabled>─────────</option>
-            </select>
-        </div>
-    </form>
-    
-    <dialog id="modal_sending">
-        <header><h2>Blue Thread</h2><button class="btn close_modal" id="btn_close_modal" onclick="closeModal(1)">🗙</button></header>
-        <p id="sending_state"></p>
-        <p id="output"></p>
-        <button class="btn" id="btn_modal_back" value="default" style="display:none;" onclick="closeModal(0)">Start a new thread</button>
-    </dialog>
-    
-    <dialog id="modal_image">
-        <header><h2>Blue Thread</h2><button class="btn close_modal" id="btn_close_modal_image">🗙</button></header>
-        <a id="link_image_modal" tabindex="-1">
-            <img id="img_modal" src="./static/gaslight.png">
-        </a>
-        <textarea id="ta_alt" autocomplete="off" autocorrect="on" autofocus="on" maxlength="1000" placeholder="Describe the picture" oninput="resizeTextarea(this);"></textarea>
-        <div id="div_modal_image_buttons">
+</form>
+
+<form method="" id="form_posts" enctype="multipart/form-data" onsubmit="return false;">
+    <div id="div_posts"></div>
+    <div id="div_buttons">
+        <button id="btn_remove_post" type="button" title="Remove a post" onClick="removePost(this);">-</button>
+        <button id="btn_add_post" type="button" title="Add a post" onClick="addEmptyPost();">+</button>
+        <input id="btn_send" class="btn" type="button" name="action" value="✉ Send" onclick="clickSend()"></input>
+        <select id="select_lang" name="lang" class="" required="true"
+            title="Select the language in which the thread is written" onchange="checkThreadValidity();" onclick="">
+            <option value="">Language</option>
+            <option value="ar">🇸🇦 Arabic</option>
+            <option value="zh">🇨🇳 Chinese</option>
+            <option value="en">🇬🇧 English</option>
+            <option value="fr">🇫🇷 French</option>
+            <option value="de">🇩🇪 German</option>
+            <option value="hi">🇮🇳 Hindi</option>
+            <option value="it">🇮🇹 Italian</option>
+            <option value="ja">🇯🇵 Japanese</option>
+            <option value="po">🇵🇹 Portuguese</option>
+            <option value="ru">🇷🇺 Russian</option>
+            <option value="es">🇪🇸 Spanish</option>
+            <option disabled>─────────</option>
+        </select>
+    </div>
+</form>
+
+<dialog id="modal_sending">
+    <header>
+        <h2>Blue Thread</h2><button class="btn close_modal" id="btn_close_modal" onclick="closeModal(1)">🗙</button>
+    </header>
+    <p id="sending_state"></p>
+    <p id="output"></p>
+    <button class="btn" id="btn_modal_back" value="default" style="display:none;" onclick="closeModal(0)">Start a new
+        thread</button>
+</dialog>
+
+<dialog id="modal_image">
+    <header>
+        <h2>Blue Thread</h2><button class="btn close_modal" id="btn_close_modal_image">🗙</button>
+    </header>
+    <a id="link_image_modal" tabindex="-1">
+        <img id="img_modal" src="./static/gaslight.png">
+    </a>
+    <textarea id="ta_alt" autocomplete="off" autocorrect="on" autofocus="on" maxlength="1000"
+        placeholder="Describe the picture" oninput="resizeTextarea(this);"></textarea>
+    <div id="div_modal_image_buttons">
         <button class="btn" id="btn_modal_validate" value="default">Validate</button>
         <button class="btn" id="btn_modal_cancel">Cancel</button>
-        </div>
-    </dialog>
-    
+    </div>
+</dialog>
+
 {% endblock %}
