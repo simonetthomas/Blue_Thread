@@ -160,7 +160,7 @@ var loadFile = function(event, i) {
                     fileInput.files = dataTransfer.files;
                     formData.append("input_images"+i, myFile);
 
-                }, "image/jpeg", 0.80);
+                }, "image/jpeg", 0.76);
 
             };
 
