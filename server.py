@@ -128,101 +128,53 @@ def send_thread (thread, request):
     firstPost=True
     str_nb_posts = str(len(thread))
     langs = [request.form.get("lang")]
-    
+
     print("nb posts : "+str_nb_posts)
-           
+
     client = Client()
     login=session["name"]
     password=session["password"]
-    
+
     print("- Envoi_thread : ", thread)
     print("form : "+str(request.form));
-    
+
     if (connection(client, login, password) == 0):
 
         for index, post in enumerate(thread):
             #print("index : "+str(index))
             numerotation = str(index+1)+"/"+str_nb_posts
-            
+
             try:    # Trying to get an alt for this post
                 alts = request.form.getlist("alt"+str(index+1))
                 #print("alts : ", alts)
             except Exception:
                 alts = ""  # no alt for this post
                 #print("pas de alt récupéré")
-            
+
             #print("input_images"+str(index+1))
             images = request.files.getlist("input_images"+str(index+1))
             print(images);
-            
-            if (firstPost):
-                # Sending of the first post, which doesn't reference any post
-                                
-                embed_images = []
-                facet = parse_facets(client, post)
-                # print("facets : " + str(facet))
-                
-                # Send with embed (images)
-                if (images[0].filename != ""):
+
+            embed_images = []
+            facet = parse_facets(client, post)
+
+            embed = None
+            if (images[0].filename != ""):
                     embed_images = create_embed_images(client, images, alts, embed_images)
-                    
-                    print("Premier post avec une image")
                     embed = models.AppBskyEmbedImages.Main(images=embed_images)
-                    print("embed : " + str(embed))
-                    root_post_ref = models.create_strong_ref(client.com.atproto.repo.create_record(
-                        models.ComAtprotoRepoCreateRecord.Data(
-                            repo=client.me.did,
-                            collection=models.ids.AppBskyFeedPost,
-                            record=models.AppBskyFeedPost.Main(created_at=client.get_current_time_iso(), text=post, embed=embed, langs=langs, facets=facet),
-                        )
-                    ))
-                    
-                # Send without embed (images)
-                else:
-                    print("Premier post sans image")
-                    root_post_ref = models.create_strong_ref(client.com.atproto.repo.create_record(
-                        models.ComAtprotoRepoCreateRecord.Data(
-                            repo=client.me.did,
-                            collection=models.ids.AppBskyFeedPost,
-                            record=models.AppBskyFeedPost.Main(created_at=client.get_current_time_iso(), text=post, langs=langs, facets=facet),
-                        )
-                    ))
-                
+
+            if (firstPost):
+                root_post_ref = client.send_post(text=post, embed=embed, langs=langs, facets=facet)
+
                 print ("root_post_ref : " + str(root_post_ref))
-                                 
+
                 parent_post_ref = root_post_ref     # The first post ref becomes the ref for the parent post
                 firstPost=False
             else:
-                # Sending of another post, replying to the previous one
-                
-                embed_images = []
-                facet = parse_facets(client, post)
-                # print("facets : " + str(facet))
-                
-                if (images[0].filename != ""):    # If there is images
-                    print("Post avec images")
-                    embed_images = create_embed_images(client, images, alts, embed_images)                    
-                    embed = models.AppBskyEmbedImages.Main(images=embed_images)
-                    
-                    parent_post_ref = models.create_strong_ref(client.com.atproto.repo.create_record(
-                        models.ComAtprotoRepoCreateRecord.Data(
-                            repo=client.me.did,
-                            collection=models.ids.AppBskyFeedPost,
-                            record=models.AppBskyFeedPost.Main(created_at=client.get_current_time_iso(), text=post, reply=models.AppBskyFeedPost.ReplyRef(parent=parent_post_ref, root=root_post_ref), embed=embed, langs=langs, facets=facet),
-                        )
-                    ))
-                else:   # If there is no image
-                    #print("Post sans image")
-                    parent_post_ref = models.create_strong_ref(client.com.atproto.repo.create_record(
-                        models.ComAtprotoRepoCreateRecord.Data(
-                            repo=client.me.did,
-                            collection=models.ids.AppBskyFeedPost,
-                            record=models.AppBskyFeedPost.Main(created_at=client.get_current_time_iso(), text=post, reply=models.AppBskyFeedPost.ReplyRef(parent=parent_post_ref, root=root_post_ref), langs=langs, facets=facet),
-                        )
-                    ))
-                    
+                parent_post_ref = client.send_post(text=post, reply_to=models.AppBskyFeedPost.ReplyRef(parent=models.create_strong_ref(parent_post_ref), root=models.create_strong_ref(root_post_ref)), embed=embed, langs=langs, facets=facet)
+
             print("- Post "+numerotation+" envoyé")
-        
+
         # Once all the thread has been sent : we get the first post's url to return it
         post_id = re.match(r"^.*\/(.*)$", root_post_ref.uri).group(1)
         post_url = "https://bsky.app/profile/"+session.get("name")+"/post/"+post_id
@@ -262,7 +214,7 @@ def parse_facets(client:Client, text: str) -> List[Dict]:
         except Exception as error:  # if handle couldn't be resolved, just skip it! will be text in the post
             print("Error trying to resolve handle " + m["handle"] + " :", error)
             continue
-        
+
         did = resp["did"]
         facets.append(
             {
@@ -289,6 +241,22 @@ def parse_facets(client:Client, text: str) -> List[Dict]:
                 ],
             }
         )
+    for h in parse_hashtags(text):
+        facets.append(
+            {
+                "index": {
+                    "byteStart": h["start"],
+                    "byteEnd": h["end"],
+                },
+                "features": [
+                    {
+                        "$type": "app.bsky.richtext.facet#tag",
+                        "tag": h["tag"],
+                    }
+                ],
+            }
+        )
+
     return facets
 
 
@@ -307,7 +275,7 @@ def parse_urls(text: str) -> List[Dict]:
             }
         )
     return spans
-    
+
 def parse_mentions(text: str) -> List[Dict]:
     spans = []
     # regex based on: https://atproto.com/specs/handle#handle-identifier-syntax
@@ -321,7 +289,44 @@ def parse_mentions(text: str) -> List[Dict]:
                 "handle": m.group(1)[1:].decode("UTF-8"),
             }
         )
-    return spans    
-    
+    return spans
+
+def parse_hashtags(text: str) -> List[Dict]:
+    spans = []
+
+    hashtag_regex = rb"(#[^\s]+)"
+    text_bytes = text.encode("UTF-8")
+    for m in re.finditer(hashtag_regex, text_bytes):
+        spans.append(
+            {
+                "start": m.start(1),
+                "end": m.end(1),
+                "tag": m.group(1)[1:].decode("UTF-8").replace("/^#/", ""),
+            }
+        )
+    return spans
+
+locales = {
+    "ar": "🇸🇦 Arabic",
+    "zh": "🇨🇳 Chinese",
+    "en": "🇬🇧 English",
+    "fr": "🇫🇷 French",
+    "de": "🇩🇪 German",
+    "hi": "🇮🇳 Hindi",
+    "it": "🇮🇹 Italian",
+    "ja": "🇯🇵 Japanese",
+    "po": "🇵🇹 Portuguese",
+    "ru": "🇷🇺 Russian",
+    "es": "🇪🇸 Spanish",
+}
+
+def get_locale():
+    return request.accept_languages.best_match(locales.keys())
+app.jinja_env.globals['get_locale'] = get_locale
+
+def get_locales():
+    return locales
+app.jinja_env.globals['get_locales'] = get_locales
+
 if __name__ == '__main__':
     app.run(debug=True)

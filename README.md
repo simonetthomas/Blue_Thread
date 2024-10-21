@@ -30,7 +30,7 @@ You can :
 
 Here is a list of possible features that are not ready yet :
 * Add a way to cut the thread manually at a certain point in the text.
-* Deal with hashtags
+* Deal with gif/videos
 
 ## What's the tech behind it
 
