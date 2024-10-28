@@ -372,10 +372,15 @@ function addPost(i, post_text){
     new_ta.setAttribute("maxlength", 300);
     new_ta.setAttribute("oninput", "resizePost(this); checkThreadValidity();");
 
+    const div_buttons = document.createElement("div");
+    div_buttons.id="div_buttons"+(i+1);
+    div_buttons.classList.add("div_buttons");
+    
     const new_label = document.createElement("label");
     new_label.id="label_input_images"+(i+1);
     new_label.title="Add a picture to the post";
     new_label.setAttribute("for", "input_images"+(i+1));
+    new_label.classList.add("label_images");
 
     const new_input = document.createElement("input");
     new_input.id="input_images"+(i+1);
@@ -385,12 +390,32 @@ function addPost(i, post_text){
     new_input.setAttribute("onchange", "loadFile(event, "+(i+1)+")");
     new_input.classList.add("input_images");
     new_input.setAttribute("multiple", "");
+    
+    const new_label_2 = document.createElement("label");
+    new_label_2.id="label_input_videos"+(i+1);
+    new_label_2.title="Add a video to the post";
+    new_label_2.setAttribute("for", "input_videos"+(i+1));
+    new_label_2.classList.add("label_videos");
+    
+    const new_input_2 = document.createElement("input");
+    new_input_2.id="input_videos"+(i+1);
+    new_input_2.type="file";
+    new_input_2.name="input_videos"+(i+1);
+    new_input_2.setAttribute("accept", "video/mp4");
+    new_input_2.setAttribute("onchange", "loadFile(event, "+(i+1)+")");
+    new_input_2.classList.add("input_images");
 
     const new_nb_char = document.createElement("div");
     new_nb_char.id="nb_char"+(i+1);
     new_nb_char.innerHTML="<span>0</span>/300";
     new_nb_char.classList.add("nb_char");
 
+    div_buttons.appendChild(new_label);
+    div_buttons.appendChild(new_input);
+    div_buttons.appendChild(new_label_2);
+    div_buttons.appendChild(new_input_2);
+    div_buttons.appendChild(new_nb_char);
+    
     const new_thumbnail_zone = document.createElement("output");
     new_thumbnail_zone.id="thumbnail_zone"+(i+1);
     new_thumbnail_zone.classList.add("thumbnail_zone")
@@ -405,11 +430,7 @@ function addPost(i, post_text){
     new_thumbnail_zone.appendChild(new_table);
 
     new_div.appendChild(new_ta);
-    new_div.appendChild(new_label);
-    new_div.appendChild(new_input);
-    new_div.appendChild(new_nb_char);
-    new_div.appendChild(new_label);
-    new_div.appendChild(new_input);
+    new_div.appendChild(div_buttons);
     new_div.appendChild(new_thumbnail_zone);
 
     document.getElementById("div_posts").appendChild(new_div);

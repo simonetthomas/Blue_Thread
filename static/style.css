@@ -99,11 +99,10 @@ textarea{
 }
 
 /* File input button */
-#div_posts label{
-    clear: left;
+#div_posts label.label_images{
+    float:left;
     width: 24px;
     height: 24px;
-    display: block;    
     background-image: url("add_image_icon.png");
     background-size: 24px;
     cursor:pointer;
@@ -111,6 +110,15 @@ textarea{
 
 #div_posts label:hover{
     filter:invert(0.2);
+}
+
+#div_posts label.label_videos{
+    float:left;
+    width: 24px;
+    height: 24px;
+    background-image: url("add_image_icon.png");
+    background-size: 24px;
+    cursor:pointer;
 }
 
 .dark_mode #div_posts label{
@@ -121,17 +129,24 @@ textarea{
     filter:invert(0.9);
 }
 
+.div_buttons{
+    clear:left;
+}
+
 /* input type = file */
 .input_images{
-    clear: left;
-    float: left;
+    display :none;
+}
+
+.input_videos{
     display :none;
 }
 
 /* Zone in which we insert the images thumbnails */
 #div_posts output{
-    margin-bottom: 5px;
+    clear:left;
     display:block;
+    margin-bottom: 5px;
 }
 
 /* Output zone cell */
@@ -202,8 +217,6 @@ textarea{
 
 /* Display of the post characters count*/
 .nb_char{
-    clear:both;
-    float:right;
     text-align: right;
     color:gray;
 }
@@ -283,7 +296,6 @@ textarea{
 }
 
 #btn_add_post{
-    
 }
 
 .dark_mode #btn_add_post, .dark_mode #btn_remove_post{
