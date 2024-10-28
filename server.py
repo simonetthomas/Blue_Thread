@@ -153,25 +153,40 @@ def send_thread (thread, request):
 
             #print("input_images"+str(index+1))
             images = request.files.getlist("input_images"+str(index+1))
-            print(images);
+            #print(images);
+            
+            video = request.files.getlist("input_videos"+str(index+1))
+            #print(video);
 
             embed_images = []
             facet = parse_facets(client, post)
 
             embed = None
             if (images[0].filename != ""):
+                    #print("Il y a une image")
                     embed_images = create_embed_images(client, images, alts, embed_images)
                     embed = models.AppBskyEmbedImages.Main(images=embed_images)
+            
+            embed_video = []
+            
+            if (video[0].filename != ""):
+                    embed_video = upload_video(client, video, alts, embed_video)
 
             if (firstPost):
-                root_post_ref = client.send_post(text=post, embed=embed, langs=langs, facets=facet)
+                if (video[0].filename != ""):
+                    root_post_ref = client.send_video(text=post, video=embed_video, video_alt=alts[0], langs=langs, facets=facet)
+                else:
+                    root_post_ref = client.send_post(text=post, embed=embed, langs=langs, facets=facet)
 
                 print ("root_post_ref : " + str(root_post_ref))
 
                 parent_post_ref = root_post_ref     # The first post ref becomes the ref for the parent post
                 firstPost=False
             else:
-                parent_post_ref = client.send_post(text=post, reply_to=models.AppBskyFeedPost.ReplyRef(parent=models.create_strong_ref(parent_post_ref), root=models.create_strong_ref(root_post_ref)), embed=embed, langs=langs, facets=facet)
+                if (video[0].filename != ""):
+                    parent_post_ref = client.send_video(text=post, reply_to=models.AppBskyFeedPost.ReplyRef(parent=models.create_strong_ref(parent_post_ref), root=models.create_strong_ref(root_post_ref)), video=embed_video, video_alt=alts[0], langs=langs, facets=facet)
+                else:
+                    parent_post_ref = client.send_post(text=post, reply_to=models.AppBskyFeedPost.ReplyRef(parent=models.create_strong_ref(parent_post_ref), root=models.create_strong_ref(root_post_ref)), embed=embed, langs=langs, facets=facet)
 
             print("- Post "+numerotation+" envoyé")
 
@@ -191,13 +206,22 @@ def send_thread (thread, request):
 def create_embed_images(client, images, alts, embed_images) :
     # Loop over the post images to add them to the embed object
     for (image_index, image) in enumerate(images):
-        print("index de l'image : "+str(image_index))
+        #print("index de l'image : "+str(image_index))
         img_data=images[image_index].read()
         #print("Juste avant ''upload_blob''")
         upload = client.com.atproto.repo.upload_blob(img_data)
         #print("Juste après ''upload_blob''")
         embed_images.append(models.AppBskyEmbedImages.Image(alt=alts[image_index], image=upload.blob))
     return embed_images
+    
+# Uploads the video blob and returns a video list
+def upload_video(client, video, alts, output_video) :
+    vid_data=video[0].read()
+    # print("Juste avant ''upload_blob''")
+    #upload = client.com.atproto.repo.upload_blob(vid_data)
+    # print("Juste après ''upload_blob''")
+    #output_video.append(models.AppBskyVideoUploadVideo.Response(alt=alts[0], video=upload.blob))
+    return vid_data
 
 
 def parse_facets(client:Client, text: str) -> List[Dict]:

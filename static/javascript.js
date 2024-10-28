@@ -209,8 +209,93 @@ var loadFile = function(event, i) {
         document.getElementById("input_images"+i).setAttribute("onClick", "event.preventDefault();");
         document.getElementById("label_input_images"+i).style.opacity = 0.4;
     }
+    
+    /* Disable the video button if there is at least 1 image*/
+    if (tr.cells.length > 0){
+        document.getElementById("input_videos"+i).setAttribute("onClick", "event.preventDefault();");
+        document.getElementById("label_input_videos"+i).style.opacity = 0.4;
+    }
+
 
 };
+
+
+/* Called when a video is added
+   It adds the video's thumbnail, and an input field for the alt text */
+var loadFileVideo = function(event, i) {
+
+    const tr = document.getElementById('output_table_row'+i);
+    //const num_image = tr.cells.length+1;
+
+    const fileInput = document.getElementById("input_videos"+i);    // The input elements that contains the selected files
+
+    const dataTransfer = new DataTransfer();    // to store temporarily the valid files that will be added to the input
+    files = event.target.files ;
+
+    //const maxSize = 1000000;    // Max size of a file (976 KB)
+
+    var new_number = 1;
+
+    var newFile = files[0];
+
+    /* If the file is not too big, we add it */
+  //  if (newFile.size <= maxSize ){
+
+    dataTransfer.items.add(newFile);
+
+    const image=document.createElement("img");
+    image.src = URL.createObjectURL(newFile);
+    image.id="img"+i+"_"+(new_number);
+
+    const btn_alt=document.createElement("button");
+    btn_alt.id = "btn_alt"+i+"_"+(new_number);
+    btn_alt.innerText="ALT";
+    btn_alt.classList.add("btn_alt");
+    btn_alt.setAttribute("onclick", "inputAlt("+i+","+(new_number)+")");
+
+    const remove_picture=document.createElement("span");
+    remove_picture.innerText="×";
+    remove_picture.classList.add("remove_picture");
+    remove_picture.setAttribute("onclick", "removeImage("+i+","+(new_number)+")");
+
+    const alt=document.createElement("textarea");
+    alt.id="alt"+i+"_"+(new_number);
+    alt.name="alt"+i;
+    alt.style.display = "none";
+
+    const td=document.createElement("td");
+    td.appendChild(image);
+    td.appendChild(btn_alt);
+    td.appendChild(remove_picture);
+    td.appendChild(alt);
+    tr.appendChild(td);
+    //}
+    /* else{
+        console.log ("The picture " + newFile.name +" is larger than 976 KB. It will be compressed.");
+
+        };
+
+    }*/
+
+    fileInput.files = dataTransfer.files;   // This affects the manipulated filelist to the input element
+
+    /* Updating the formData with the new images */
+    formData.delete("input_videos"+i);
+
+    for (let f of fileInput.files){
+        formData.append("input_videos"+i, f);
+    }
+
+    /* Disable the image button if there are 4 images in the post */
+    if (tr.cells.length == 1){
+        document.getElementById("input_images"+i).setAttribute("onClick", "event.preventDefault();");
+        document.getElementById("label_input_images"+i).style.opacity = 0.4;
+        document.getElementById("input_videos"+i).setAttribute("onClick", "event.preventDefault();");
+        document.getElementById("label_input_videos"+i).style.opacity = 0.4;
+    }
+
+};
+
 
 /* Removes an image from the thumbnail zone and input list */
 function removeImage(i, j){
@@ -232,16 +317,21 @@ function removeImage(i, j){
     /* Removes the td after the transition has ended */
     td.addEventListener("transitionend", () => {
         td.remove();
+        /* Enable the button again to add images */
+        document.getElementById("input_images"+i).removeAttribute ("onclick");
+        document.getElementById("label_input_images"+i).style.opacity = 1;
+    
+        if (document.getElementById('output_table_row'+i).cells.length == 0){
+            document.getElementById("input_videos"+i).removeAttribute("onClick", "event.preventDefault();");
+            document.getElementById("label_input_videos"+i).style.opacity = 1;
+        }
+        
     });
 
     td.classList.add("shrink");    /* Add the 'removed' class which triggers the transition to shrink the td */
 
     //console.log(dataTransfer);
     fileInput.files = dataTransfer.files;
-
-    /* Enable the button again to add images */
-    document.getElementById("input_images"+i).removeAttribute ("onclick");
-    document.getElementById("label_input_images"+i).style.opacity = 1;
 
 }
 
@@ -386,7 +476,7 @@ function addPost(i, post_text){
     new_input.id="input_images"+(i+1);
     new_input.type="file";
     new_input.name="input_images"+(i+1);
-    new_input.setAttribute("accept", "image/png, image/jpg, image/jpeg, image/gif, video/mp4");
+    new_input.setAttribute("accept", "image/png, image/jpg, image/jpeg, image/gif");
     new_input.setAttribute("onchange", "loadFile(event, "+(i+1)+")");
     new_input.classList.add("input_images");
     new_input.setAttribute("multiple", "");
@@ -401,9 +491,9 @@ function addPost(i, post_text){
     new_input_2.id="input_videos"+(i+1);
     new_input_2.type="file";
     new_input_2.name="input_videos"+(i+1);
-    new_input_2.setAttribute("accept", "video/mp4");
-    new_input_2.setAttribute("onchange", "loadFile(event, "+(i+1)+")");
-    new_input_2.classList.add("input_images");
+    new_input_2.setAttribute("accept", "video/mp4, video/mpeg, video/webm, video/mov");
+    new_input_2.setAttribute("onchange", "loadFileVideo(event, "+(i+1)+")");
+    new_input_2.classList.add("input_videos");
 
     const new_nb_char = document.createElement("div");
     new_nb_char.id="nb_char"+(i+1);
